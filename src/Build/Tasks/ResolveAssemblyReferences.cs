@@ -21,7 +21,7 @@ namespace XPack.Build.Tasks
         public ITaskItem[] AssemblyReferences { get; set; }
 
         [Output]
-        public ITaskItem[] AssemblyMetadataOverrides { get; set; }
+        public ITaskItem[] AssemblyReferenceOverrides { get; set; }
         
         public override void ExecuteOrThrow()
         {
@@ -29,20 +29,20 @@ namespace XPack.Build.Tasks
                 return;
             
             var assemblyToOverride = TestAssemblyName;
-            List<ITaskItem> assemblyMetadataOverrides = new List<ITaskItem>();
+            var referenceOverrides = new List<ITaskItem>();
             foreach (var assemblyReference in AssemblyReferences)
             {
                 if(assemblyReference.ItemSpec.Equals(assemblyToOverride, StringComparison.OrdinalIgnoreCase)
                     || assemblyReference.ItemSpec.StartsWith(assemblyToOverride + ",", StringComparison.OrdinalIgnoreCase))
                 {
-                    var metadataOverride = new TaskItem(assemblyReference.ItemSpec);
-                    metadataOverride.SetMetadata("HintPath", TestAssemblyDirectory + @"\" + assemblyToOverride + ".dll");
+                    assemblyReference.SetMetadata("HintPath", TestAssemblyDirectory + @"\" + assemblyToOverride + ".dll");
+                    assemblyReference.SetMetadata("ShortName", assemblyToOverride);
                     
-                    assemblyMetadataOverrides.Add(metadataOverride);
+                    referenceOverrides.Add(assemblyReference);
                 }
             }
 
-            AssemblyMetadataOverrides = assemblyMetadataOverrides.ToArray();
+            AssemblyReferenceOverrides = referenceOverrides.ToArray();
         }
     }
 }

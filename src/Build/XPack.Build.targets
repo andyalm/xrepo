@@ -2,29 +2,27 @@
 	<UsingTask TaskName="XPack.Build.Tasks.ResolveAssemblyReferences"
 			   AssemblyFile="$(MSBuildThisFileDirectory)\XPack.Build.dll"/>
 
-  <Target Name="BeforeResolveReferences" DependsOnTargets="_OverrideHintPaths">
-    
-  </Target>
-
-  <Target Name="AfterResolveReferences">
-    <!--Message Text="References after: %(Reference.HintPath)"/-->
-    <Message Text="ReferencePath: @(ReferencePath)"/>
-  </Target>
+  <PropertyGroup>
+    <ResolveReferencesDependsOn>
+      _OverrideHintPaths;
+      $(ResolveReferencesDependsOn)
+    </ResolveReferencesDependsOn>
+  </PropertyGroup>
 
   <Target Name="_OverrideHintPaths" Condition="$(TestAssemblyName)!='' and $(TestAssemblyDirectory)!=''">
-    <XPack.Build.Tasks.ResolveAssemblyReferences AssemblyReferences="@(Reference)"
+    <XPack.Build.Tasks.ResolveAssemblyReferences
+        AssemblyReferences="@(Reference)"
         TestAssemblyName="$(TestAssemblyName)"
         TestAssemblyDirectory="$(TestAssemblyDirectory)"
         Enabled="true"
         DebugTask="false">
-      <Output TaskParameter="AssemblyMetadataOverrides" ItemName="AssemblyMetadataOverride"/>
+      <Output TaskParameter="AssemblyReferenceOverrides" ItemName="ReferenceOverride"/>
     </XPack.Build.Tasks.ResolveAssemblyReferences>
     <ItemGroup>
-      <Reference Remove="%(AssemblyMetadataOverride.Identity)"/>
-      <Reference Include="%(AssemblyMetadataOverride.Identity)">
-        <HintPath>%(AssemblyMetadataOverride.HintPath)</HintPath>
-      </Reference>
+      <Reference Remove="%(ReferenceOverride.Identity)"/>
+      <Reference Include="@(ReferenceOverride)" />
     </ItemGroup>
+    <Message Text="%(ReferenceOverride.ShortName) reference overridden by xpack. Using '%(ReferenceOverride.HintPath)'" Condition="@(ReferenceOverride)!=''"/>
   </Target>
   
 </Project>
