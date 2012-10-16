@@ -1,6 +1,8 @@
 ﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
 	<UsingTask TaskName="XPack.Build.Tasks.ResolveAssemblyReferences"
 			   AssemblyFile="$(MSBuildThisFileDirectory)\XPack.Build.dll"/>
+  <UsingTask TaskName="XPack.Build.Tasks.RegisterAssembly"
+			   AssemblyFile="$(MSBuildThisFileDirectory)\XPack.Build.dll"/>
 
   <PropertyGroup>
     <ResolveReferencesDependsOn>
@@ -9,12 +11,11 @@
     </ResolveReferencesDependsOn>
   </PropertyGroup>
 
-  <Target Name="_OverrideHintPaths" Condition="$(TestAssemblyName)!='' and $(TestAssemblyDirectory)!=''">
+  <Target Name="_OverrideHintPaths">
     <XPack.Build.Tasks.ResolveAssemblyReferences
         AssemblyReferences="@(Reference)"
-        TestAssemblyName="$(TestAssemblyName)"
-        TestAssemblyDirectory="$(TestAssemblyDirectory)"
         Enabled="true"
+        CustomConfigDir="$(XPackConfigDir)"
         DebugTask="false">
       <Output TaskParameter="AssemblyReferenceOverrides" ItemName="ReferenceOverride"/>
     </XPack.Build.Tasks.ResolveAssemblyReferences>
@@ -23,6 +24,24 @@
       <Reference Include="@(ReferenceOverride)" />
     </ItemGroup>
     <Message Text="%(ReferenceOverride.ShortName) reference overridden by xpack. Using '%(ReferenceOverride.HintPath)'" Condition="@(ReferenceOverride)!=''"/>
+  </Target>
+
+  <PropertyGroup>
+    <BuildDependsOn>
+      $(BuildDependsOn);
+      _RegisterAssembly
+    </BuildDependsOn>
+  </PropertyGroup>
+  
+  <Target Name="_RegisterAssembly">
+    <Message Text="Registering the assembly $(TargetPath)" Importance="high"/>
+    <XPack.Build.Tasks.RegisterAssembly
+      AssemblyPath="$(TargetPath)"
+      AssemblyName="$(AssemblyName)"
+      ProjectPath="$(MSBuildProjectFullPath)"
+      CustomConfigDir="$(XPackConfigDir)"
+      Condition="$(TargetPath)!=''"
+      DebugTask="false"/>
   </Target>
   
 </Project>

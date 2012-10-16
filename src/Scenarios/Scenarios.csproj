@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{DE24D3B6-EED5-44C7-A0CA-AE66A364365B}</ProjectGuid>
+    <ProjectGuid>{637BF041-BB18-49E7-92CA-7922EB211592}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>XPack.Build</RootNamespace>
-    <AssemblyName>XPack.Build</AssemblyName>
+    <RootNamespace>XPack.Scenarios</RootNamespace>
+    <AssemblyName>XPack.Scenarios</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
@@ -32,10 +32,13 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="FluentAssertions">
+      <HintPath>..\..\packages\FluentAssertions.2.0.0.1\lib\net40\FluentAssertions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Build" />
     <Reference Include="Microsoft.Build.Framework" />
-    <Reference Include="Microsoft.Build.Utilities.v4.0" />
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\..\packages\Newtonsoft.Json.4.5.10\lib\net40\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="nunit.framework">
+      <HintPath>..\..\packages\NUnit.2.6.1\lib\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -44,26 +47,39 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="TechTalk.SpecFlow">
+      <HintPath>..\..\packages\SpecFlow.1.9.0\lib\net35\TechTalk.SpecFlow.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Core\AssemblyRegistry.cs" />
-    <Compile Include="Infrastructure\BuildEngineExtensions.cs" />
-    <Compile Include="Infrastructure\CommandLineBuilderExtensions.cs" />
-    <Compile Include="Infrastructure\IBuildContext.cs" />
-    <Compile Include="Infrastructure\TaskItemExtensions.cs" />
-    <Compile Include="Infrastructure\TaskWithNoReturnFlag.cs" />
+    <Compile Include="AssemblyRegistration.feature.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>AssemblyRegistration.feature</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Tasks\RegisterAssembly.cs" />
-    <Compile Include="Tasks\ResolveAssemblyReferences.cs" />
+    <Compile Include="Steps\AssemblyRegistrationSteps.cs" />
+    <Compile Include="TestSupport\BuildEnvironment.cs" />
+    <Compile Include="TestSupport\ProjectBuilder.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="XPack.Build.targets">
+    <Content Include="..\Build\XPack.Build.targets">
+      <Link>XPack.Build.targets</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <SubType>Designer</SubType>
     </Content>
+    <None Include="App.config" />
+    <None Include="AssemblyRegistration.feature">
+      <Generator>SpecFlowSingleFileGenerator</Generator>
+      <LastGenOutput>AssemblyRegistration.feature.cs</LastGenOutput>
+    </None>
+    <None Include="packages.config" />
+    <EmbeddedResource Include="TestSupport\ClassLibrary.csproj.template" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <ProjectReference Include="..\Build\Build.csproj">
+      <Project>{de24d3b6-eed5-44c7-a0ca-ae66a364365b}</Project>
+      <Name>Build</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
