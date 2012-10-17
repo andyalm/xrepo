@@ -1,6 +1,7 @@
-﻿using System.Collections.ObjectModel;
+using System;
+using System.Collections.ObjectModel;
 
-namespace XPack.Build.Core
+namespace XPack.Core
 {
     public class PinRegistry : JsonRegistry<PinnedAssemblyCollection>
     {
@@ -23,6 +24,12 @@ namespace XPack.Build.Core
         public bool IsAssemblyPinned(string assemblyName)
         {
             return Data.Contains(assemblyName);
+        }
+
+        public void UnpinAssembly(string assemblyName)
+        {
+            if (Data.Contains(assemblyName))
+                Data.Remove(assemblyName);
         }
     }
 

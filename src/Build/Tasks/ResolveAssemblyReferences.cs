@@ -3,8 +3,8 @@ using System.Collections.Generic;
 
 using Microsoft.Build.Framework;
 
-using XPack.Build.Core;
 using XPack.Build.Infrastructure;
+using XPack.Core;
 
 namespace XPack.Build.Tasks
 {

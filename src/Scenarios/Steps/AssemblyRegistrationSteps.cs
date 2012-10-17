@@ -36,17 +36,15 @@ namespace XPack.Scenarios.Steps
         [Given(@"the assembly (.*) is pinned")]
         public void GivenTheAssemblyMyAssemblyIsPinned(string assemblyName)
         {
-            var pinRegistry = _environment.GetPinRegistry();
-            pinRegistry.PinAssembly(assemblyName);
-            pinRegistry.Save();
+            _environment.PinRegistry.PinAssembly(assemblyName);
+            _environment.PinRegistry.Save();
         }
 
         [Given(@"the assembly (.*) is registered")]
         public void GivenTheAssemblyIsRegistered(string assemblyName)
         {
-            var assemblyRegistry = _environment.GetAssemblyRegistry();
-            assemblyRegistry.RegisterAssembly(assemblyName, Path.Combine(_environment.Root, assemblyName + ".dll"), null);
-            assemblyRegistry.Save();
+            _environment.AssemblyRegistry.RegisterAssembly(assemblyName, Path.Combine(_environment.Root, assemblyName + ".dll"), null);
+            _environment.AssemblyRegistry.Save();
         }
 
         [When(@"the project is compiled")]
@@ -65,8 +63,7 @@ namespace XPack.Scenarios.Steps
         [Then(@"the resulting assembly is registered by xpack")]
         public void ThenTheResultingAssemblyIsRegisteredByXpack()
         {
-            var assemblyRegistry = _environment.GetAssemblyRegistry();
-            var assembly = assemblyRegistry.GetAssembly(_projectBuilder.AssemblyName);
+            var assembly = _environment.AssemblyRegistry.GetAssembly(_projectBuilder.AssemblyName);
             assembly.Should().NotBeNull("The assembly {0} was not registered", _projectBuilder.AssemblyName);
             assembly.Projects.Should().HaveCount(1);
             assembly.Projects.Should().Contain(p => p.ProjectPath == _projectBuilder.FullPath);

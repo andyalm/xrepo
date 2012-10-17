@@ -1,8 +1,8 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Linq;
 
-namespace XPack.Build.Core
+namespace XPack.Core
 {
     public class XPackEnvironment
     {
@@ -22,25 +22,25 @@ namespace XPack.Build.Core
         {
             _directory = directory ?? DefaultConfigDir;
         }
-        
-        public AssemblyRegistry GetAssemblyRegistry()
+
+        private AssemblyRegistry _assemblyRegistry;
+        public AssemblyRegistry AssemblyRegistry
         {
-            return AssemblyRegistry.ForDirectory(_directory);
+            get { return _assemblyRegistry ?? (_assemblyRegistry = AssemblyRegistry.ForDirectory(_directory)); }
         }
 
-        public PinRegistry GetPinRegistry()
+        private PinRegistry _pinRegistry;
+        public PinRegistry PinRegistry
         {
-            return PinRegistry.ForDirectory(_directory);
+            get { return _pinRegistry ?? (_pinRegistry = PinRegistry.ForDirectory(_directory)); }
         }
 
         public string GetPinnedAssemblyPath(string assemblyName)
         {
-            var pinRegistry = GetPinRegistry();
-            if (!pinRegistry.IsAssemblyPinned(assemblyName))
+            if (!PinRegistry.IsAssemblyPinned(assemblyName))
                 return null;
             
-            var assemblyRegistry = GetAssemblyRegistry();
-            var assembly = assemblyRegistry.GetAssembly(assemblyName);
+            var assembly = AssemblyRegistry.GetAssembly(assemblyName);
             if(assembly == null)
                 throw new ApplicationException("I don't know where the assembly '" + assemblyName + "' is. Have you built it on your machine?");
 

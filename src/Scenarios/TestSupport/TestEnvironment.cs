@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-using XPack.Build.Core;
+using XPack.Core;
 
 namespace XPack.Scenarios.TestSupport
 {
@@ -41,14 +41,14 @@ namespace XPack.Scenarios.TestSupport
             get { return _root; }
         }
 
-        public AssemblyRegistry GetAssemblyRegistry()
+        public AssemblyRegistry AssemblyRegistry
         {
-            return _xPackEnvironment.GetAssemblyRegistry();
+            get { return _xPackEnvironment.AssemblyRegistry; } 
         }
 
-        public PinRegistry GetPinRegistry()
+        public PinRegistry PinRegistry
         {
-            return _xPackEnvironment.GetPinRegistry();
+            get { return _xPackEnvironment.PinRegistry; }
         }
 
         public void Dispose()

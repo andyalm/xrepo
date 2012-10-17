@@ -1,11 +1,11 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 
 using Newtonsoft.Json;
 
-namespace XPack.Build.Core
+namespace XPack.Core
 {
     public class AssemblyRegistry : JsonRegistry<RegisteredAssemblyCollection>
     {

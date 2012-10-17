@@ -1,8 +1,9 @@
+using System;
 using System.IO;
 
 using Newtonsoft.Json;
 
-namespace XPack.Build.Core
+namespace XPack.Core
 {
     public abstract class JsonRegistry<T> where T : class,new() 
     {

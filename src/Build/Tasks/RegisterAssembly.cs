@@ -1,6 +1,6 @@
 ﻿using Microsoft.Build.Framework;
 
-using XPack.Build.Core;
+using XPack.Core;
 using XPack.Build.Infrastructure;
 
 namespace XPack.Build.Tasks

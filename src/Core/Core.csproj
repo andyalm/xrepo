@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{DE24D3B6-EED5-44C7-A0CA-AE66A364365B}</ProjectGuid>
+    <ProjectGuid>{355AD8CD-3FB2-42A3-AB3F-585CE58CC69E}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>XPack.Build</RootNamespace>
-    <AssemblyName>XPack.Build</AssemblyName>
+    <RootNamespace>XPack.Core</RootNamespace>
+    <AssemblyName>XPack.Core</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
@@ -32,8 +32,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.Build.Framework" />
-    <Reference Include="Microsoft.Build.Utilities.v4.0" />
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\..\packages\Newtonsoft.Json.4.5.10\lib\net40\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -43,26 +44,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Infrastructure\BuildEngineExtensions.cs" />
-    <Compile Include="Infrastructure\CommandLineBuilderExtensions.cs" />
-    <Compile Include="Infrastructure\IBuildContext.cs" />
-    <Compile Include="Infrastructure\TaskItemExtensions.cs" />
-    <Compile Include="Infrastructure\TaskWithNoReturnFlag.cs" />
+    <Compile Include="AssemblyRegistry.cs" />
+    <Compile Include="JsonRegistry.cs" />
+    <Compile Include="PinRegistry.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Tasks\RegisterAssembly.cs" />
-    <Compile Include="Tasks\ResolveAssemblyReferences.cs" />
+    <Compile Include="XPackEnvironment.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="XPack.Build.targets">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <SubType>Designer</SubType>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Core\Core.csproj">
-      <Project>{355ad8cd-3fb2-42a3-ab3f-585ce58cc69e}</Project>
-      <Name>Core</Name>
-    </ProjectReference>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />

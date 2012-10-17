@@ -81,6 +81,10 @@
       <Project>{de24d3b6-eed5-44c7-a0ca-ae66a364365b}</Project>
       <Name>Build</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Core\Core.csproj">
+      <Project>{355ad8cd-3fb2-42a3-ab3f-585ce58cc69e}</Project>
+      <Name>Core</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
