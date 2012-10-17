@@ -3,37 +3,26 @@ using System.Collections.Generic;
 
 using Microsoft.Build.Framework;
 
-using XPack.Build.Infrastructure;
-using XPack.Core;
-
 namespace XPack.Build.Tasks
 {
-    public class ResolveAssemblyReferences : TaskWithNoReturnFlag
+    public class ResolveAssemblyReferences : XPackTask
     {
-        public bool Enabled { get; set; }
-
         [Required]
         public ITaskItem[] AssemblyReferences { get; set; }
-
-        public string CustomConfigDir { get; set; }
 
         [Output]
         public ITaskItem[] AssemblyReferenceOverrides { get; set; }
         
         public override void ExecuteOrThrow()
         {
-            if(!Enabled)
-                return;
-
-            var environment = GetXPackEnvironment();
             var referenceOverrides = new List<ITaskItem>();
             foreach (var assemblyReference in AssemblyReferences)
             {
                 var assemblyName = GetShortName(assemblyReference);
-                var pinnedAssemblyPath = environment.GetPinnedAssemblyPath(assemblyName);
+                var pinnedAssemblyPath = XPackEnvironment.GetPinnedAssemblyPath(assemblyName);
                 if(pinnedAssemblyPath != null)
                 {
-                    Log.LogMessage(MessageImportance.High, "Overriding assembly reference '" + assemblyName + "' to use pinned path '" + pinnedAssemblyPath + "'...");
+                    Log.LogMessage(MessageImportance.Normal, "Overriding assembly reference '" + assemblyName + "' to use pinned path '" + pinnedAssemblyPath + "'...");
                     assemblyReference.SetMetadata("HintPath", pinnedAssemblyPath);
                     assemblyReference.SetMetadata("ShortName", assemblyName);
 
@@ -51,11 +40,6 @@ namespace XPack.Build.Tasks
                 return item.ItemSpec.Substring(0, index);
             else
                 return item.ItemSpec;
-        }
-
-        private XPackEnvironment GetXPackEnvironment()
-        {
-            return XPackEnvironment.ForDirectory(CustomConfigDir);
         }
     }
 }

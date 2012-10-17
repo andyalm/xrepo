@@ -14,7 +14,6 @@
   <Target Name="_OverrideHintPaths">
     <XPack.Build.Tasks.ResolveAssemblyReferences
         AssemblyReferences="@(Reference)"
-        Enabled="true"
         CustomConfigDir="$(XPackConfigDir)"
         DebugTask="false">
       <Output TaskParameter="AssemblyReferenceOverrides" ItemName="ReferenceOverride"/>
@@ -23,7 +22,6 @@
       <Reference Remove="%(ReferenceOverride.Identity)"/>
       <Reference Include="@(ReferenceOverride)" />
     </ItemGroup>
-    <Message Text="%(ReferenceOverride.ShortName) reference overridden by xpack. Using '%(ReferenceOverride.HintPath)'" Condition="@(ReferenceOverride)!=''"/>
   </Target>
 
   <PropertyGroup>

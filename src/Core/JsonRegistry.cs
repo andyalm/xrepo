@@ -7,7 +7,7 @@ namespace XPack.Core
 {
     public abstract class JsonRegistry<T> where T : class,new() 
     {
-        public static TRegistry Load<TRegistry>(string directoryPath) where TRegistry : JsonRegistry<T>, new()
+        protected static TRegistry Load<TRegistry>(string directoryPath) where TRegistry : JsonRegistry<T>, new()
         {
             var registry = new TRegistry {DirectoryPath = directoryPath};
             

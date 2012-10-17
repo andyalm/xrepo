@@ -13,6 +13,8 @@ namespace CommandLine.Commands
         public override bool Execute(PinInputArgs input)
         {
             var environment = XPackEnvironment.ForCurrentUser();
+            if(!environment.AssemblyRegistry.IsAssemblyRegistered(input.Assembly))
+                throw new CommandFailureException("I don't know where to find the assembly '" + input.Assembly + "'. Please go build it and try pinning again.");
             environment.PinRegistry.PinAssembly(input.Assembly);
             environment.PinRegistry.Save();
 

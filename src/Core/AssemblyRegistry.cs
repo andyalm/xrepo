@@ -33,6 +33,11 @@ namespace XPack.Core
             assemblyConfig.RegisterProject(assemblyPath, projectPath);
         }
 
+        public bool IsAssemblyRegistered(string assemblyName)
+        {
+            return Data.Contains(assemblyName);
+        }
+
         protected override string Filename
         {
             get { return "assembly.registry"; }
