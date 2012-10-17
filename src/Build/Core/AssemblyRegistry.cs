@@ -1,40 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
 using System.Linq;
 
 using Newtonsoft.Json;
 
 namespace XPack.Build.Core
 {
-    [JsonObject(MemberSerialization.OptIn)]
-    public class AssemblyRegistry
+    public class AssemblyRegistry : JsonRegistry<RegisteredAssemblyCollection>
     {
         public static AssemblyRegistry ForDirectory(string directoryPath)
         {
-            var registryFile = Path.Combine(directoryPath, "assembly.registry");
-            if(!File.Exists(registryFile))
-                return new AssemblyRegistry { DirectoryPath = directoryPath };
-            using(var reader = new StreamReader(registryFile))
-            {
-                var serializer = new JsonSerializer();
-                var assemblyRegistry = serializer.Deserialize<AssemblyRegistry>(new JsonTextReader(reader));
-                assemblyRegistry.DirectoryPath = directoryPath;
-
-                return assemblyRegistry;
-            }
+            return Load<AssemblyRegistry>(directoryPath);
         }
-
-        private string DirectoryPath { get; set; }
-
-        [JsonProperty(PropertyName = "Assemblies")]
-        private RegisteredAssemblyCollection _assemblies = new RegisteredAssemblyCollection();
 
         public RegisteredAssembly GetAssembly(string assemblyShortName)
         {
-            if (_assemblies.Contains(assemblyShortName))
-                return _assemblies[assemblyShortName];
+            if (Data.Contains(assemblyShortName))
+                return Data[assemblyShortName];
             else
                 return null;
         }
@@ -45,26 +28,14 @@ namespace XPack.Build.Core
             if(assemblyConfig == null)
             {
                 assemblyConfig = new RegisteredAssembly(assemblyShortName);
-                _assemblies.Add(assemblyConfig);
+                Data.Add(assemblyConfig);
             }
             assemblyConfig.RegisterProject(assemblyPath, projectPath);
         }
 
-        public void SaveTo(string directoryPath)
+        protected override string Filename
         {
-            Directory.CreateDirectory(directoryPath);
-            var registryFile = Path.Combine(directoryPath, "assembly.registry");
-            using(var writer = new StreamWriter(registryFile))
-            {
-                var serializer = new JsonSerializer();
-                serializer.Formatting = Formatting.Indented;
-                serializer.Serialize(writer, this);
-            }
-        }
-
-        public void Save()
-        {
-            SaveTo(DirectoryPath);
+            get { return "assembly.registry"; }
         }
     }
 

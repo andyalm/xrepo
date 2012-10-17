@@ -1,61 +1,28 @@
 ﻿using System.Collections.ObjectModel;
-using System.IO;
-
-using Newtonsoft.Json;
 
 namespace XPack.Build.Core
 {
-    [JsonObject(MemberSerialization.OptIn)]
-    public class PinRegistry
+    public class PinRegistry : JsonRegistry<PinnedAssemblyCollection>
     {
-        private const string Filename = "pin.registry";
-        
         public static PinRegistry ForDirectory(string directoryPath)
         {
-            var registryFile = Path.Combine(directoryPath, Filename);
-            if (!File.Exists(registryFile))
-                return new PinRegistry { DirectoryPath = directoryPath };
-            using (var reader = new StreamReader(registryFile))
-            {
-                var serializer = new JsonSerializer();
-                var assemblyRegistry = serializer.Deserialize<PinRegistry>(new JsonTextReader(reader));
-                assemblyRegistry.DirectoryPath = directoryPath;
-
-                return assemblyRegistry;
-            }
+            return Load<PinRegistry>(directoryPath);
         }
 
-        private string DirectoryPath { get; set; }
-
-        public void SaveTo(string directoryPath)
+        protected override string Filename
         {
-            Directory.CreateDirectory(directoryPath);
-            var registryFile = Path.Combine(directoryPath, Filename);
-            using (var writer = new StreamWriter(registryFile))
-            {
-                var serializer = new JsonSerializer();
-                serializer.Formatting = Formatting.Indented;
-                serializer.Serialize(writer, this);
-            }
-        }
-
-        public void Save()
-        {
-            SaveTo(DirectoryPath);
+            get { return "pin.registry"; }
         }
 
         public void PinAssembly(string assemblyName)
         {
-            if(!_assemblies.Contains(assemblyName))
-                _assemblies.Add(new PinnedAssembly(assemblyName));
+            if(!Data.Contains(assemblyName))
+                Data.Add(new PinnedAssembly(assemblyName));
         }
-
-        [JsonProperty(PropertyName = "Assemblies")]
-        private PinnedAssemblyCollection _assemblies = new PinnedAssemblyCollection();
 
         public bool IsAssemblyPinned(string assemblyName)
         {
-            return _assemblies.Contains(assemblyName);
+            return Data.Contains(assemblyName);
         }
     }
 

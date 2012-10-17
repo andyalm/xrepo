@@ -11,8 +11,8 @@ Scenario: A compiled assembly is registered
 @wip
 Scenario: A pinned assembly overrides hint paths
 	Given a class library project
-		And the project has a reference to assembly MyAssembly1
-		And the assembly MyAssembly1 is registered
-		And the assembly MyAssembly1 is pinned
+		And the project has a reference to assembly nunit.framework
+		And the assembly nunit.framework is registered
+		And the assembly nunit.framework is pinned
 	When the project is compiled
-	Then the reference to is resolved to the pinned copy of MyAssembly1
+	Then the reference to is resolved to the pinned copy of nunit.framework

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 
 using FluentAssertions;
 
@@ -44,7 +45,7 @@ namespace XPack.Scenarios.Steps
         public void GivenTheAssemblyIsRegistered(string assemblyName)
         {
             var assemblyRegistry = _environment.GetAssemblyRegistry();
-            assemblyRegistry.RegisterAssembly(assemblyName, _environment.GetLocalAssemblyPath(assemblyName), _environment.GetLocalProjectPath(assemblyName));
+            assemblyRegistry.RegisterAssembly(assemblyName, Path.Combine(_environment.Root, assemblyName + ".dll"), null);
             assemblyRegistry.Save();
         }
 
@@ -57,9 +58,7 @@ namespace XPack.Scenarios.Steps
         [Then(@"the reference to is resolved to the pinned copy of (.*)")]
         public void ThenTheReferenceToIsResolvedToThePinnedCopyOf(string assemblyName)
         {
-            //TODO: the following line would be preferred, but we need to figure out how to generate an actual assembly at that path in order for it to work
-            //var expectedReferenceString = "/reference:" + _environment.GetLocalAssemblyPath(assemblyName);
-            var expectedString = "Overriding assembly reference '" + assemblyName + "' to use pinned path '" + _environment.GetLocalAssemblyPath(assemblyName) + "'";
+            var expectedString = "/reference:" + Path.Combine(_environment.Root, assemblyName + ".dll");
             _buildOutput.Should().Contain(expectedString);
         }
 
