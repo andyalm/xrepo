@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 
 using Microsoft.Build.Framework;
-using Microsoft.Build.Utilities;
 
 using XPack.Build.Core;
 using XPack.Build.Infrastructure;
@@ -26,15 +25,16 @@ namespace XPack.Build.Tasks
             if(!Enabled)
                 return;
 
-            var assemblyRegistry = GetAssemblyRegistry();
+            var environment = GetXPackEnvironment();
             var referenceOverrides = new List<ITaskItem>();
             foreach (var assemblyReference in AssemblyReferences)
             {
                 var assemblyName = GetShortName(assemblyReference);
-                var assemblyConfig = assemblyRegistry.GetAssembly(assemblyName);
-                if(assemblyConfig != null)
+                var pinnedAssemblyPath = environment.GetPinnedAssemblyPath(assemblyName);
+                if(pinnedAssemblyPath != null)
                 {
-                    assemblyReference.SetMetadata("HintPath", assemblyName + @"\" + assemblyName + ".dll");
+                    Log.LogMessage(MessageImportance.High, "Overriding assembly reference '" + assemblyName + "' to use pinned path '" + pinnedAssemblyPath + "'...");
+                    assemblyReference.SetMetadata("HintPath", pinnedAssemblyPath);
                     assemblyReference.SetMetadata("ShortName", assemblyName);
 
                     referenceOverrides.Add(assemblyReference);
@@ -53,16 +53,9 @@ namespace XPack.Build.Tasks
                 return item.ItemSpec;
         }
 
-        private AssemblyRegistry GetAssemblyRegistry()
+        private XPackEnvironment GetXPackEnvironment()
         {
-            if(string.IsNullOrWhiteSpace(CustomConfigDir))
-            {
-                return AssemblyRegistry.ForCurrentUser();
-            }
-            else
-            {
-                return AssemblyRegistry.ForDirectory(CustomConfigDir);
-            }
+            return XPackEnvironment.ForDirectory(CustomConfigDir);
         }
     }
 }

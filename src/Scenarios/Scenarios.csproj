@@ -59,7 +59,8 @@
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Steps\AssemblyRegistrationSteps.cs" />
-    <Compile Include="TestSupport\BuildEnvironment.cs" />
+    <Compile Include="TestSupport\CapturingLogger.cs" />
+    <Compile Include="TestSupport\TestEnvironment.cs" />
     <Compile Include="TestSupport\ProjectBuilder.cs" />
   </ItemGroup>
   <ItemGroup>

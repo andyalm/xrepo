@@ -15,30 +15,18 @@ namespace XPack.Build.Core
         {
             var registryFile = Path.Combine(directoryPath, "assembly.registry");
             if(!File.Exists(registryFile))
-                return new AssemblyRegistry();
+                return new AssemblyRegistry { DirectoryPath = directoryPath };
             using(var reader = new StreamReader(registryFile))
             {
                 var serializer = new JsonSerializer();
-                return serializer.Deserialize<AssemblyRegistry>(new JsonTextReader(reader));
+                var assemblyRegistry = serializer.Deserialize<AssemblyRegistry>(new JsonTextReader(reader));
+                assemblyRegistry.DirectoryPath = directoryPath;
+
+                return assemblyRegistry;
             }
         }
 
-        public static AssemblyRegistry ForCurrentUser()
-        {
-            if(Directory.Exists(DefaultConfigDir))
-                return ForDirectory(DefaultConfigDir);
-            else
-                return new AssemblyRegistry();
-        }
-
-        private static string DefaultConfigDir
-        {
-            get
-            {
-                return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData,
-                                                              Environment.SpecialFolderOption.Create), "XPack");
-            }
-        }
+        private string DirectoryPath { get; set; }
 
         [JsonProperty(PropertyName = "Assemblies")]
         private RegisteredAssemblyCollection _assemblies = new RegisteredAssemblyCollection();
@@ -62,7 +50,7 @@ namespace XPack.Build.Core
             assemblyConfig.RegisterProject(assemblyPath, projectPath);
         }
 
-        public void SaveToDirectory(string directoryPath)
+        public void SaveTo(string directoryPath)
         {
             Directory.CreateDirectory(directoryPath);
             var registryFile = Path.Combine(directoryPath, "assembly.registry");
@@ -76,7 +64,7 @@ namespace XPack.Build.Core
 
         public void Save()
         {
-            SaveToDirectory(DefaultConfigDir);
+            SaveTo(DirectoryPath);
         }
     }
 

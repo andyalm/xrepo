@@ -26,19 +26,12 @@ namespace XPack.Build.Tasks
             if (string.IsNullOrWhiteSpace(CustomConfigDir))
                 assemblyRegistery.Save();
             else
-                assemblyRegistery.SaveToDirectory(CustomConfigDir);
+                assemblyRegistery.SaveTo(CustomConfigDir);
         }
 
         private AssemblyRegistry GetAssemblyRegistry()
         {
-            if (string.IsNullOrWhiteSpace(CustomConfigDir))
-            {
-                return AssemblyRegistry.ForCurrentUser();
-            }
-            else
-            {
-                return AssemblyRegistry.ForDirectory(CustomConfigDir);
-            }
+            return AssemblyRegistry.ForDirectory(CustomConfigDir);
         }
     }
 }
