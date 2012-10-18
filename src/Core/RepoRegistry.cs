@@ -24,9 +24,21 @@ namespace XPack.Core
             Data.Add(new RegisteredRepo(repoName, repoPath));
         }
 
+        public void UnregisterRepo(string repoName)
+        {
+            if(!Data.Contains(repoName))
+                throw new ApplicationException("The repo '" + repoName + "' is not registered");
+            Data.Remove(repoName);
+        }
+
         public IEnumerable<RegisteredRepo> GetRepos()
         {
             return Data;
+        }
+
+        public bool IsRepoRegistered(string repoName)
+        {
+            return Data.Contains(repoName);
         }
     }
 

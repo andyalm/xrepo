@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 
 using FubuCore.CommandLine;
@@ -12,43 +13,73 @@ namespace CommandLine.Commands
     [CommandDescription("Lists xpack things", Name="list")]
     public class ListCommand : FubuCommand<ListInputArgs>
     {
-        private string _thing;
-        private bool _match;
-        private List<string> _validThings = new List<string>(); 
-        
         public override bool Execute(ListInputArgs input)
         {
-            _thing = input.Thing;
             var environment = XPackEnvironment.ForCurrentUser();
-            
-            ListThingsIfMatch("pins", () => environment.PinRegistry.GetPinnedAssemblies().Select(a => a.AssemblyName));
-            
-            if(!_match)
+
+            switch (input.Subject)
             {
-                var validThingList = String.Join(", ", _validThings.ToArray());
-                throw new CommandFailureException("I don't know how to list '" + input.Thing + "'. Please try listing one of these: " + validThingList);
+                case ListSubject.pins:
+                    WriteList("pinned repos", environment.PinRegistry.GetPinnedRepos().Select(r => r.RepoName));
+                    Console.WriteLine();
+                    Console.WriteLine();
+                    WriteList("pinned assemblies", environment.PinRegistry.GetPinnedAssemblies().Select(a => a.AssemblyName));
+                    break;
+                case ListSubject.repos:
+                    WriteRepos("repos", environment.RepoRegistry.GetRepos());
+                    break;
+                case ListSubject.assemblies:
+                    WriteAssemblies("assemblies", environment.AssemblyRegistry.GetAssemblies());
+                    break;
             }
 
             return true;
         }
 
-        private void ListThingsIfMatch(string thingName, Func<IEnumerable<string>> retrieveThings)
+        private void WriteRepos(string title, IEnumerable<RegisteredRepo> repos)
         {
-            _validThings.Add(thingName);
-            if(thingName.Equals(_thing, StringComparison.OrdinalIgnoreCase))
+            Write(title, repos, r => Console.WriteLine("{0} - {1}", r.Name, r.Path));
+        }
+
+        private void WriteAssemblies(string title, IEnumerable<RegisteredAssembly> assemblies)
+        {
+            Write(title, assemblies, a =>
             {
-                _match = true;
-                foreach (var thing in retrieveThings())
+                Console.WriteLine(a.Name);
+                foreach (var project in a.Projects)
                 {
-                    Console.WriteLine(thing);
+                    Console.WriteLine("\t{0}", project.AssemblyPath);
                 }
+                Console.WriteLine("----------------------");
+            });
+        }
+
+        private void Write<T>(string title, IEnumerable<T> items, Action<T> write)
+        {
+            Console.WriteLine(title);
+            Console.WriteLine("-------------------");
+            foreach (var item in items)
+            {
+                write(item);
             }
+        }
+
+        private void WriteList(string title, IEnumerable<string> items)
+        {
+            Write(title, items, Console.WriteLine);
         }
     }
 
     public class ListInputArgs
     {
         [RequiredUsage("default")]
-        public string Thing { get; set; }
+        public ListSubject Subject { get; set; }
+    }
+
+    public enum ListSubject
+    {
+        pins,
+        repos,
+        assemblies
     }
 }

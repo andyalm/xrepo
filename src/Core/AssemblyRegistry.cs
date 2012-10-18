@@ -38,7 +38,7 @@ namespace XPack.Core
             return Data.Contains(assemblyName);
         }
 
-        public IEnumerable<RegisteredAssembly> GetRegisteredAssemblies()
+        public IEnumerable<RegisteredAssembly> GetAssemblies()
         {
             return Data;
         }

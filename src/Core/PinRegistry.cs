@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
@@ -47,6 +48,17 @@ namespace XPack.Core
         public bool IsRepoPinned(string repoName)
         {
             return Data.Repos.Contains(repoName);
+        }
+
+        public void UnpinRepo(string repoName)
+        {
+            if (Data.Repos.Contains(repoName))
+                Data.Repos.Remove(repoName);
+        }
+
+        public IEnumerable<PinnedRepo> GetPinnedRepos()
+        {
+            return Data.Repos;
         }
     }
 
