@@ -38,6 +38,11 @@ namespace XPack.Core
             return Data.Contains(assemblyName);
         }
 
+        public IEnumerable<RegisteredAssembly> GetRegisteredAssemblies()
+        {
+            return Data;
+        }
+
         protected override string Filename
         {
             get { return "assembly.registry"; }

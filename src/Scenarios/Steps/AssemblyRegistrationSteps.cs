@@ -54,6 +54,34 @@ namespace XPack.Scenarios.Steps
             _environment.AssemblyRegistry.Save();
         }
 
+        [Given(@"a repo (.*)")]
+        public void GivenARepo(string repoName)
+        {
+            var repoPath = _environment.GetRepoPath(repoName);
+            Directory.CreateDirectory(repoPath);
+            _environment.RepoRegistry.RegisterRepo(repoName, repoPath);
+            _environment.RepoRegistry.Save();
+        }
+
+        [Given(@"the assembly (.*) is registered at a location within (.*)")]
+        public void GivenTheAssemblyIsRegisteredAtALocationWithinMyRepo(string assemblyName, string repoName)
+        {
+            var assemblyFilename = assemblyName + ".dll";
+            var repoPath = _environment.GetRepoPath(repoName);
+            var assemblyLocation = Path.Combine(repoPath, assemblyName + ".dll");
+            _environment.AssemblyRegistry.RegisterAssembly(assemblyName, assemblyLocation, null);
+            _environment.AssemblyRegistry.Save();
+            
+            File.Copy(Path.Combine(_environment.Root, assemblyFilename), Path.Combine(repoPath, assemblyFilename));
+        }
+
+        [Given(@"the repo (.*) is pinned")]
+        public void GivenTheRepoIsPinned(string repoName)
+        {
+            _environment.PinRegistry.PinRepo(repoName);
+            _environment.PinRegistry.Save();
+        }
+
         [When(@"the project is compiled")]
         public void WhenTheProjectIsCompiled()
         {
@@ -63,7 +91,8 @@ namespace XPack.Scenarios.Steps
         [Then(@"the reference to is resolved to the pinned copy of (.*)")]
         public void ThenTheReferenceToIsResolvedToThePinnedCopyOf(string assemblyName)
         {
-            var expectedString = "/reference:" + Path.Combine(_environment.Root, assemblyName + ".dll");
+            var pinnedAssemblyPath = _environment.XPackEnvironment.GetPinnedAssemblyPath(assemblyName);
+            var expectedString = "/reference:" + pinnedAssemblyPath;
             _buildOutput.Should().Contain(expectedString);
         }
 
@@ -82,6 +111,5 @@ namespace XPack.Scenarios.Steps
             var unexpectedString = "/reference:" + Path.Combine(_environment.Root, assemblyName + ".dll");
             _buildOutput.Should().NotContain(unexpectedString);
         }
-
     }
 }

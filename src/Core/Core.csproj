@@ -48,6 +48,7 @@
     <Compile Include="JsonRegistry.cs" />
     <Compile Include="PinRegistry.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RepoRegistry.cs" />
     <Compile Include="XPackEnvironment.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -51,9 +51,19 @@ namespace XPack.Scenarios.TestSupport
             get { return _xPackEnvironment.PinRegistry; }
         }
 
+        public RepoRegistry RepoRegistry
+        {
+            get { return _xPackEnvironment.RepoRegistry; }
+        }
+
         public void Dispose()
         {
             Directory.Delete(_tempDir, recursive:true);
+        }
+
+        public XPackEnvironment XPackEnvironment
+        {
+            get { return _xPackEnvironment; }
         }
 
         public string GetLocalAssemblyPath(string assemblyName)
@@ -64,6 +74,11 @@ namespace XPack.Scenarios.TestSupport
         public string GetLocalProjectPath(string assemblyName)
         {
             return ResolveProjectPath(Path.Combine(assemblyName, assemblyName + ".csproj"));
+        }
+
+        public string GetRepoPath(string repoName)
+        {
+            return Path.Combine(_root, _id, "Repos", repoName);
         }
     }
 }
