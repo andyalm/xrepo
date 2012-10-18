@@ -22,7 +22,7 @@ namespace XPack.Build.Tasks
                 var pinnedAssemblyPath = XPackEnvironment.GetPinnedAssemblyPath(assemblyName);
                 if(pinnedAssemblyPath != null)
                 {
-                    Log.LogMessage(MessageImportance.Normal, "Overriding assembly reference '" + assemblyName + "' to use pinned path '" + pinnedAssemblyPath + "'...");
+                    Log.LogWarning("Overriding assembly reference '" + assemblyName + "' to use pinned path '" + pinnedAssemblyPath + "'...");
                     assemblyReference.SetMetadata("HintPath", pinnedAssemblyPath);
                     assemblyReference.SetMetadata("ShortName", assemblyName);
 

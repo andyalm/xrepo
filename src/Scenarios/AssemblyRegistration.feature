@@ -8,7 +8,6 @@ Scenario: A compiled assembly is registered
 	When the project is compiled
 	Then the resulting assembly is registered by xpack
 
-@wip
 Scenario: A pinned assembly overrides hint paths
 	Given a class library project
 		And the project has a reference to assembly nunit.framework

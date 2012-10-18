@@ -1,4 +1,6 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
 namespace XPack.Core
@@ -30,6 +32,11 @@ namespace XPack.Core
         {
             if (Data.Contains(assemblyName))
                 Data.Remove(assemblyName);
+        }
+
+        public IEnumerable<PinnedAssembly> GetPinnedAssemblies()
+        {
+            return Data;
         }
     }
 

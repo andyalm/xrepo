@@ -46,6 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Commands\ListCommand.cs" />
     <Compile Include="Commands\PinCommand.cs" />
     <Compile Include="Models\PinInputArgs.cs" />
     <Compile Include="Commands\UnpinCommand.cs" />
