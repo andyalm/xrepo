@@ -15,3 +15,11 @@ Scenario: A pinned assembly overrides hint paths
 		And the assembly nunit.framework is pinned
 	When the project is compiled
 	Then the reference to is resolved to the pinned copy of nunit.framework
+
+Scenario: An unpinned assembly does not override the hint path
+	Given a class library project
+		And the project has a reference to assembly nunit.framework
+		And the assembly nunit.framework is registered
+		And the assembly nunit.framework is not pinned
+	When the project is compiled
+	Then the reference to nunit.framework is resolved via standard msbuild rules

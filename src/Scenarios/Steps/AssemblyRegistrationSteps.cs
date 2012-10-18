@@ -40,6 +40,13 @@ namespace XPack.Scenarios.Steps
             _environment.PinRegistry.Save();
         }
 
+        [Given(@"the assembly (.*) is not pinned")]
+        public void GivenTheAssemblyIsNotPinned(string assemblyName)
+        {
+            _environment.PinRegistry.UnpinAssembly(assemblyName);
+            _environment.PinRegistry.Save();
+        }
+
         [Given(@"the assembly (.*) is registered")]
         public void GivenTheAssemblyIsRegistered(string assemblyName)
         {
@@ -67,6 +74,14 @@ namespace XPack.Scenarios.Steps
             assembly.Should().NotBeNull("The assembly {0} was not registered", _projectBuilder.AssemblyName);
             assembly.Projects.Should().HaveCount(1);
             assembly.Projects.Should().Contain(p => p.ProjectPath == _projectBuilder.FullPath);
-        } 
+        }
+
+        [Then(@"the reference to (.*) is resolved via standard msbuild rules")]
+        public void ThenTheReferenceIsResolvedViaStandardMsbuildRules(string assemblyName)
+        {
+            var unexpectedString = "/reference:" + Path.Combine(_environment.Root, assemblyName + ".dll");
+            _buildOutput.Should().NotContain(unexpectedString);
+        }
+
     }
 }
