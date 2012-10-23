@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
-namespace XPack.Core
+namespace XRepo.Core
 {
     public class PinRegistry : JsonRegistry<PinHolder>
     {

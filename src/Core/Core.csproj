@@ -7,8 +7,8 @@
     <ProjectGuid>{355AD8CD-3FB2-42A3-AB3F-585CE58CC69E}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>XPack.Core</RootNamespace>
-    <AssemblyName>XPack.Core</AssemblyName>
+    <RootNamespace>XRepo.Core</RootNamespace>
+    <AssemblyName>XRepo.Core</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
@@ -49,7 +49,7 @@
     <Compile Include="PinRegistry.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RepoRegistry.cs" />
-    <Compile Include="XPackEnvironment.cs" />
+    <Compile Include="XRepoEnvironment.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

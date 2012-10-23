@@ -1,6 +1,6 @@
 ﻿using Microsoft.Build.Utilities;
 
-namespace XPack.Build.Infrastructure
+namespace XRepo.Build.Infrastructure
 {
     internal static class CommandLineBuilderExtensions
     {

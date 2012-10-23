@@ -6,7 +6,7 @@ using Microsoft.Build.Evaluation;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Logging;
 
-namespace XPack.Scenarios.TestSupport
+namespace XRepo.Scenarios.TestSupport
 {
     public class ProjectBuilder
     {
@@ -18,7 +18,7 @@ namespace XPack.Scenarios.TestSupport
         {
             _assemblyName = assemblyName;
             _environment = environment;
-            using(var reader = new StreamReader(this.GetType().Assembly.GetManifestResourceStream("XPack.Scenarios.TestSupport.ClassLibrary.csproj.template")))
+            using(var reader = new StreamReader(this.GetType().Assembly.GetManifestResourceStream("XRepo.Scenarios.TestSupport.ClassLibrary.csproj.template")))
             {
                 _serializedProject = reader.ReadToEnd();
                 _serializedProject = _serializedProject.Replace("$AssemblyName$", assemblyName);
@@ -58,11 +58,11 @@ namespace XPack.Scenarios.TestSupport
             {
                 if(_project == null)
                 {
-                    _environment.EnsureDirectoryExists(_environment.XPackConfigDir);
+                    _environment.EnsureDirectoryExists(_environment.XRepoConfigDir);
                     var buildProperties = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
                     {
-                        {"XPackConfigDir", _environment.XPackConfigDir},
-                        {"DisableGlobalXPack", "true"}
+                        {"XRepoConfigDir", _environment.XRepoConfigDir},
+                        {"DisableGlobalXRepo", "true"}
                     };
 
                     var projectDirectory = Path.GetDirectoryName(FullPath);
@@ -70,8 +70,8 @@ namespace XPack.Scenarios.TestSupport
 
                     File.WriteAllText(FullPath, _serializedProject);
                     _project = new Project(FullPath, buildProperties, null);
-                    var xPackImportPath = Path.Combine(_environment.Root, "XPack.Build.targets");
-                    _project.Xml.AddImport(xPackImportPath);
+                    var xRepoImportPath = Path.Combine(_environment.Root, "XRepo.Build.targets");
+                    _project.Xml.AddImport(xRepoImportPath);
                     _project.Xml.Save();
                 }
 

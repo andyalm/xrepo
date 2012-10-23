@@ -4,7 +4,7 @@ using System.IO;
 
 using FubuCore.CommandLine;
 
-using XPack.Core;
+using XRepo.Core;
 
 namespace CommandLine.Commands
 {
@@ -17,11 +17,11 @@ namespace CommandLine.Commands
             if(!Directory.Exists(fullRepoPath))
                 throw new CommandFailureException("The path '" + fullRepoPath + "' does not exist");
 
-            var xpackEnvironment = XPackEnvironment.ForCurrentUser();
-            if (xpackEnvironment.RepoRegistry.IsRepoRegistered(input.Name))
-                xpackEnvironment.RepoRegistry.UnregisterRepo(input.Name);
-            xpackEnvironment.RepoRegistry.RegisterRepo(input.Name, fullRepoPath);
-            xpackEnvironment.RepoRegistry.Save();
+            var xRepoEnvironment = XRepoEnvironment.ForCurrentUser();
+            if (xRepoEnvironment.RepoRegistry.IsRepoRegistered(input.Name))
+                xRepoEnvironment.RepoRegistry.UnregisterRepo(input.Name);
+            xRepoEnvironment.RepoRegistry.RegisterRepo(input.Name, fullRepoPath);
+            xRepoEnvironment.RepoRegistry.Save();
             
             return true;
         }

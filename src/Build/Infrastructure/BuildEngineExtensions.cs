@@ -2,7 +2,7 @@
 
 using Microsoft.Build.Framework;
 
-namespace XPack.Build.Infrastructure
+namespace XRepo.Build.Infrastructure
 {
     public static class BuildEngineExtensions
     {

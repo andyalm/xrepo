@@ -12,7 +12,7 @@ namespace CommandLine
             try
             {
                 var factory = new CommandFactory();
-                factory.SetAppName("xpack");
+                factory.SetAppName("xrepo");
                 factory.RegisterCommands(typeof(Program).Assembly);
             
                 var executor = new CommandExecutor(factory);

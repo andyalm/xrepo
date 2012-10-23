@@ -4,7 +4,7 @@ using CommandLine.Models;
 
 using FubuCore.CommandLine;
 
-using XPack.Core;
+using XRepo.Core;
 
 namespace CommandLine.Commands
 {
@@ -13,7 +13,7 @@ namespace CommandLine.Commands
     {
         public override bool Execute(PinInputArgs input)
         {
-            var environment = XPackEnvironment.ForCurrentUser();
+            var environment = XRepoEnvironment.ForCurrentUser();
 
             switch (input.Subject)
             {
@@ -28,13 +28,13 @@ namespace CommandLine.Commands
             return true;
         }
 
-        private static void UnpinAssembly(XPackEnvironment environment, string assemblyName)
+        private static void UnpinAssembly(XRepoEnvironment environment, string assemblyName)
         {
             environment.PinRegistry.UnpinAssembly(assemblyName);
             environment.PinRegistry.Save();
         }
 
-        private void UnpinRepo(XPackEnvironment environment, string repoName)
+        private void UnpinRepo(XRepoEnvironment environment, string repoName)
         {
             environment.PinRegistry.UnpinRepo(repoName);
             environment.PinRegistry.Save();

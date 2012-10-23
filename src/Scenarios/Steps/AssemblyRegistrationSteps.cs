@@ -5,9 +5,9 @@ using FluentAssertions;
 
 using TechTalk.SpecFlow;
 
-using XPack.Scenarios.TestSupport;
+using XRepo.Scenarios.TestSupport;
 
-namespace XPack.Scenarios.Steps
+namespace XRepo.Scenarios.Steps
 {
     [Binding]
     public class AssemblyRegistrationSteps
@@ -91,13 +91,13 @@ namespace XPack.Scenarios.Steps
         [Then(@"the reference to is resolved to the pinned copy of (.*)")]
         public void ThenTheReferenceToIsResolvedToThePinnedCopyOf(string assemblyName)
         {
-            var pinnedAssemblyPath = _environment.XPackEnvironment.GetPinnedAssemblyPath(assemblyName);
+            var pinnedAssemblyPath = _environment.XRepoEnvironment.GetPinnedAssemblyPath(assemblyName);
             var expectedString = "/reference:" + pinnedAssemblyPath;
             _buildOutput.Should().Contain(expectedString);
         }
 
-        [Then(@"the resulting assembly is registered by xpack")]
-        public void ThenTheResultingAssemblyIsRegisteredByXpack()
+        [Then(@"the resulting assembly is registered by xrepo")]
+        public void ThenTheResultingAssemblyIsRegisteredByXrepo()
         {
             var assembly = _environment.AssemblyRegistry.GetAssembly(_projectBuilder.AssemblyName);
             assembly.Should().NotBeNull("The assembly {0} was not registered", _projectBuilder.AssemblyName);

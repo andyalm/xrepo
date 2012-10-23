@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 using Microsoft.Build.Framework;
 
-namespace XPack.Build.Tasks
+namespace XRepo.Build.Tasks
 {
-    public class ResolveAssemblyReferences : XPackTask
+    public class ResolveAssemblyReferences : XRepoTask
     {
         [Required]
         public ITaskItem[] AssemblyReferences { get; set; }
@@ -19,7 +19,7 @@ namespace XPack.Build.Tasks
             foreach (var assemblyReference in AssemblyReferences)
             {
                 var assemblyName = GetShortName(assemblyReference);
-                var pinnedAssemblyPath = XPackEnvironment.GetPinnedAssemblyPath(assemblyName);
+                var pinnedAssemblyPath = XRepoEnvironment.GetPinnedAssemblyPath(assemblyName);
                 if(pinnedAssemblyPath != null)
                 {
                     Log.LogWarning("Overriding assembly reference '" + assemblyName + "' to use pinned path '" + pinnedAssemblyPath + "'...");

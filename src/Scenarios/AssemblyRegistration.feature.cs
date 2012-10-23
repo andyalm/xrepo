@@ -11,7 +11,7 @@
 // ------------------------------------------------------------------------------
 #region Designer generated code
 #pragma warning disable
-namespace XPack.Scenarios
+namespace XRepo.Scenarios
 {
     using TechTalk.SpecFlow;
     
@@ -77,7 +77,7 @@ this.ScenarioSetup(scenarioInfo);
 #line 8
  testRunner.When("the project is compiled", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 9
- testRunner.Then("the resulting assembly is registered by xpack", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("the resulting assembly is registered by xrepo", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
         }

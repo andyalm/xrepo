@@ -3,23 +3,23 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace XPack.Core
+namespace XRepo.Core
 {
-    public class XPackEnvironment
+    public class XRepoEnvironment
     {
-        public static XPackEnvironment ForCurrentUser()
+        public static XRepoEnvironment ForCurrentUser()
         {
             return ForDirectory(null);
         }
 
-        public static XPackEnvironment ForDirectory(string directoryPath)
+        public static XRepoEnvironment ForDirectory(string directoryPath)
         {
-            return new XPackEnvironment(directoryPath);
+            return new XRepoEnvironment(directoryPath);
         }
         
         private readonly string _directory;
 
-        private XPackEnvironment(string directory)
+        private XRepoEnvironment(string directory)
         {
             _directory = directory ?? DefaultConfigDir;
         }
@@ -105,7 +105,7 @@ namespace XPack.Core
             get
             {
                 return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData,
-                                                            Environment.SpecialFolderOption.Create), "XPack");
+                                                            Environment.SpecialFolderOption.Create), "XRepo");
             }
         }
     }

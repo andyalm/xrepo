@@ -6,7 +6,7 @@
 Scenario: A compiled assembly is registered
 	Given a class library project
 	When the project is compiled
-	Then the resulting assembly is registered by xpack
+	Then the resulting assembly is registered by xrepo
 
 Scenario: A pinned assembly overrides hint paths
 	Given a class library project

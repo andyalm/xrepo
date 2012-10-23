@@ -2,7 +2,7 @@
 
 using FubuCore.CommandLine;
 
-using XPack.Core;
+using XRepo.Core;
 
 namespace CommandLine.Commands
 {
@@ -11,7 +11,7 @@ namespace CommandLine.Commands
     {
         public override bool Execute(UnregisterInput input)
         {
-            var xpackEnvironment = XPackEnvironment.ForCurrentUser();
+            var xpackEnvironment = XRepoEnvironment.ForCurrentUser();
             if (xpackEnvironment.RepoRegistry.IsRepoRegistered(input.Name))
                 xpackEnvironment.RepoRegistry.UnregisterRepo(input.Name);
             xpackEnvironment.RepoRegistry.Save();

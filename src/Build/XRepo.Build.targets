@@ -1,8 +1,8 @@
 ﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
-	<UsingTask TaskName="XPack.Build.Tasks.ResolveAssemblyReferences"
-			   AssemblyFile="$(MSBuildThisFileDirectory)\XPack.Build.dll"/>
-  <UsingTask TaskName="XPack.Build.Tasks.RegisterAssembly"
-			   AssemblyFile="$(MSBuildThisFileDirectory)\XPack.Build.dll"/>
+	<UsingTask TaskName="XRepo.Build.Tasks.ResolveAssemblyReferences"
+			   AssemblyFile="$(MSBuildThisFileDirectory)\XRepo.Build.dll"/>
+  <UsingTask TaskName="XRepo.Build.Tasks.RegisterAssembly"
+			   AssemblyFile="$(MSBuildThisFileDirectory)\XRepo.Build.dll"/>
 
   <PropertyGroup>
     <ResolveReferencesDependsOn>
@@ -12,12 +12,12 @@
   </PropertyGroup>
 
   <Target Name="_OverrideHintPaths">
-    <XPack.Build.Tasks.ResolveAssemblyReferences
+    <XRepo.Build.Tasks.ResolveAssemblyReferences
         AssemblyReferences="@(Reference)"
-        CustomConfigDir="$(XPackConfigDir)"
+        CustomConfigDir="$(XRepoConfigDir)"
         DebugTask="false">
       <Output TaskParameter="AssemblyReferenceOverrides" ItemName="ReferenceOverride"/>
-    </XPack.Build.Tasks.ResolveAssemblyReferences>
+    </XRepo.Build.Tasks.ResolveAssemblyReferences>
     <ItemGroup>
       <Reference Remove="%(ReferenceOverride.Identity)"/>
       <Reference Include="@(ReferenceOverride)" />
@@ -33,11 +33,11 @@
   
   <Target Name="_RegisterAssembly">
     <Message Text="Registering the assembly $(TargetPath)" Importance="high"/>
-    <XPack.Build.Tasks.RegisterAssembly
+    <XRepo.Build.Tasks.RegisterAssembly
       AssemblyPath="$(TargetPath)"
       AssemblyName="$(AssemblyName)"
       ProjectPath="$(MSBuildProjectFullPath)"
-      CustomConfigDir="$(XPackConfigDir)"
+      CustomConfigDir="$(XRepoConfigDir)"
       Condition="$(TargetPath)!=''"
       DebugTask="false"/>
   </Target>

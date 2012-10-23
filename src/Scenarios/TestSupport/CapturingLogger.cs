@@ -4,7 +4,7 @@ using System.Text;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Logging;
 
-namespace XPack.Scenarios.TestSupport
+namespace XRepo.Scenarios.TestSupport
 {
     public class CapturingLogger : ConsoleLogger
     {

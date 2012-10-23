@@ -6,7 +6,7 @@ using System.Linq;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 
-namespace XPack.Build.Infrastructure
+namespace XRepo.Build.Infrastructure
 {
     public static class TaskItemExtensions
     {

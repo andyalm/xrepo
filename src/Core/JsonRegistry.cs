@@ -3,7 +3,7 @@ using System.IO;
 
 using Newtonsoft.Json;
 
-namespace XPack.Core
+namespace XRepo.Core
 {
     public abstract class JsonRegistry<T> where T : class,new() 
     {

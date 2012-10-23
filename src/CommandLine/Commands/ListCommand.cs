@@ -4,18 +4,18 @@ using System.Collections.Generic;
 
 using FubuCore.CommandLine;
 
-using XPack.Core;
+using XRepo.Core;
 
 using System.Linq;
 
 namespace CommandLine.Commands
 {
-    [CommandDescription("Lists xpack things", Name="list")]
+    [CommandDescription("Lists xrepo things", Name="list")]
     public class ListCommand : FubuCommand<ListInputArgs>
     {
         public override bool Execute(ListInputArgs input)
         {
-            var environment = XPackEnvironment.ForCurrentUser();
+            var environment = XRepoEnvironment.ForCurrentUser();
 
             switch (input.Subject)
             {

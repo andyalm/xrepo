@@ -1,16 +1,16 @@
 ﻿using System;
 using System.IO;
 
-using XPack.Core;
+using XRepo.Core;
 
-namespace XPack.Scenarios.TestSupport
+namespace XRepo.Scenarios.TestSupport
 {
     public class TestEnvironment : IDisposable
     {
         private readonly string _id;
         private readonly string _root;
         private readonly string _tempDir;
-        private readonly XPackEnvironment _xPackEnvironment;
+        private readonly XRepoEnvironment _xRepoEnvironment;
         
         public TestEnvironment()
         {
@@ -18,7 +18,7 @@ namespace XPack.Scenarios.TestSupport
             _root = Path.GetDirectoryName(this.GetType().Assembly.Location);
             _tempDir = Path.Combine(_root, _id);
             Directory.CreateDirectory(_tempDir);
-            _xPackEnvironment = XPackEnvironment.ForDirectory(XPackConfigDir);
+            _xRepoEnvironment = XRepoEnvironment.ForDirectory(XRepoConfigDir);
         }
 
         public string ResolveProjectPath(string relativePath)
@@ -31,7 +31,7 @@ namespace XPack.Scenarios.TestSupport
             Directory.CreateDirectory(ResolveProjectPath(relativePath));
         }
 
-        public string XPackConfigDir
+        public string XRepoConfigDir
         {
             get { return ResolveProjectPath("xpack.d"); }
         }
@@ -43,17 +43,17 @@ namespace XPack.Scenarios.TestSupport
 
         public AssemblyRegistry AssemblyRegistry
         {
-            get { return _xPackEnvironment.AssemblyRegistry; } 
+            get { return _xRepoEnvironment.AssemblyRegistry; } 
         }
 
         public PinRegistry PinRegistry
         {
-            get { return _xPackEnvironment.PinRegistry; }
+            get { return _xRepoEnvironment.PinRegistry; }
         }
 
         public RepoRegistry RepoRegistry
         {
-            get { return _xPackEnvironment.RepoRegistry; }
+            get { return _xRepoEnvironment.RepoRegistry; }
         }
 
         public void Dispose()
@@ -61,9 +61,9 @@ namespace XPack.Scenarios.TestSupport
             Directory.Delete(_tempDir, recursive:true);
         }
 
-        public XPackEnvironment XPackEnvironment
+        public XRepoEnvironment XRepoEnvironment
         {
-            get { return _xPackEnvironment; }
+            get { return _xRepoEnvironment; }
         }
 
         public string GetLocalAssemblyPath(string assemblyName)

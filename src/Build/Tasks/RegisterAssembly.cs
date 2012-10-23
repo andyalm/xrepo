@@ -1,11 +1,11 @@
 ﻿using Microsoft.Build.Framework;
 
-using XPack.Core;
-using XPack.Build.Infrastructure;
+using XRepo.Core;
+using XRepo.Build.Infrastructure;
 
-namespace XPack.Build.Tasks
+namespace XRepo.Build.Tasks
 {
-    public class RegisterAssembly : XPackTask
+    public class RegisterAssembly : XRepoTask
     {
         [Required]
         public ITaskItem AssemblyPath { get; set; }
@@ -18,8 +18,8 @@ namespace XPack.Build.Tasks
 
         public override void ExecuteOrThrow()
         {
-            XPackEnvironment.AssemblyRegistry.RegisterAssembly(AssemblyName, AssemblyPath.FullPath(), ProjectPath.FullPath());
-            XPackEnvironment.AssemblyRegistry.Save();
+            XRepoEnvironment.AssemblyRegistry.RegisterAssembly(AssemblyName, AssemblyPath.FullPath(), ProjectPath.FullPath());
+            XRepoEnvironment.AssemblyRegistry.Save();
         }
     }
 }

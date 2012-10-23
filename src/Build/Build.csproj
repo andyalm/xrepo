@@ -7,8 +7,8 @@
     <ProjectGuid>{DE24D3B6-EED5-44C7-A0CA-AE66A364365B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>XPack.Build</RootNamespace>
-    <AssemblyName>XPack.Build</AssemblyName>
+    <RootNamespace>XRepo.Build</RootNamespace>
+    <AssemblyName>XRepo.Build</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
@@ -51,10 +51,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tasks\RegisterAssembly.cs" />
     <Compile Include="Tasks\ResolveAssemblyReferences.cs" />
-    <Compile Include="Tasks\XPackTask.cs" />
+    <Compile Include="Tasks\XRepoTask.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="XPack.Build.targets">
+    <Content Include="XRepo.Build.targets">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <SubType>Designer</SubType>
     </Content>

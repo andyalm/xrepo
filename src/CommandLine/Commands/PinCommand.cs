@@ -4,7 +4,7 @@ using CommandLine.Models;
 
 using FubuCore.CommandLine;
 
-using XPack.Core;
+using XRepo.Core;
 
 namespace CommandLine.Commands
 {
@@ -13,7 +13,7 @@ namespace CommandLine.Commands
     {
         public override bool Execute(PinInputArgs input)
         {
-            var environment = XPackEnvironment.ForCurrentUser();
+            var environment = XRepoEnvironment.ForCurrentUser();
 
             switch (input.Subject)
             {
@@ -28,7 +28,7 @@ namespace CommandLine.Commands
             return true;
         }
 
-        private void PinAssembly(XPackEnvironment environment, string assemblyName)
+        private void PinAssembly(XRepoEnvironment environment, string assemblyName)
         {
             if (!environment.AssemblyRegistry.IsAssemblyRegistered(assemblyName))
                 throw new CommandFailureException("I don't know where to find the assembly '" + assemblyName + "'. Please go build it and try pinning again.");
@@ -36,7 +36,7 @@ namespace CommandLine.Commands
             environment.PinRegistry.Save();
         }
 
-        private void PinRepo(XPackEnvironment environment, string repoName)
+        private void PinRepo(XRepoEnvironment environment, string repoName)
         {
             if(!environment.RepoRegistry.IsRepoRegistered(repoName))
                 throw new CommandFailureException("I don't know anything about a '" + repoName + "' repo. Please register it.");

@@ -5,7 +5,7 @@ using System.Linq;
 
 using Newtonsoft.Json;
 
-namespace XPack.Core
+namespace XRepo.Core
 {
     public class AssemblyRegistry : JsonRegistry<RegisteredAssemblyCollection>
     {
