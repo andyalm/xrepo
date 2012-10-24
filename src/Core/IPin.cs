@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -61,8 +62,32 @@ namespace XRepo.Core
 
         private string GetBackupPath(string environmentRoot, int index)
         {
-            return Path.Combine(environmentRoot, "backups", AssemblyName, index.ToString());
+            return Path.Combine(GetAssemblyDir(environmentRoot), index.ToString());
         }
+
+        public IEnumerable<AssemblyRestorePaths> GetRestorePaths(string environmentRoot)
+        {
+            for (int i = 0; i < OriginalDirectories.Count; i++)
+            {
+                yield return new AssemblyRestorePaths
+                {
+                    OriginalDirectory = OriginalDirectories[i],
+                    BackupDirectory = GetBackupPath(environmentRoot, i)
+                };
+            }
+        }
+
+        public string GetAssemblyDir(string environmentRoot)
+        {
+            return Path.Combine(environmentRoot, "backups", AssemblyName);
+        }
+    }
+
+    public class AssemblyRestorePaths
+    {
+        public string OriginalDirectory { get; set; }
+
+        public string BackupDirectory { get; set; }
     }
 
     public class AssemblyBackupCollection : KeyedCollection<string,AssemblyBackup>

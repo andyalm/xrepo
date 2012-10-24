@@ -27,10 +27,16 @@ namespace XRepo.Core
             return Data.Assemblies.Contains(assemblyName);
         }
 
-        public void UnpinAssembly(string assemblyName)
+        public AssemblyPin UnpinAssembly(string assemblyName)
         {
             if (Data.Assemblies.Contains(assemblyName))
-                Data.Assemblies.Remove(assemblyName);
+            {
+                var pinToRemove = Data.Assemblies[assemblyName];
+                Data.Assemblies.Remove(pinToRemove);
+                return pinToRemove;
+            }
+
+            return null;
         }
 
         public IEnumerable<AssemblyPin> GetPinnedAssemblies()
@@ -59,10 +65,17 @@ namespace XRepo.Core
             return Data.Assemblies[assemblyName];
         }
 
-        public void UnpinRepo(string repoName)
+        public RepoPin UnpinRepo(string repoName)
         {
             if (Data.Repos.Contains(repoName))
+            {
+                var pinToRemove = Data.Repos[repoName];
                 Data.Repos.Remove(repoName);
+
+                return pinToRemove;
+            }
+
+            return null;
         }
 
         public IEnumerable<RepoPin> GetPinnedRepos()

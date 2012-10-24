@@ -50,7 +50,7 @@ namespace XRepo.Build.Tasks
         private void CopyPinnedAssembly(string assemblyName, PinnedProject project, string hintPath)
         {
             var backupEntry = project.Pin.GetBackupForAssembly(assemblyName);
-            var hintPathDir = Path.GetDirectoryName(hintPath);
+            var hintPathDir = Path.GetFullPath(Path.GetDirectoryName(hintPath));
             if(!backupEntry.ContainsOriginalDirectory(hintPathDir))
             {
                 var newBackupEntry = backupEntry.AddEntry(Environment.Directory, hintPathDir);
