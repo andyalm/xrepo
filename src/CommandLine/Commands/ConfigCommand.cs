@@ -2,44 +2,41 @@
 
 using FubuCore.CommandLine;
 
-using XRepo.Core;
-
 using CommandLine.Infrastructure;
 
 namespace CommandLine.Commands
 {
     [Usage("default", "Lists all current config settings")]
     [Usage("update", "Updates a config setting")]
-    [CommandDescription("Lists or updates config settings", Name = "config")]
-    public class ConfigCommand : FubuCommand<ConfigInput>
+    [CommandDescription("Lists or updates config settings")]
+    public class ConfigCommand : XRepoCommand<ConfigInput>
     {
-        public override bool Execute(ConfigInput input)
+        public override void ExecuteCommand(ConfigInput input)
         {
-            var environment = XRepoEnvironment.ForCurrentUser();
-            
+            Console.WriteLine();
             if(string.IsNullOrEmpty(input.Name))
             {
-                ListSettings(environment);
+                ListSettings();
             }
             else
             {
-                UpdateSettings(environment, input);
+                UpdateSettings(input);
             }
-            return true;
+            Console.WriteLine();
         }
 
-        private void ListSettings(XRepoEnvironment environment)
+        private void ListSettings()
         {
-            Console.Out.WriteList("Current config settings", environment.ConfigRegistry.SettingDescriptors, d =>
+            Console.Out.WriteList("name - value", Environment.ConfigRegistry.SettingDescriptors, d =>
             {
                 Console.Out.WriteLine("{0} - {1}", d.Name, d.Value);
             });
         }
 
-        private void UpdateSettings(XRepoEnvironment environment, ConfigInput input)
+        private void UpdateSettings(ConfigInput input)
         {
-            environment.ConfigRegistry.UpdateSetting(input.Name, input.Value);
-            environment.ConfigRegistry.Save();
+            Environment.ConfigRegistry.UpdateSetting(input.Name, input.Value);
+            Environment.ConfigRegistry.Save();
             Console.WriteLine("xrepo setting '" + input.Name + "' updated to '" + input.Value + "'");
         }
     }

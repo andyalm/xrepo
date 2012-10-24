@@ -8,41 +8,37 @@ using XRepo.Core;
 
 namespace CommandLine.Commands
 {
-    [CommandDescription("Pins an assembly or repo so that all references are resolved locally", Name = "pin")]
-    public class PinCommand : FubuCommand<PinInputArgs>
+    [CommandDescription("Pins an assembly or repo so that all references are resolved locally")]
+    public class PinCommand : XRepoCommand<PinInputArgs>
     {
-        public override bool Execute(PinInputArgs input)
+        public override void ExecuteCommand(PinInputArgs input)
         {
-            var environment = XRepoEnvironment.ForCurrentUser();
-
             switch (input.Subject)
             {
                 case PinSubject.assembly:
-                    PinAssembly(environment, input.Name);
+                    PinAssembly(input.Name);
                     break;
                 case PinSubject.repo:
-                    PinRepo(environment, input.Name);
+                    PinRepo(input.Name);
                     break;
             }
-
-            return true;
         }
 
-        private void PinAssembly(XRepoEnvironment environment, string assemblyName)
+        private void PinAssembly(string assemblyName)
         {
-            if (!environment.AssemblyRegistry.IsAssemblyRegistered(assemblyName))
+            if (!Environment.AssemblyRegistry.IsAssemblyRegistered(assemblyName))
                 throw new CommandFailureException("I don't know where to find the assembly '" + assemblyName + "'. Please go build it and try pinning again.");
-            environment.PinRegistry.PinAssembly(assemblyName);
-            environment.PinRegistry.Save();
+            Environment.PinRegistry.PinAssembly(assemblyName);
+            Environment.PinRegistry.Save();
         }
 
-        private void PinRepo(XRepoEnvironment environment, string repoName)
+        private void PinRepo(string repoName)
         {
-            if(!environment.RepoRegistry.IsRepoRegistered(repoName))
+            if (!Environment.RepoRegistry.IsRepoRegistered(repoName))
                 throw new CommandFailureException("I don't know anything about a '" + repoName + "' repo. Please register it.");
 
-            environment.PinRegistry.PinRepo(repoName);
-            environment.PinRegistry.Save();
+            Environment.PinRegistry.PinRepo(repoName);
+            Environment.PinRegistry.Save();
         }
     }
 }
