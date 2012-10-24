@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
+using Newtonsoft.Json;
+
 namespace XRepo.Core
 {
-    public class RepoRegistry : JsonRegistry<RegisteredRepoCollection>
+    public class RepoRegistry : JsonRegistry<RepoRegistrationCollection>
     {
         public static RepoRegistry ForDirectory(string directoryPath)
         {
@@ -21,7 +23,7 @@ namespace XRepo.Core
             if(Data.Contains(repoName))
                 throw new ApplicationException("The repo '" + repoName + "' is already registered");
 
-            Data.Add(new RegisteredRepo(repoName, repoPath));
+            Data.Add(new RepoRegistration(repoName, repoPath));
         }
 
         public void UnregisterRepo(string repoName)
@@ -31,7 +33,7 @@ namespace XRepo.Core
             Data.Remove(repoName);
         }
 
-        public IEnumerable<RegisteredRepo> GetRepos()
+        public IEnumerable<RepoRegistration> GetRepos()
         {
             return Data;
         }
@@ -42,24 +44,24 @@ namespace XRepo.Core
         }
     }
 
-    public class RegisteredRepo
+    public class RepoRegistration
     {
         public string Name { get; private set; }
         
         public string Path { get; private set; }
 
-        public RegisteredRepo(string name, string path)
+        public RepoRegistration(string name, string path)
         {
             Name = name;
             Path = path;
         }
     }
 
-    public class RegisteredRepoCollection : KeyedCollection<string,RegisteredRepo>
+    public class RepoRegistrationCollection : KeyedCollection<string,RepoRegistration>
     {
-        public RegisteredRepoCollection() : base(StringComparer.OrdinalIgnoreCase) {}
+        public RepoRegistrationCollection() : base(StringComparer.OrdinalIgnoreCase) {}
 
-        protected override string GetKeyForItem(RegisteredRepo item)
+        protected override string GetKeyForItem(RepoRegistration item)
         {
             return item.Name;
         }

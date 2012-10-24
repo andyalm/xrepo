@@ -7,14 +7,14 @@ using Newtonsoft.Json;
 
 namespace XRepo.Core
 {
-    public class AssemblyRegistry : JsonRegistry<RegisteredAssemblyCollection>
+    public class AssemblyRegistry : JsonRegistry<AssemblyRegistrationCollection>
     {
         public static AssemblyRegistry ForDirectory(string directoryPath)
         {
             return Load<AssemblyRegistry>(directoryPath);
         }
 
-        public RegisteredAssembly GetAssembly(string assemblyShortName)
+        public AssemblyRegistration GetAssembly(string assemblyShortName)
         {
             if (Data.Contains(assemblyShortName))
                 return Data[assemblyShortName];
@@ -27,7 +27,7 @@ namespace XRepo.Core
             var assemblyConfig = GetAssembly(assemblyShortName);
             if(assemblyConfig == null)
             {
-                assemblyConfig = new RegisteredAssembly(assemblyShortName);
+                assemblyConfig = new AssemblyRegistration(assemblyShortName);
                 Data.Add(assemblyConfig);
             }
             assemblyConfig.RegisterProject(assemblyPath, projectPath);
@@ -38,7 +38,7 @@ namespace XRepo.Core
             return Data.Contains(assemblyName);
         }
 
-        public IEnumerable<RegisteredAssembly> GetAssemblies()
+        public IEnumerable<AssemblyRegistration> GetAssemblies()
         {
             return Data;
         }
@@ -50,7 +50,7 @@ namespace XRepo.Core
     }
 
     [JsonObject(MemberSerialization.OptIn)]
-    public class RegisteredAssembly
+    public class AssemblyRegistration
     {
         [JsonProperty(PropertyName = "Projects")]
         private readonly List<RegisteredProject> _projects = new List<RegisteredProject>();
@@ -63,9 +63,9 @@ namespace XRepo.Core
         [JsonProperty(PropertyName = "Name")]
         public string Name { get; set; }
 
-        private RegisteredAssembly() {}
+        private AssemblyRegistration() {}
 
-        public RegisteredAssembly(string assemblyName)
+        public AssemblyRegistration(string assemblyName)
         {
             Name = assemblyName;
         }
@@ -84,11 +84,11 @@ namespace XRepo.Core
         }
     }
 
-    public class RegisteredAssemblyCollection : KeyedCollection<string,RegisteredAssembly>
+    public class AssemblyRegistrationCollection : KeyedCollection<string,AssemblyRegistration>
     {
-        public RegisteredAssemblyCollection() : base(StringComparer.OrdinalIgnoreCase) {}
+        public AssemblyRegistrationCollection() : base(StringComparer.OrdinalIgnoreCase) {}
         
-        protected override string GetKeyForItem(RegisteredAssembly item)
+        protected override string GetKeyForItem(AssemblyRegistration item)
         {
             return item.Name;
         }

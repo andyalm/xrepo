@@ -13,10 +13,10 @@ namespace CommandLine.Commands
         public override void ExecuteCommand()
         {
             Console.WriteLine();
-            Console.Out.WriteList("pinned repos", Environment.PinRegistry.GetPinnedRepos().Select(r => r.RepoName));
+            Console.Out.WriteList("pinned repos", Environment.PinRegistry.GetPinnedRepos().Select(r => r.Name));
             Console.WriteLine();
             Console.WriteLine();
-            Console.Out.WriteList("pinned assemblies", Environment.PinRegistry.GetPinnedAssemblies().Select(a => a.AssemblyName));
+            Console.Out.WriteList("pinned assemblies", Environment.PinRegistry.GetPinnedAssemblies().Select(a => a.Name));
             Console.WriteLine();
         }
     }

@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
@@ -20,7 +19,7 @@ namespace XRepo.Core
         public void PinAssembly(string assemblyName)
         {
             if(!Data.Assemblies.Contains(assemblyName))
-                Data.Assemblies.Add(new PinnedAssembly(assemblyName));
+                Data.Assemblies.Add(new AssemblyPin(assemblyName));
         }
 
         public bool IsAssemblyPinned(string assemblyName)
@@ -34,7 +33,7 @@ namespace XRepo.Core
                 Data.Assemblies.Remove(assemblyName);
         }
 
-        public IEnumerable<PinnedAssembly> GetPinnedAssemblies()
+        public IEnumerable<AssemblyPin> GetPinnedAssemblies()
         {
             return Data.Assemblies;
         }
@@ -42,12 +41,22 @@ namespace XRepo.Core
         public void PinRepo(string repoName)
         {
             if (!Data.Repos.Contains(repoName))
-                Data.Repos.Add(new PinnedRepo(repoName));
+                Data.Repos.Add(new RepoPin(repoName));
         }
 
         public bool IsRepoPinned(string repoName)
         {
             return Data.Repos.Contains(repoName);
+        }
+
+        public RepoPin GetRepoPin(string repoName)
+        {
+            return Data.Repos[repoName];
+        }
+
+        public IPin GetAssemblyPin(string assemblyName)
+        {
+            return Data.Assemblies[assemblyName];
         }
 
         public void UnpinRepo(string repoName)
@@ -56,7 +65,7 @@ namespace XRepo.Core
                 Data.Repos.Remove(repoName);
         }
 
-        public IEnumerable<PinnedRepo> GetPinnedRepos()
+        public IEnumerable<RepoPin> GetPinnedRepos()
         {
             return Data.Repos;
         }
@@ -64,53 +73,58 @@ namespace XRepo.Core
 
     public class PinHolder
     {
-        public PinnedAssemblyCollection Assemblies { get; private set; }
-        public PinnedRepoCollection Repos { get; private set; }
+        public AssemblyPinCollection Assemblies { get; private set; }
+        public RepoPinCollection Repos { get; private set; }
 
         public PinHolder()
         {
-            Assemblies = new PinnedAssemblyCollection();
-            Repos = new PinnedRepoCollection();
+            Assemblies = new AssemblyPinCollection();
+            Repos = new RepoPinCollection();
         }
     }
 
-    public class PinnedAssembly
+    public class AssemblyPin : IPin
     {
-        public PinnedAssembly(string assemblyName)
+        public AssemblyPin(string name)
         {
-            AssemblyName = assemblyName;
+            Name = name;
+            Backups = new AssemblyBackupCollection();
         }
         
-        public string AssemblyName { get; private set; }
+        public string Name { get; private set; }
+
+        public AssemblyBackupCollection Backups { get; private set; }
     }
 
-    public class PinnedAssemblyCollection : KeyedCollection<string,PinnedAssembly>
+    public class AssemblyPinCollection : KeyedCollection<string,AssemblyPin>
     {
-        public PinnedAssemblyCollection() : base(StringComparer.OrdinalIgnoreCase) {}
+        public AssemblyPinCollection() : base(StringComparer.OrdinalIgnoreCase) {}
 
-        protected override string GetKeyForItem(PinnedAssembly item)
+        protected override string GetKeyForItem(AssemblyPin item)
         {
-            return item.AssemblyName;
+            return item.Name;
         }
     }
 
-    public class PinnedRepo
+    public class RepoPin : IPin
     {
-        public PinnedRepo(string repoName)
+        public RepoPin(string name)
         {
-            RepoName = repoName;
+            Name = name;
+            Backups = new AssemblyBackupCollection();
         }
 
-        public string RepoName { get; private set; }
+        public string Name { get; private set; }
+        public AssemblyBackupCollection Backups { get; private set; }
     }
 
-    public class PinnedRepoCollection : KeyedCollection<string,PinnedRepo>
+    public class RepoPinCollection : KeyedCollection<string,RepoPin>
     {
-        public PinnedRepoCollection() : base(StringComparer.OrdinalIgnoreCase) {}
+        public RepoPinCollection() : base(StringComparer.OrdinalIgnoreCase) {}
         
-        protected override string GetKeyForItem(PinnedRepo item)
+        protected override string GetKeyForItem(RepoPin item)
         {
-            return item.RepoName;
+            return item.Name;
         }
     }
 }

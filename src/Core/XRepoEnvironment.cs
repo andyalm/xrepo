@@ -48,27 +48,7 @@ namespace XRepo.Core
             get { return _configRegistry ?? (_configRegistry = ConfigRegistry.ForDirectory(_directory)); }
         }
 
-        public string GetPinnedAssemblyPath(string assemblyName)
-        {
-            RegisteredProject pinnedProject;
-            if(IsAssemblyInPinnedRepo(assemblyName, out pinnedProject))
-            {
-                return pinnedProject.AssemblyPath;
-            }
-            
-            if(PinRegistry.IsAssemblyPinned(assemblyName))
-            {
-                var assembly = AssemblyRegistry.GetAssembly(assemblyName);
-                if (assembly == null)
-                    throw new ApplicationException("I don't know where the assembly '" + assemblyName + "' is. Have you built it on your machine?");
-
-                return assembly.Projects.First().AssemblyPath;
-            }
-
-            return null;
-        }
-
-        private bool IsAssemblyInPinnedRepo(string assemblyName, out RegisteredProject project)
+        private bool IsAssemblyInPinnedRepo(string assemblyName, out PinnedProject project)
         {
             var registeredAssembly = AssemblyRegistry.GetAssembly(assemblyName);
             if(registeredAssembly == null)
@@ -80,7 +60,7 @@ namespace XRepo.Core
             var pinnedRepos = GetPinnedRepos().ToList();
             var matchingProjectsInPinnedRepos = (from pinnedRepo in pinnedRepos
                                                 from aProject in registeredAssembly.Projects
-                                                where aProject.AssemblyPath.StartsWith(pinnedRepo.Path, StringComparison.OrdinalIgnoreCase)
+                                                where aProject.AssemblyPath.StartsWith(pinnedRepo.Repo.Path, StringComparison.OrdinalIgnoreCase)
                                                 select new { Repo = pinnedRepo, Project = aProject}).ToArray();
 
             if(matchingProjectsInPinnedRepos.Length == 0)
@@ -90,20 +70,29 @@ namespace XRepo.Core
             }
             else if(matchingProjectsInPinnedRepos.Length == 1)
             {
-                project = matchingProjectsInPinnedRepos.Single().Project;
+                var projectRepoPair = matchingProjectsInPinnedRepos.Single();
+                project = new PinnedProject
+                {
+                    Pin = projectRepoPair.Repo.Pin,
+                    Project = projectRepoPair.Project
+                };
                 return true;
             }
             else
             {
-                var matchingRepoList = String.Join(", ", matchingProjectsInPinnedRepos.Select(p => p.Repo.Name).ToArray());
+                var matchingRepoList = String.Join(", ", matchingProjectsInPinnedRepos.Select(p => p.Repo.Repo.Name).ToArray());
                 var errorMessage = String.Format("The assembly '{0}' is registered in multiple pinned repos ({1}), so I don't know what to do here. Please either unregister the assembly from all but one of the locations, or unpin all but one of the repos.", assemblyName, matchingRepoList);
                 throw new ApplicationException(errorMessage);
             }
         }
 
-        private IEnumerable<RegisteredRepo> GetPinnedRepos()
+        private IEnumerable<PinnedRepo> GetPinnedRepos()
         {
-            return RepoRegistry.GetRepos().Where(r => PinRegistry.IsRepoPinned(r.Name));
+            return RepoRegistry.GetRepos().Where(r => PinRegistry.IsRepoPinned(r.Name)).Select(r => new PinnedRepo
+            {
+                Pin = PinRegistry.GetRepoPin(r.Name),
+                Repo = r
+            });
         }
 
         private string DefaultConfigDir
@@ -115,10 +104,39 @@ namespace XRepo.Core
             }
         }
 
+        public string Directory
+        {
+            get { return _directory; }
+        }
+
         public bool IsAssemblyPinned(string assemblyName)
         {
-            RegisteredProject notUsed;
+            PinnedProject notUsed;
             return PinRegistry.IsAssemblyPinned(assemblyName) || IsAssemblyInPinnedRepo(assemblyName, out notUsed);
+        }
+
+        public PinnedProject FindPinForAssembly(string assemblyName)
+        {
+            PinnedProject pinnedProject;
+            if (IsAssemblyInPinnedRepo(assemblyName, out pinnedProject))
+            {
+                return pinnedProject;
+            }
+
+            if (PinRegistry.IsAssemblyPinned(assemblyName))
+            {
+                var assembly = AssemblyRegistry.GetAssembly(assemblyName);
+                if (assembly == null)
+                    throw new ApplicationException("I don't know where the assembly '" + assemblyName + "' is. Have you built it on your machine?");
+
+                return new PinnedProject
+                {
+                    Pin = PinRegistry.GetAssemblyPin(assemblyName),
+                    Project = assembly.Projects.First()
+                };
+            }
+
+            return null;
         }
     }
 }

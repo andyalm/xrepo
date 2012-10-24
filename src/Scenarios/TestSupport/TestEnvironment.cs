@@ -10,7 +10,7 @@ namespace XRepo.Scenarios.TestSupport
         private readonly string _id;
         private readonly string _root;
         private readonly string _tempDir;
-        private readonly XRepoEnvironment _xRepoEnvironment;
+        private XRepoEnvironment _xRepoEnvironment;
         
         public TestEnvironment()
         {
@@ -34,6 +34,11 @@ namespace XRepo.Scenarios.TestSupport
         public string XRepoConfigDir
         {
             get { return ResolveProjectPath("xpack.d"); }
+        }
+
+        public void Reload()
+        {
+            _xRepoEnvironment = XRepoEnvironment.ForDirectory(XRepoConfigDir);
         }
 
         public string Root

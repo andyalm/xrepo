@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 
 using Microsoft.Build.Framework;
 
 using XRepo.Build.Infrastructure;
+using XRepo.Core;
 
 namespace XRepo.Build.Tasks
 {
@@ -14,23 +16,30 @@ namespace XRepo.Build.Tasks
 
         [Output]
         public ITaskItem[] AssemblyReferenceOverrides { get; set; }
-        
+
+        public bool SkipUnchangedFiles { get; set; }
+
+        public ResolveAssemblyReferences()
+        {
+            SkipUnchangedFiles = true;
+        }
+
         public override void ExecuteOrThrow()
         {
             var referenceOverrides = new List<ITaskItem>();
             foreach (var assemblyReference in AssemblyReferences)
             {
                 var assemblyName = GetShortName(assemblyReference);
-                var pinnedAssemblyPath = XRepoEnvironment.GetPinnedAssemblyPath(assemblyName);
-                if(pinnedAssemblyPath == null)
+                var pinnedProject = Environment.FindPinForAssembly(assemblyName);
+                if(pinnedProject == null)
                     continue;
-                if(XRepoEnvironment.ConfigRegistry.Settings.CopyPins && assemblyReference.ContainsMetadata("HintPath"))
+                if(Environment.ConfigRegistry.Settings.CopyPins && assemblyReference.ContainsMetadata("HintPath"))
                 {
-                    CopyPinnedAssembly(assemblyName, pinnedAssemblyPath, assemblyReference.GetMetadata("HintPath"));
+                    CopyPinnedAssembly(assemblyName, pinnedProject, assemblyReference.GetMetadata("HintPath"));
                 }
                 else
                 {
-                    OverrideHintPath(assemblyName, pinnedAssemblyPath, assemblyReference, referenceOverrides);
+                    OverrideHintPath(assemblyName, pinnedProject.Project.AssemblyPath, assemblyReference, referenceOverrides);
                 }
                 
             }
@@ -38,14 +47,30 @@ namespace XRepo.Build.Tasks
             AssemblyReferenceOverrides = referenceOverrides.ToArray();
         }
 
-        private void CopyPinnedAssembly(string assemblyName, string sourcePath, string destinationPath)
+        private void CopyPinnedAssembly(string assemblyName, PinnedProject project, string hintPath)
         {
-            Log.LogWarning("Copying pinned assembly '" + assemblyName + "' to hint path location '" + destinationPath + "'...");
+            var backupEntry = project.Pin.GetBackupForAssembly(assemblyName);
+            var hintPathDir = Path.GetDirectoryName(hintPath);
+            if(!backupEntry.ContainsOriginalDirectory(hintPathDir))
+            {
+                var newBackupEntry = backupEntry.AddEntry(Environment.Directory, hintPathDir);
+                Environment.PinRegistry.Save();
+                Log.LogMessage("Backing up original copy of assembly '" + assemblyName + "' in '" + hintPath + "' because it is about to be overridden by a pinned copy of that assembly...");
+                this.ExecTask(() => new CopyAssembly
+                {
+                    Assemblies = hintPath.ToTaskItems(),
+                    DestinationFolder = newBackupEntry.ToTaskItem(),
+                    CopyDependencies = false,
+                    SkipUnchangedFiles = SkipUnchangedFiles
+                });
+            }
+            Log.LogWarning("Copying pinned assembly '" + assemblyName + "' to hint path location '" + hintPath + "'...");
             this.ExecTask(() => new CopyAssembly
             {
-                Assemblies = sourcePath.ToTaskItems(),
-                DestinationFolder = destinationPath.ToTaskItem().FullDirectoryPath().ToTaskItem(),
+                Assemblies = project.Project.AssemblyPath.ToTaskItems(),
+                DestinationFolder = hintPath.ToTaskItem().FullDirectoryPath().ToTaskItem(),
                 CopyDependencies = false,
+                SkipUnchangedFiles = SkipUnchangedFiles
             });
         }
 

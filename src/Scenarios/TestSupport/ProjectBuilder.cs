@@ -45,9 +45,8 @@ namespace XRepo.Scenarios.TestSupport
             return logger.ToString();
         }
 
-        public void AddReference(string assemblyName)
+        public void AddReference(string assemblyName, string hintPath)
         {
-            var hintPath = _environment.GetLibFilePath(assemblyName + ".dll");
             var metadata = new Dictionary<string, string> {{"HintPath", hintPath}};
             Project.AddItem("Reference", assemblyName, metadata);
             Project.Save();
@@ -64,6 +63,7 @@ namespace XRepo.Scenarios.TestSupport
                     var buildProperties = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
                     {
                         {"XRepoConfigDir", _environment.XRepoConfigDir},
+                        {"XRepoSkipUnchangedFiles", "false"},
                         {"DisableGlobalXRepo", "true"}
                     };
 

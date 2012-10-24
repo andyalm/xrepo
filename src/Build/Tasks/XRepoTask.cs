@@ -6,11 +6,11 @@ namespace XRepo.Build.Tasks
     public abstract class XRepoTask : TaskWithNoReturnFlag
     {
         public string CustomConfigDir { get; set; }
-        
-        private XRepoEnvironment _xRepoEnvironment;
-        public XRepoEnvironment XRepoEnvironment
+
+        private XRepoEnvironment _environment;
+        public XRepoEnvironment Environment
         {
-            get { return _xRepoEnvironment ?? (_xRepoEnvironment = XRepoEnvironment.ForDirectory(CustomConfigDir)); }
+            get { return _environment ?? (_environment = XRepoEnvironment.ForDirectory(CustomConfigDir)); }
         }
     }
 }

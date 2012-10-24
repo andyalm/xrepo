@@ -126,6 +126,8 @@ this.ScenarioSetup(scenarioInfo);
  testRunner.When("the project is compiled", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 26
  testRunner.Then("the registered copy of nunit.framework is copied to the hint path\'s location", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 27
+  testRunner.And("a backup copy of the original nunit.framework is kept", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             this.ScenarioCleanup();
         }
@@ -135,19 +137,19 @@ this.ScenarioSetup(scenarioInfo);
         public virtual void AnUnpinnedAssemblyDoesNotOverrideTheHintPath()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("An unpinned assembly does not override the hint path", ((string[])(null)));
-#line 28
-this.ScenarioSetup(scenarioInfo);
 #line 29
- testRunner.Given("a class library project", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+this.ScenarioSetup(scenarioInfo);
 #line 30
-  testRunner.And("the project has a reference to assembly nunit.framework", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.Given("a class library project", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 31
-  testRunner.And("the assembly nunit.framework is registered", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+  testRunner.And("the project has a reference to assembly nunit.framework", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 32
-  testRunner.And("the assembly nunit.framework is not pinned", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+  testRunner.And("the assembly nunit.framework is registered", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 33
- testRunner.When("the project is compiled", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+  testRunner.And("the assembly nunit.framework is not pinned", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 34
+ testRunner.When("the project is compiled", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 35
  testRunner.Then("the reference to nunit.framework is resolved via standard msbuild rules", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
@@ -158,21 +160,21 @@ this.ScenarioSetup(scenarioInfo);
         public virtual void APinnedRepoOverridesHintPathsForAllRegisteredAssembliesWithinTheRepo()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("A pinned repo overrides hint paths for all registered assemblies within the repo", ((string[])(null)));
-#line 36
-this.ScenarioSetup(scenarioInfo);
 #line 37
- testRunner.Given("a repo MyRepo", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+this.ScenarioSetup(scenarioInfo);
 #line 38
-  testRunner.And("a class library project", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.Given("a repo MyRepo", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 39
-  testRunner.And("the project has a reference to assembly nunit.framework", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+  testRunner.And("a class library project", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 40
-  testRunner.And("the assembly nunit.framework is registered at a location within MyRepo", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+  testRunner.And("the project has a reference to assembly nunit.framework", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 41
-  testRunner.And("the repo MyRepo is pinned", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+  testRunner.And("the assembly nunit.framework is registered at a location within MyRepo", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 42
- testRunner.When("the project is compiled", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+  testRunner.And("the repo MyRepo is pinned", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 43
+ testRunner.When("the project is compiled", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 44
   testRunner.Then("the reference to is resolved to the pinned copy of nunit.framework", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();

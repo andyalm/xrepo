@@ -24,6 +24,7 @@ Scenario: A pinned assembly is copied to hint path location when copypins is tru
 		And the copypins config setting is true
 	When the project is compiled
 	Then the registered copy of nunit.framework is copied to the hint path's location
+		And a backup copy of the original nunit.framework is kept
 
 Scenario: An unpinned assembly does not override the hint path
 	Given a class library project

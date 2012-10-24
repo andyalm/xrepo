@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 using FluentAssertions;
@@ -31,7 +32,11 @@ namespace XRepo.Scenarios.Steps
         [Given(@"the project has a reference to assembly (.*)")]
         public void GivenTheProjectHasAReferenceToAssembly(string assemblyName)
         {
-            _projectBuilder.AddReference(assemblyName);
+            var libPath = _environment.GetLibFilePath(assemblyName + ".dll");
+            Directory.CreateDirectory(Path.GetDirectoryName(libPath));
+            File.Copy(Path.Combine(_environment.Root, assemblyName + ".dll"), libPath);
+
+            _projectBuilder.AddReference(assemblyName, libPath);
         }
 
         [Given(@"the assembly (.*) is pinned")]
@@ -99,8 +104,8 @@ namespace XRepo.Scenarios.Steps
         [Then(@"the reference to is resolved to the pinned copy of (.*)")]
         public void ThenTheReferenceToIsResolvedToThePinnedCopyOf(string assemblyName)
         {
-            var pinnedAssemblyPath = _environment.XRepoEnvironment.GetPinnedAssemblyPath(assemblyName);
-            var expectedString = "/reference:" + pinnedAssemblyPath;
+            var pinnedProject = _environment.XRepoEnvironment.FindPinForAssembly(assemblyName);
+            var expectedString = "/reference:" + pinnedProject.Project.AssemblyPath;
             _buildOutput.Should().Contain(expectedString);
         }
 
@@ -123,12 +128,24 @@ namespace XRepo.Scenarios.Steps
         [Then(@"the registered copy of (.*) is copied to the hint path's location")]
         public void ThenTheRegisteredCopyOfAssemblyIsCopiedToTheHintPathSLocation(string assemblyName)
         {
-            var pinnedAssemblyPath = _environment.XRepoEnvironment.GetPinnedAssemblyPath(assemblyName);
+            var pinnedProject = _environment.XRepoEnvironment.FindPinForAssembly(assemblyName);
             var hintedPath = _environment.GetLibFilePath(assemblyName + ".dll");
             
-            var expectedRegex = new Regex(String.Format("from.*{0}.*to.*{1}.*", pinnedAssemblyPath.Replace("\\", "\\\\"), hintedPath.Replace("\\", "\\\\")));
+            var expectedRegex = new Regex(String.Format("from.*{0}.*to.*{1}.*", pinnedProject.Project.AssemblyPath.Replace("\\", "\\\\"), hintedPath.Replace("\\", "\\\\")));
             expectedRegex.IsMatch(_buildOutput).Should().BeTrue("Expected the regex '" + expectedRegex.ToString() + "' to match");
         }
+
+        [Then(@"a backup copy of the original (.*) is kept")]
+        public void ThenABackupCopyOfTheOriginalAssemblyIsKept(string assemblyName)
+        {
+            _environment.Reload(); //ensure we have a copy of the latest environment
+            var pinnedProject = _environment.XRepoEnvironment.FindPinForAssembly(assemblyName);
+            pinnedProject.Should().NotBeNull();
+            pinnedProject.Pin.Backups.Count.Should().BeGreaterThan(0, "there should be a backup entry for the pin");
+            pinnedProject.Pin.Backups.GetBackupLocations(_environment.XRepoConfigDir)
+                .Should().OnlyContain(p => File.Exists(Path.Combine(p, assemblyName + ".dll")), "The file should exist");
+        }
+
 
     }
 }

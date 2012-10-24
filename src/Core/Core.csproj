@@ -46,7 +46,10 @@
   <ItemGroup>
     <Compile Include="AssemblyRegistry.cs" />
     <Compile Include="ConfigRegistry.cs" />
+    <Compile Include="IPin.cs" />
     <Compile Include="JsonRegistry.cs" />
+    <Compile Include="PinnedProject.cs" />
+    <Compile Include="PinnedRepo.cs" />
     <Compile Include="PinRegistry.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RepoRegistry.cs" />

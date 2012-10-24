@@ -12,9 +12,13 @@
   </PropertyGroup>
 
   <Target Name="_OverrideHintPaths">
+    <PropertyGroup>
+      <XRepoSkipUnchangedFiles Condition="$(XRepoSkipUnchangedFiles)==''">true</XRepoSkipUnchangedFiles>
+    </PropertyGroup>
     <XRepo.Build.Tasks.ResolveAssemblyReferences
         AssemblyReferences="@(Reference)"
         CustomConfigDir="$(XRepoConfigDir)"
+        SkipUnchangedFiles="$(XRepoSkipUnchangedFiles)"
         DebugTask="false">
       <Output TaskParameter="AssemblyReferenceOverrides" ItemName="ReferenceOverride"/>
     </XRepo.Build.Tasks.ResolveAssemblyReferences>
