@@ -42,6 +42,12 @@ namespace XRepo.Core
             get { return _repoRegistry ?? (_repoRegistry = RepoRegistry.ForDirectory(_directory)); }
         }
 
+        private ConfigRegistry _configRegistry;
+        public ConfigRegistry ConfigRegistry
+        {
+            get { return _configRegistry ?? (_configRegistry = ConfigRegistry.ForDirectory(_directory)); }
+        }
+
         public string GetPinnedAssemblyPath(string assemblyName)
         {
             RegisteredProject pinnedProject;
@@ -107,6 +113,12 @@ namespace XRepo.Core
                 return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData,
                                                             Environment.SpecialFolderOption.Create), "XRepo");
             }
+        }
+
+        public bool IsAssemblyPinned(string assemblyName)
+        {
+            RegisteredProject notUsed;
+            return PinRegistry.IsAssemblyPinned(assemblyName) || IsAssemblyInPinnedRepo(assemblyName, out notUsed);
         }
     }
 }

@@ -8,13 +8,22 @@ Scenario: A compiled assembly is registered
 	When the project is compiled
 	Then the resulting assembly is registered by xrepo
 
-Scenario: A pinned assembly overrides hint paths
+Scenario: A pinned assembly overrides hint paths by default
 	Given a class library project
 		And the project has a reference to assembly nunit.framework
 		And the assembly nunit.framework is registered
 		And the assembly nunit.framework is pinned
 	When the project is compiled
 	Then the reference to is resolved to the pinned copy of nunit.framework
+
+Scenario: A pinned assembly is copied to hint path location when copypins is true
+	Given a class library project
+		And the project has a reference to assembly nunit.framework
+		And the assembly nunit.framework is registered
+		And the assembly nunit.framework is pinned
+		And the copypins config setting is true
+	When the project is compiled
+	Then the registered copy of nunit.framework is copied to the hint path's location
 
 Scenario: An unpinned assembly does not override the hint path
 	Given a class library project

@@ -33,6 +33,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Build.Framework" />
+    <Reference Include="Microsoft.Build.Tasks.v4.0" />
     <Reference Include="Microsoft.Build.Utilities.v4.0" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -45,6 +46,7 @@
   <ItemGroup>
     <Compile Include="Infrastructure\BuildEngineExtensions.cs" />
     <Compile Include="Infrastructure\CommandLineBuilderExtensions.cs" />
+    <Compile Include="Infrastructure\CopyAssembly.cs" />
     <Compile Include="Infrastructure\IBuildContext.cs" />
     <Compile Include="Infrastructure\TaskItemExtensions.cs" />
     <Compile Include="Infrastructure\TaskWithNoReturnFlag.cs" />

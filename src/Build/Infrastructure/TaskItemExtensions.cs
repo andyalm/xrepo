@@ -109,5 +109,10 @@ namespace XRepo.Build.Infrastructure
 
             return value;
         }
+
+        public static bool ContainsMetadata(this ITaskItem item, string name)
+        {
+            return !String.IsNullOrWhiteSpace(item.GetMetadata(name));
+        }
     }
 }

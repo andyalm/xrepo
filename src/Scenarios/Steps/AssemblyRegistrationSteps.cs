@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Text.RegularExpressions;
 
 using FluentAssertions;
 
@@ -82,6 +83,13 @@ namespace XRepo.Scenarios.Steps
             _environment.PinRegistry.Save();
         }
 
+        [Given(@"the (.*) config setting is (.*)")]
+        public void GivenTheConfigSettingIs(string settingName, string settingValue)
+        {
+            _environment.ConfigRegistry.UpdateSetting(settingName, settingValue);
+            _environment.ConfigRegistry.Save();
+        }
+
         [When(@"the project is compiled")]
         public void WhenTheProjectIsCompiled()
         {
@@ -111,5 +119,16 @@ namespace XRepo.Scenarios.Steps
             var unexpectedString = "/reference:" + Path.Combine(_environment.Root, assemblyName + ".dll");
             _buildOutput.Should().NotContain(unexpectedString);
         }
+
+        [Then(@"the registered copy of (.*) is copied to the hint path's location")]
+        public void ThenTheRegisteredCopyOfAssemblyIsCopiedToTheHintPathSLocation(string assemblyName)
+        {
+            var pinnedAssemblyPath = _environment.XRepoEnvironment.GetPinnedAssemblyPath(assemblyName);
+            var hintedPath = _environment.GetLibFilePath(assemblyName + ".dll");
+            
+            var expectedRegex = new Regex(String.Format("from.*{0}.*to.*{1}.*", pinnedAssemblyPath.Replace("\\", "\\\\"), hintedPath.Replace("\\", "\\\\")));
+            expectedRegex.IsMatch(_buildOutput).Should().BeTrue("Expected the regex '" + expectedRegex.ToString() + "' to match");
+        }
+
     }
 }

@@ -38,7 +38,7 @@ namespace XRepo.Scenarios.TestSupport
 
         public string Build()
         {
-            var logger = new CapturingLogger(LoggerVerbosity.Minimal);
+            var logger = new CapturingLogger(LoggerVerbosity.Normal);
             if(!Project.Build(logger))
                 throw new ApplicationException("Build failed");
 
@@ -47,7 +47,9 @@ namespace XRepo.Scenarios.TestSupport
 
         public void AddReference(string assemblyName)
         {
-            Project.AddItem("Reference", assemblyName);
+            var hintPath = _environment.GetLibFilePath(assemblyName + ".dll");
+            var metadata = new Dictionary<string, string> {{"HintPath", hintPath}};
+            Project.AddItem("Reference", assemblyName, metadata);
             Project.Save();
         }
 

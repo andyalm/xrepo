@@ -1,6 +1,7 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
+
+using CommandLine.Infrastructure;
 
 using FubuCore.CommandLine;
 
@@ -20,10 +21,10 @@ namespace CommandLine.Commands
             switch (input.Subject)
             {
                 case ListSubject.pins:
-                    WriteList("pinned repos", environment.PinRegistry.GetPinnedRepos().Select(r => r.RepoName));
+                    Console.Out.WriteList("pinned repos", environment.PinRegistry.GetPinnedRepos().Select(r => r.RepoName));
                     Console.WriteLine();
                     Console.WriteLine();
-                    WriteList("pinned assemblies", environment.PinRegistry.GetPinnedAssemblies().Select(a => a.AssemblyName));
+                    Console.Out.WriteList("pinned assemblies", environment.PinRegistry.GetPinnedAssemblies().Select(a => a.AssemblyName));
                     break;
                 case ListSubject.repos:
                     WriteRepos("repos", environment.RepoRegistry.GetRepos());
@@ -38,12 +39,12 @@ namespace CommandLine.Commands
 
         private void WriteRepos(string title, IEnumerable<RegisteredRepo> repos)
         {
-            Write(title, repos, r => Console.WriteLine("{0} - {1}", r.Name, r.Path));
+            Console.Out.WriteList(title, repos, r => Console.WriteLine("{0} - {1}", r.Name, r.Path));
         }
 
         private void WriteAssemblies(string title, IEnumerable<RegisteredAssembly> assemblies)
         {
-            Write(title, assemblies, a =>
+            Console.Out.WriteList(title, assemblies, a =>
             {
                 Console.WriteLine(a.Name);
                 foreach (var project in a.Projects)
@@ -52,21 +53,6 @@ namespace CommandLine.Commands
                 }
                 Console.WriteLine("----------------------");
             });
-        }
-
-        private void Write<T>(string title, IEnumerable<T> items, Action<T> write)
-        {
-            Console.WriteLine(title);
-            Console.WriteLine("-------------------");
-            foreach (var item in items)
-            {
-                write(item);
-            }
-        }
-
-        private void WriteList(string title, IEnumerable<string> items)
-        {
-            Write(title, items, Console.WriteLine);
         }
     }
 

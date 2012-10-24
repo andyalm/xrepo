@@ -46,10 +46,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Commands\ConfigCommand.cs" />
     <Compile Include="Commands\RegisterCommand.cs" />
     <Compile Include="Commands\ListCommand.cs" />
     <Compile Include="Commands\PinCommand.cs" />
     <Compile Include="Commands\UnregisterCommand.cs" />
+    <Compile Include="Infrastructure\WriterExtensions.cs" />
     <Compile Include="Models\PinInputArgs.cs" />
     <Compile Include="Commands\UnpinCommand.cs" />
     <Compile Include="Program.cs" />

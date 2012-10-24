@@ -56,6 +56,11 @@ namespace XRepo.Scenarios.TestSupport
             get { return _xRepoEnvironment.RepoRegistry; }
         }
 
+        public ConfigRegistry ConfigRegistry
+        {
+            get { return _xRepoEnvironment.ConfigRegistry; }
+        }
+
         public void Dispose()
         {
             Directory.Delete(_tempDir, recursive:true);
@@ -79,6 +84,11 @@ namespace XRepo.Scenarios.TestSupport
         public string GetRepoPath(string repoName)
         {
             return Path.Combine(_root, _id, "Repos", repoName);
+        }
+
+        public string GetLibFilePath(string filename)
+        {
+            return Path.Combine(_root, _id, "lib", filename);
         }
     }
 }

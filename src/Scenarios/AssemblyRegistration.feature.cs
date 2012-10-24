@@ -83,10 +83,10 @@ this.ScenarioSetup(scenarioInfo);
         }
         
         [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("A pinned assembly overrides hint paths")]
-        public virtual void APinnedAssemblyOverridesHintPaths()
+        [NUnit.Framework.DescriptionAttribute("A pinned assembly overrides hint paths by default")]
+        public virtual void APinnedAssemblyOverridesHintPathsByDefault()
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("A pinned assembly overrides hint paths", ((string[])(null)));
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("A pinned assembly overrides hint paths by default", ((string[])(null)));
 #line 11
 this.ScenarioSetup(scenarioInfo);
 #line 12
@@ -106,10 +106,10 @@ this.ScenarioSetup(scenarioInfo);
         }
         
         [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("An unpinned assembly does not override the hint path")]
-        public virtual void AnUnpinnedAssemblyDoesNotOverrideTheHintPath()
+        [NUnit.Framework.DescriptionAttribute("A pinned assembly is copied to hint path location when copypins is true")]
+        public virtual void APinnedAssemblyIsCopiedToHintPathLocationWhenCopypinsIsTrue()
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("An unpinned assembly does not override the hint path", ((string[])(null)));
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("A pinned assembly is copied to hint path location when copypins is true", ((string[])(null)));
 #line 19
 this.ScenarioSetup(scenarioInfo);
 #line 20
@@ -119,10 +119,35 @@ this.ScenarioSetup(scenarioInfo);
 #line 22
   testRunner.And("the assembly nunit.framework is registered", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 23
-  testRunner.And("the assembly nunit.framework is not pinned", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+  testRunner.And("the assembly nunit.framework is pinned", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 24
- testRunner.When("the project is compiled", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+  testRunner.And("the copypins config setting is true", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 25
+ testRunner.When("the project is compiled", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 26
+ testRunner.Then("the registered copy of nunit.framework is copied to the hint path\'s location", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("An unpinned assembly does not override the hint path")]
+        public virtual void AnUnpinnedAssemblyDoesNotOverrideTheHintPath()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("An unpinned assembly does not override the hint path", ((string[])(null)));
+#line 28
+this.ScenarioSetup(scenarioInfo);
+#line 29
+ testRunner.Given("a class library project", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 30
+  testRunner.And("the project has a reference to assembly nunit.framework", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 31
+  testRunner.And("the assembly nunit.framework is registered", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 32
+  testRunner.And("the assembly nunit.framework is not pinned", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 33
+ testRunner.When("the project is compiled", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 34
  testRunner.Then("the reference to nunit.framework is resolved via standard msbuild rules", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
@@ -133,21 +158,21 @@ this.ScenarioSetup(scenarioInfo);
         public virtual void APinnedRepoOverridesHintPathsForAllRegisteredAssembliesWithinTheRepo()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("A pinned repo overrides hint paths for all registered assemblies within the repo", ((string[])(null)));
-#line 27
+#line 36
 this.ScenarioSetup(scenarioInfo);
-#line 28
+#line 37
  testRunner.Given("a repo MyRepo", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 29
+#line 38
   testRunner.And("a class library project", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 30
+#line 39
   testRunner.And("the project has a reference to assembly nunit.framework", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 31
+#line 40
   testRunner.And("the assembly nunit.framework is registered at a location within MyRepo", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 32
+#line 41
   testRunner.And("the repo MyRepo is pinned", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 33
+#line 42
  testRunner.When("the project is compiled", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 34
+#line 43
   testRunner.Then("the reference to is resolved to the pinned copy of nunit.framework", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();

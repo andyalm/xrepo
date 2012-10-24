@@ -45,6 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyRegistry.cs" />
+    <Compile Include="ConfigRegistry.cs" />
     <Compile Include="JsonRegistry.cs" />
     <Compile Include="PinRegistry.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
