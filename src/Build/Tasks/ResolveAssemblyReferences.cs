@@ -33,6 +33,8 @@ namespace XRepo.Build.Tasks
                 var pinnedProject = Environment.FindPinForAssembly(assemblyName);
                 if(pinnedProject == null)
                     continue;
+                if(Environment.ConfigRegistry.Settings.PinWarnings)
+                    Log.LogWarning("The assembly '" + assemblyName + "' is pinned");
                 if(Environment.ConfigRegistry.Settings.CopyPins && assemblyReference.ContainsMetadata("HintPath"))
                 {
                     CopyPinnedAssembly(assemblyName, pinnedProject, assemblyReference.GetMetadata("HintPath"));
@@ -64,7 +66,7 @@ namespace XRepo.Build.Tasks
                     SkipUnchangedFiles = SkipUnchangedFiles
                 });
             }
-            Log.LogWarning("Copying pinned assembly '" + assemblyName + "' to hint path location '" + hintPath + "'...");
+            Log.LogMessage("Copying pinned assembly '" + assemblyName + "' to hint path location '" + hintPath + "'...");
             this.ExecTask(() => new CopyAssembly
             {
                 Assemblies = project.Project.AssemblyPath.ToTaskItems(),
@@ -76,7 +78,7 @@ namespace XRepo.Build.Tasks
 
         private void OverrideHintPath(string assemblyName, string pinnedAssemblyPath, ITaskItem assemblyReference, List<ITaskItem> referenceOverrides)
         {
-            Log.LogWarning("Overriding assembly reference '" + assemblyName + "' to use pinned path '" +
+            Log.LogMessage("Overriding assembly reference '" + assemblyName + "' to use pinned path '" +
                            pinnedAssemblyPath + "'...");
             assemblyReference.SetMetadata("HintPath", pinnedAssemblyPath);
             assemblyReference.SetMetadata("ShortName", assemblyName);

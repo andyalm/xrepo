@@ -88,6 +88,7 @@ namespace XRepo.Core
     public class ConfigSettings
     {
         public bool CopyPins { get; set; }
+        public bool PinWarnings { get; set; }
     }
 
     internal static class ConfigExtensions
