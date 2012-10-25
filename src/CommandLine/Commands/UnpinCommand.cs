@@ -12,20 +12,17 @@ using FubuCore;
 
 namespace CommandLine.Commands
 {
-    [CommandDescription("Unpins an assembly or repo so that all references are resolved via standard behavior", Name = "unpin")]
+    [CommandDescription("Unpins a repo or assembly so that all references are resolved via standard behavior", Name = "unpin")]
     public class UnpinCommand : XRepoCommand<PinInputArgs>
     {
         public override void ExecuteCommand(PinInputArgs input)
         {
-            switch (input.Subject)
-            {
-                case PinSubject.assembly:
-                    UnpinAssembly(input.Name);
-                    break;
-                case PinSubject.repo:
-                    UnpinRepo(input.Name);
-                    break;
-            }
+            if (Environment.RepoRegistry.IsRepoRegistered(input.Name))
+                UnpinRepo(input.Name);
+            else if (Environment.AssemblyRegistry.IsAssemblyRegistered(input.Name))
+                UnpinAssembly(input.Name);
+            else
+                throw new CommandFailureException("There is no repo or assembly registered by the name of '" + input.Name + "'. Either go build that assembly or register the repo.");
         }
 
         private void UnpinAssembly(string assemblyName)

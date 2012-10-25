@@ -6,7 +6,7 @@ using FubuCore.CommandLine;
 
 namespace CommandLine.Commands
 {
-    [CommandDescription("Registers a repo at the current path")]
+    [CommandDescription("Registers or unregisters a repo")]
     [Usage("register", "Registers a repo at the current or specified path")]
     [Usage("unregister", "Unregisters a repo with the given name")]
     public class RepoCommand : XRepoCommand<RepoInput>
