@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>xrepo</id>
+    <title>xrepo</title>
+    <version>0.5.0</version>
+    <authors>Andy Alm</authors>
+    <summary>Cross repo development finally made easy</summary>
+    <description>Finally makes it easy to develop when you need to make changes that spans more than one source code repository.</description>
+    <projectUrl>http://github.com/andyalm/xrepo</projectUrl>
+    <tags>xrepo admin</tags>
+    <copyright>2012 Andy Alm</copyright>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <!--<iconUrl>https://github.com/__CHOCO_PKG_OWNER_REPO__/raw/master/xrepo/xrepo.gif</iconUrl>-->
+    <releaseNotes></releaseNotes>
+  </metadata>
+  <files>
+    <file src="..\src\CommandLine\bin\$configuration$\*.*" target="tools" />
+    <file src="..\src\Build\bin\$configuration$\*.*" target="build" />
+  </files>
+</package>
