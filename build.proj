@@ -15,6 +15,7 @@
     </Target>
 
     <Target Name="Deploy" DependsOnTargets="Package">
-        <Exec Command="cinst xrepo -source $(MSBuildProjectDirectory)\deploy\bin\$(Configuration) -force" />
+        <Exec Command="chocolatey uninstall xrepo" ContinueOnError="true" />
+        <Exec Command="chocolatey install xrepo -source $(MSBuildProjectDirectory)\deploy\bin\$(Configuration)" />
     </Target>
 </Project>

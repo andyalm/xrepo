@@ -1,0 +1,19 @@
+{
+	"folders":
+	[
+		{
+			"path": "."
+		}
+	],
+    "build_systems":
+    [
+        {
+            "name": "build",
+            "cmd": ["build.bat"]
+        },
+        {
+            "name": "deploy",
+            "cmd": ["deploy.bat"]
+        }
+    ]
+}
