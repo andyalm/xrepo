@@ -7,7 +7,7 @@ $NamespaceManager.AddNamespace("msb", $MSBuildNamespace)
 function Add-XRepoImport($Path, $ImportPath)
 {
     $project = Get-Project $Path
-    Write-Host "Adding import of '$ImportPath' to global MSBuild hook..."
+    Write-Host "Adding import of '$ImportPath' to '$Path'"
     $import = $project.CreateElement("Import", $MSBuildNamespace)
     $import.SetAttribute("Project", $ImportPath)
     $import.SetAttribute("Condition", "Exists('$ImportPath') and `$(DisableGlobalXRepo)!='true'")
@@ -25,7 +25,7 @@ function Remove-XRepoImport($Path)
         {
             if($import.GetAttribute("Project").ToLowerInvariant().Contains("xrepo.build.targets"))
             {
-                Write-Host $("Removing import of '" + $import.GetAttribute("Project") + "' from global MSBuild hook...")
+                Write-Host $("Removing import of '" + $import.GetAttribute("Project") + "' from '$Path'")
                 $import.ParentNode.RemoveChild($import) | Out-Null
             }
         }
@@ -40,9 +40,20 @@ Export-ModuleMember Remove-XRepoImport
 
 function Get-GlobalMSBuildHookFiles
 {
-    @(
-        "$env:ProgramFiles\MSBuild\v4.0\Custom.After.Microsoft.Common.Targets"
-    )
+    $files = @()
+    $ProgramFilesX86 = $(Get-Item "env:ProgramFiles(x86)").Value
+    if(Test-Path "$ProgramFilesX86\MSBuild")
+    {
+        $files += "$ProgramFilesX86\MSBuild\v4.0\Custom.After.Microsoft.Common.Targets"
+        [IO.Directory]::CreateDirectory("$ProgramFilesX86\MSBuild\v4.0") | Out-Null
+    }
+    if(Test-Path "$env:ProgramW6432\MSBuild")
+    {
+        $files += "$env:ProgramW6432\MSBuild\v4.0\Custom.After.Microsoft.Common.Targets"
+        [IO.Directory]::CreateDirectory("$env:ProgramW6432\MSBuild\v4.0") | Out-Null
+    }
+
+    return $files
 }
 Export-ModuleMember Get-GlobalMSBuildHookFiles
 
