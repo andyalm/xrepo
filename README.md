@@ -27,7 +27,7 @@ Configuration options can be set via the 'xrepo config' command.
 
 ### copy_pins
 
-Determines whether pinned assemblies will be copied to the location of the HintPath of the assembly reference they are overriding. If you use an real-time code analysis tool like ReSharper, you will want to enable this option
+Determines whether pinned assemblies will be copied to the HintPath location of the assembly reference they are overriding. If you use an real-time code analysis tool like ReSharper, you will want to enable this option.
 
 ### pin_warnings
 
