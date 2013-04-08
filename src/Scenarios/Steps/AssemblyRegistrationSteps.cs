@@ -57,7 +57,6 @@ namespace XRepo.Scenarios.Steps
         public void GivenTheAssemblyIsRegistered(string assemblyName)
         {
             _environment.AssemblyRegistry.RegisterAssembly(assemblyName, Path.Combine(_environment.Root, assemblyName + ".dll"), null);
-            _environment.AssemblyRegistry.Save();
         }
 
         [Given(@"a repo (.*)")]
@@ -76,7 +75,6 @@ namespace XRepo.Scenarios.Steps
             var repoPath = _environment.GetRepoPath(repoName);
             var assemblyLocation = Path.Combine(repoPath, assemblyName + ".dll");
             _environment.AssemblyRegistry.RegisterAssembly(assemblyName, assemblyLocation, null);
-            _environment.AssemblyRegistry.Save();
             
             File.Copy(Path.Combine(_environment.Root, assemblyFilename), Path.Combine(repoPath, assemblyFilename));
         }

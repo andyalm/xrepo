@@ -1,51 +1,54 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 
 using Newtonsoft.Json;
 
 namespace XRepo.Core
 {
-    public class AssemblyRegistry : JsonRegistry<AssemblyRegistrationCollection>
+    public class AssemblyRegistry
     {
+        private readonly MultiFileRegistry<AssemblyRegistration> _assemblies;
+
+        public AssemblyRegistry(string directoryPath)
+        {
+            _assemblies = new MultiFileRegistry<AssemblyRegistration>(Path.Combine(directoryPath, "assemblies"), r => r.Name);
+        }
+
         public static AssemblyRegistry ForDirectory(string directoryPath)
         {
-            return Load<AssemblyRegistry>(directoryPath);
+            return new AssemblyRegistry(directoryPath);
         }
 
         public AssemblyRegistration GetAssembly(string assemblyShortName)
         {
-            if (Data.Contains(assemblyShortName))
-                return Data[assemblyShortName];
+            if (IsAssemblyRegistered(assemblyShortName))
+                return _assemblies.GetItem(assemblyShortName);
             else
                 return null;
         }
 
         public void RegisterAssembly(string assemblyShortName, string assemblyPath, string projectPath)
         {
-            var assemblyConfig = GetAssembly(assemblyShortName);
-            if(assemblyConfig == null)
+            var assemblyRegistration = GetAssembly(assemblyShortName);
+            if(assemblyRegistration == null)
             {
-                assemblyConfig = new AssemblyRegistration(assemblyShortName);
-                Data.Add(assemblyConfig);
+                assemblyRegistration = new AssemblyRegistration(assemblyShortName);
             }
-            assemblyConfig.RegisterProject(assemblyPath, projectPath);
+            assemblyRegistration.RegisterProject(assemblyPath, projectPath);
+            _assemblies.SaveItem(assemblyRegistration);
         }
 
         public bool IsAssemblyRegistered(string assemblyName)
         {
-            return Data.Contains(assemblyName);
+            return _assemblies.Exists(assemblyName);
         }
 
         public IEnumerable<AssemblyRegistration> GetAssemblies()
         {
-            return Data;
-        }
-
-        protected override string Filename
-        {
-            get { return "assembly.registry"; }
+            return _assemblies.GetItems();
         }
     }
 

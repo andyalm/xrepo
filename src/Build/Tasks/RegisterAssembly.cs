@@ -19,7 +19,6 @@ namespace XRepo.Build.Tasks
         public override void ExecuteOrThrow()
         {
             Environment.AssemblyRegistry.RegisterAssembly(AssemblyName, AssemblyPath.FullPath(), ProjectPath.FullPath());
-            Environment.AssemblyRegistry.Save();
         }
     }
 }

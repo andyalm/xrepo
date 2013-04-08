@@ -68,7 +68,7 @@ namespace XRepo.Scenarios.TestSupport
 
         public void Dispose()
         {
-            Directory.Delete(_tempDir, recursive:true);
+            //Directory.Delete(_tempDir, recursive:true);
         }
 
         public XRepoEnvironment XRepoEnvironment
