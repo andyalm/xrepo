@@ -3,7 +3,7 @@
   <metadata>
     <id>xrepo</id>
     <title>xrepo</title>
-    <version>0.5.1</version>
+    <version>0.6.0</version>
     <authors>Andy Alm</authors>
     <summary>Cross repo development finally made easy</summary>
     <description>Finally makes it easy to develop when you need to make changes that spans more than one source code repository.</description>
@@ -13,7 +13,7 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <!--<iconUrl>https://github.com/__CHOCO_PKG_OWNER_REPO__/raw/master/xrepo/xrepo.gif</iconUrl>-->
     <releaseNotes>
-        Fixed the chocolatey installer...it actually works now
+        Reduced file contention during parallel builds so that random build errors would not occur.
     </releaseNotes>
   </metadata>
   <files>
