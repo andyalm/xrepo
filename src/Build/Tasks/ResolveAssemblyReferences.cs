@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 
 using Microsoft.Build.Framework;
-
+using Microsoft.Build.Tasks;
 using XRepo.Build.Infrastructure;
 using XRepo.Core;
 
@@ -33,9 +33,12 @@ namespace XRepo.Build.Tasks
                 var pinnedProject = Environment.FindPinForAssembly(assemblyName);
                 if(pinnedProject == null)
                     continue;
-                if(Environment.ConfigRegistry.Settings.PinWarnings)
+                var configSettings = Environment.ConfigRegistry.Settings;
+                if(configSettings.PinWarnings)
                     Log.LogWarning("The assembly '" + assemblyName + "' is pinned");
-                if(Environment.ConfigRegistry.Settings.CopyPins && assemblyReference.ContainsMetadata("HintPath"))
+                if (configSettings.AutoBuildPins && !string.IsNullOrEmpty(pinnedProject.Project.ProjectPath))
+                    BuildPinnedAssembly(pinnedProject.Project, assemblyName);
+                if(configSettings.CopyPins && assemblyReference.ContainsMetadata("HintPath"))
                 {
                     CopyPinnedAssembly(assemblyName, pinnedProject, assemblyReference.GetMetadata("HintPath"));
                 }
@@ -47,6 +50,16 @@ namespace XRepo.Build.Tasks
             }
 
             AssemblyReferenceOverrides = referenceOverrides.ToArray();
+        }
+
+        private void BuildPinnedAssembly(RegisteredProject project, string assemblyName)
+        {
+            Log.LogMessage("Building project for pinned assembly '" + assemblyName + "'...");
+            this.ExecTask(() => new MSBuild
+            {
+                Projects = project.ProjectPath.ToTaskItems(),
+                BuildInParallel = false //Ensure that this is built synchronously before we copy the output assembly
+            });
         }
 
         private void CopyPinnedAssembly(string assemblyName, PinnedProject project, string hintPath)

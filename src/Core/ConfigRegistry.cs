@@ -89,6 +89,14 @@ namespace XRepo.Core
     {
         public bool CopyPins { get; set; }
         public bool PinWarnings { get; set; }
+        public bool AutoBuildPins { get; set; }
+
+        public ConfigSettings()
+        {
+            CopyPins = true;
+            PinWarnings = false;
+            AutoBuildPins = true;
+        }
     }
 
     internal static class ConfigExtensions
