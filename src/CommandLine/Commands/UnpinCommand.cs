@@ -17,12 +17,21 @@ namespace CommandLine.Commands
     {
         public override void ExecuteCommand(PinInputArgs input)
         {
-            if (Environment.RepoRegistry.IsRepoRegistered(input.Name))
+            if(input.Name.EqualsIgnoreCase("all"))
+                UnpinAll();
+            else if (Environment.RepoRegistry.IsRepoRegistered(input.Name))
                 UnpinRepo(input.Name);
             else if (Environment.AssemblyRegistry.IsAssemblyRegistered(input.Name))
                 UnpinAssembly(input.Name);
             else
                 throw new CommandFailureException("There is no repo or assembly registered by the name of '" + input.Name + "'. Either go build that assembly or register the repo.");
+        }
+
+        private void UnpinAll()
+        {
+            Environment.PinRegistry.UnpinAll();
+            Environment.PinRegistry.Save();
+            Console.WriteLine("Everything has been unpinned.");
         }
 
         private void UnpinAssembly(string assemblyName)

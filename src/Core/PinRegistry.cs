@@ -78,6 +78,12 @@ namespace XRepo.Core
             return null;
         }
 
+        public void UnpinAll()
+        {
+            Data.Repos.Clear();
+            Data.Assemblies.Clear();
+        }
+
         public IEnumerable<RepoPin> GetPinnedRepos()
         {
             return Data.Repos;
