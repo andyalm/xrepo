@@ -33,7 +33,7 @@ _xrepo()
         return 0
         ;;
       unpin)
-        local pinned_repos=$(xrepo pins | grep -v "pinned *" | grep -v "\-" | grep -v -e '^$')
+        local pinned_repos=$(xrepo pins | grep -v "pinned *" | grep -v "^\-" | grep -v -e '^$')
         COMPREPLY=($(compgen -W "${pinned_repos}" ${cur}))
         return 0
         ;;
