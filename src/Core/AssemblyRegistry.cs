@@ -79,7 +79,7 @@ namespace XRepo.Core
             if(project == null)
             {
                 project = new RegisteredProject();
-                _projects.Add(project);
+                _projects.Insert(0, project);
             }
 
             project.ProjectPath = projectPath;
