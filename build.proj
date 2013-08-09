@@ -16,6 +16,6 @@
 
     <Target Name="Deploy" DependsOnTargets="Package">
         <Exec Command="chocolatey uninstall xrepo" ContinueOnError="true" />
-        <Exec Command="chocolatey install xrepo -source $(MSBuildProjectDirectory)\deploy\bin\$(Configuration)" />
+        <Exec Command="chocolatey install xrepo -source $(MSBuildProjectDirectory)\deploy\bin\$(Configuration) -pre" />
     </Target>
 </Project>

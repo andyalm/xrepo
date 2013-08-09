@@ -1,6 +1,6 @@
 $ThisScriptPath = Split-Path -Parent $MyInvocation.MyCommand.Definition
 
-$LocalDevAssemblyLocation = Join-Path $ThisScriptPath "src\Core\bin\Debug\XRepo.Core.dll"
+$LocalDevAssemblyLocation = Join-Path $ThisScriptPath "..\Core\bin\Debug\XRepo.Core.dll"
 $DeployedAssemblyLocation = Join-Path $ThisScriptPath "..\tools\XRepo.Core.dll"
 
 if(Test-Path $LocalDevAssemblyLocation) {
@@ -40,7 +40,7 @@ function XRepoTabExpansion($line, $lastWord) {
 			Get-AssembliesAndRepos | Write-Expansions $lastWord
 		}
 		'unpin' {
-			(@('all') + @(Get-AssembliesAndRepos)) | Write-Expansions $lastWord
+			('all' + @(Get-AssembliesAndRepos)) | Write-Expansions $lastWord
 		}
 		'repo' {
 			@('register', 'unregister') | Write-Expansions $lastWord
@@ -57,14 +57,22 @@ function XRepoTabExpansion($line, $lastWord) {
 function TabExpansion_XRepoDecorator($line, $lastWord) {
 	$result = XRepoTabExpansion $line $lastWord
 	if($result -eq $null) {
-		return TabExpansion_Inner $line $lastWord
+		return TabExpansion_XRepoInner $line $lastWord
 	}
 	else {
 		return $result
 	}
 }
 
+function TabExpansion_XRepoInner($line, $lastWord) {
+	return $null
+}
 
-cp function:TabExpansion function:TabExpansion_Inner
-cp function:TabExpansion_XRepoDecorator function:TabExpansion
-#cp function:XRepoTabExpansion function:TabExpansion
+function Install-XRepoTabExpansion {
+	if(Test-Path function:TabExpansion) {
+		cp function:TabExpansion function:TabExpansion_XRepoInner
+	}
+	cp function:TabExpansion_XRepoDecorator function:TabExpansion
+	#cp function:XRepoTabExpansion function:TabExpansion
+}
+Export-ModuleMember Install-XRepoTabExpansion, TabExpansion_XRepoInner
