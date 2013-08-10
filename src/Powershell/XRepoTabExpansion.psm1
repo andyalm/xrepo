@@ -1,13 +1,55 @@
 $ThisScriptPath = Split-Path -Parent $MyInvocation.MyCommand.Definition
 
+function Test-FileLock($Path) {
+	$oFile = New-Object System.IO.FileInfo $Path
+	
+	if ((Test-Path -Path $Path) -eq $false)	{
+		return $false
+	}
+	  
+	try
+	{
+		$oStream = $oFile.Open([System.IO.FileMode]::Open, [System.IO.FileAccess]::ReadWrite, [System.IO.FileShare]::None)
+		$oStream.Close()
+		
+		return $false
+	}
+	catch
+	{
+		# file is locked by a process.
+		return $true
+	}
+}
+
+function Load-XRepoAssembly($Path) {
+	#file locking sucks. Shadow copy the dll's to a temp dir before they are loaded
+	
+	$assemblyDir = Split-Path -Parent $Path
+	$assemblyFile = Split-Path -Leaf $Path
+	$shadowCopyDirs = @("$env:temp\xrepo\1", "$env:temp\xrepo\2", "$env:temp\xrepo\3", "$env:temp\xrepo\4", "$env:temp\xrepo\5")
+	$shadowCopyDir = $null
+	for($i = 0; $i -lt $shadowCopyDirs.Length; $i++) {
+		$shadowCopyDir = $shadowCopyDirs[$i]
+		if(-not (Test-Path $shadowCopyDir)) {
+			[IO.Directory]::CreateDirectory($shadowCopyDir)
+		}
+		if(-not (Test-FileLock $shadowCopyDir\$assemblyFile)) {
+			break
+		}
+	}
+
+	cp $assemblyDir\*.* $shadowCopyDir
+	Add-Type -Path $shadowCopyDir\$assemblyFile
+}
+
 $LocalDevAssemblyLocation = Join-Path $ThisScriptPath "..\Core\bin\Debug\XRepo.Core.dll"
 $DeployedAssemblyLocation = Join-Path $ThisScriptPath "..\tools\XRepo.Core.dll"
 
 if(Test-Path $LocalDevAssemblyLocation) {
-	Add-Type -Path $LocalDevAssemblyLocation
+	Load-XRepoAssembly $LocalDevAssemblyLocation
 }
 else {
-	Add-Type -Path $DeployedAssemblyLocation
+	Load-XRepoAssembly -Path $DeployedAssemblyLocation
 }
 
 function Get-AssembliesAndRepos {
