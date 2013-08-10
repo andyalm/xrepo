@@ -32,8 +32,8 @@ function XRepoTabExpansion($line, $lastWord) {
 		return $null
 	}
 	$xrepo = [XRepo.Core.XRepoEnvironment]::ForCurrentUser()
-	if($parts.Length -eq 2) {
-		Write-Expansions $(Get-XRepoCommands) $lastWord
+	if($parts.Length -le 2) {
+		return Get-XRepoCommands | Write-Expansions $lastWord
 	}
 	switch($parts[1]) {
 		'pin' {

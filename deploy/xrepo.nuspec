@@ -22,5 +22,6 @@
     <file src="..\deploy\build\*.*" target="build" />
     <file src="..\src\Build\bin\$configuration$\*.*" target="build" />
     <file src="..\src\Powershell\*.*" target="powershell" />
+    <file src="..\src\Bash\*.*" target="bash" />
   </files>
 </package>
