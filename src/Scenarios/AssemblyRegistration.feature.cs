@@ -183,6 +183,33 @@ this.ScenarioSetup(scenarioInfo);
 #line hidden
             this.ScenarioCleanup();
         }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("A pinned assembly registered in multiple locations resolves to most recently buil" +
+            "t")]
+        public virtual void APinnedAssemblyRegisteredInMultipleLocationsResolvesToMostRecentlyBuilt()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("A pinned assembly registered in multiple locations resolves to most recently buil" +
+                    "t", ((string[])(null)));
+#line 46
+this.ScenarioSetup(scenarioInfo);
+#line 47
+ testRunner.Given("a class library project", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 48
+  testRunner.And("the project has a reference to assembly nunit.framework", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 49
+  testRunner.And("the assembly nunit.framework is registered in multiple locations", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 50
+  testRunner.And("the assembly nunit.framework is pinned", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 51
+ testRunner.When("the project is compiled", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 52
+ testRunner.Then("the reference to is resolved to the pinned copy of nunit.framework", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 53
+  testRunner.And("the pinned location resolves to the most recently built location", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+            this.ScenarioCleanup();
+        }
     }
 }
 #pragma warning restore
