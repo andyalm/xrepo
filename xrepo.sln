@@ -15,11 +15,40 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "src\Core\Core.cspro
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommandLine", "src\CommandLine\CommandLine.csproj", "{588D487A-E1AE-4576-9AFA-78C6C3F0AA3C}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{3BA97855-9E36-4915-AD21-17A437B3D36C}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Powershell", "Powershell", "{2BA2342D-4ADE-44D1-9910-BF6B82125254}"
 	ProjectSection(SolutionItems) = preProject
-		deploy.ps1 = deploy.ps1
-		xrepo-completion.bash = xrepo-completion.bash
-		xrepo-completion.ps1 = xrepo-completion.ps1
+		src\Powershell\XRepoTabExpansion.psm1 = src\Powershell\XRepoTabExpansion.psm1
+		src\Powershell\XRepoTabExpansionBootstrapper.ps1 = src\Powershell\XRepoTabExpansionBootstrapper.ps1
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Bash", "Bash", "{17C2ADC8-E150-4AF4-AF18-2696961FBA50}"
+	ProjectSection(SolutionItems) = preProject
+		src\Bash\xrepo_completion.bash = src\Bash\xrepo_completion.bash
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Deploy", "Deploy", "{ECEEC24B-63FE-4404-AC66-9A94FB19B83D}"
+	ProjectSection(SolutionItems) = preProject
+		deploy\xrepo.nuspec = deploy\xrepo.nuspec
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{D12DB11C-F3F5-4547-9C11-1DBABB6883C6}"
+	ProjectSection(SolutionItems) = preProject
+		deploy\tools\chocolateyInstall.ps1 = deploy\tools\chocolateyInstall.ps1
+		deploy\tools\chocolateyUninstall.ps1 = deploy\tools\chocolateyUninstall.ps1
+		deploy\tools\GlobalMSBuildHook.psm1 = deploy\tools\GlobalMSBuildHook.psm1
+		deploy\tools\install.ps1 = deploy\tools\install.ps1
+		deploy\tools\installGlobalMsBuildHook.ps1 = deploy\tools\installGlobalMsBuildHook.ps1
+		deploy\tools\uninstallGlobalMsBuildHook.ps1 = deploy\tools\uninstallGlobalMsBuildHook.ps1
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{A983F4B8-92F8-44E6-B7C9-C33823F3E890}"
+	ProjectSection(SolutionItems) = preProject
+		deploy\build\Custom.After.Microsoft.Common.Targets = deploy\build\Custom.After.Microsoft.Common.Targets
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{D1BFF699-243E-4C40-BD22-91EC0B0BDCD3}"
+	ProjectSection(SolutionItems) = preProject
+		build.proj = build.proj
 	EndProjectSection
 EndProject
 Global
@@ -47,5 +76,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{D12DB11C-F3F5-4547-9C11-1DBABB6883C6} = {ECEEC24B-63FE-4404-AC66-9A94FB19B83D}
+		{A983F4B8-92F8-44E6-B7C9-C33823F3E890} = {ECEEC24B-63FE-4404-AC66-9A94FB19B83D}
 	EndGlobalSection
 EndGlobal
