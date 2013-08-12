@@ -114,6 +114,10 @@ function Install-XRepoTabExpansion {
 	if(Test-Path function:TabExpansion) {
 		cp function:TabExpansion function:TabExpansion_XRepoInner
 	}
+	else {
+		#if a TabExpansion function doesn't exist, create it in the global scope
+		function global:TabExpansion {}
+	}
 	cp function:TabExpansion_XRepoDecorator function:TabExpansion
 	#cp function:XRepoTabExpansion function:TabExpansion
 }
