@@ -107,7 +107,7 @@ function TabExpansion_XRepoDecorator($line, $lastWord) {
 }
 
 function TabExpansion_XRepoInner($line, $lastWord) {
-	return $null
+	
 }
 
 function Install-XRepoTabExpansion {

@@ -99,8 +99,7 @@ namespace XRepo.Core
         {
             get
             {
-                return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData,
-                                                            Environment.SpecialFolderOption.Create), "XRepo");
+                return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "XRepo");
             }
         }
 

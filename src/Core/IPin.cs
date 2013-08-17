@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -79,7 +78,7 @@ namespace XRepo.Core
 
         public string GetAssemblyDir(string environmentRoot)
         {
-            return Path.Combine(environmentRoot, "backups", AssemblyName);
+            return Path.Combine(Path.Combine(environmentRoot, "backups"), AssemblyName);
         }
     }
 
