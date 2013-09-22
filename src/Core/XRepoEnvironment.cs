@@ -68,22 +68,16 @@ namespace XRepo.Core
                 project = null;
                 return false;
             }
-            else if(matchingProjectsInPinnedRepos.Length == 1)
+
+            var projectRepoPair = matchingProjectsInPinnedRepos
+                .OrderByDescending(p => p.Project.Timestamp)
+                .First();
+            project = new PinnedProject
             {
-                var projectRepoPair = matchingProjectsInPinnedRepos.Single();
-                project = new PinnedProject
-                {
-                    Pin = projectRepoPair.Repo.Pin,
-                    Project = projectRepoPair.Project
-                };
-                return true;
-            }
-            else
-            {
-                var matchingRepoList = String.Join(", ", matchingProjectsInPinnedRepos.Select(p => p.Repo.Repo.Name).ToArray());
-                var errorMessage = String.Format("The assembly '{0}' is registered in multiple pinned repos ({1}), so I don't know what to do here. Please either unregister the assembly from all but one of the locations, or unpin all but one of the repos.", assemblyName, matchingRepoList);
-                throw new ApplicationException(errorMessage);
-            }
+                Pin = projectRepoPair.Repo.Pin,
+                Project = projectRepoPair.Project
+            };
+            return true;
         }
 
         private IEnumerable<PinnedRepo> GetPinnedRepos()
@@ -131,7 +125,7 @@ namespace XRepo.Core
                 return new PinnedProject
                 {
                     Pin = PinRegistry.GetAssemblyPin(assemblyName),
-                    Project = assembly.Projects.First()
+                    Project = assembly.Projects.OrderByDescending(p => p.Timestamp).First()
                 };
             }
 

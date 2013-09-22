@@ -84,6 +84,7 @@ namespace XRepo.Core
 
             project.ProjectPath = projectPath;
             project.AssemblyPath = assemblyPath;
+            project.Timestamp = DateTime.Now;
         }
     }
 
@@ -102,5 +103,7 @@ namespace XRepo.Core
         public string ProjectPath { get; set; }
 
         public string AssemblyPath { get; set; }
+        
+        public DateTime Timestamp { get; set; }
     }
 }
