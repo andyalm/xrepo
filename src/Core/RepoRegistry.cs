@@ -42,6 +42,18 @@ namespace XRepo.Core
         {
             return Data.Contains(repoName);
         }
+
+        public bool IsRepoRegistered(string repoName, out RepoRegistration repo)
+        {
+            if (IsRepoRegistered(repoName))
+            {
+                repo = Data[repoName];
+                return true;
+            }
+
+            repo = null;
+            return false;
+        }
     }
 
     public class RepoRegistration

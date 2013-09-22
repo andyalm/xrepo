@@ -52,6 +52,8 @@
     <Compile Include="Commands\RepoCommand.cs" />
     <Compile Include="Commands\PinCommand.cs" />
     <Compile Include="Commands\ReposCommand.cs" />
+    <Compile Include="Commands\WhereCommand.cs" />
+    <Compile Include="Commands\WhichCommand.cs" />
     <Compile Include="Commands\XRepoCommand.cs" />
     <Compile Include="Infrastructure\WriterExtensions.cs" />
     <Compile Include="Models\PinInputArgs.cs" />
