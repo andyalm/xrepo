@@ -47,7 +47,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
+    <Compile Include="ResolvingPins.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Support\TestEnvironment.cs" />
   </ItemGroup>

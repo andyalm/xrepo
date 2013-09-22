@@ -43,13 +43,4 @@ Scenario: A pinned repo overrides hint paths for all registered assemblies withi
 		And the repo MyRepo is pinned
 		And the copy_pins config setting is false
 	When the project is compiled
-		Then the reference to is resolved to the pinned copy of nunit.framework
-
-Scenario: A pinned assembly registered in multiple locations resolves to most recently built
-	Given a class library project
-		And the project has a reference to assembly nunit.framework
-		And the assembly nunit.framework is registered in multiple locations
-		And the assembly nunit.framework is pinned
-	When the project is compiled
 	Then the reference to is resolved to the pinned copy of nunit.framework
-		And the pinned location resolves to the most recently built location

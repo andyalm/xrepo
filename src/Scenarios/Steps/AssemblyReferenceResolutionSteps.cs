@@ -12,13 +12,13 @@ using XRepo.Scenarios.TestSupport;
 namespace XRepo.Scenarios.Steps
 {
     [Binding]
-    public class AssemblyRegistrationSteps
+    public class AssemblyReferenceResolutionSteps
     {
         private readonly TestEnvironment _environment;
         private ProjectBuilder _projectBuilder;
         private string _buildOutput;
 
-        public AssemblyRegistrationSteps(TestEnvironment environment)
+        public AssemblyReferenceResolutionSteps(TestEnvironment environment)
         {
             _environment = environment;
         }
