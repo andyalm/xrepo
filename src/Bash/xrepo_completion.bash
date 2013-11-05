@@ -5,7 +5,7 @@ _xrepo()
     cur="${COMP_WORDS[COMP_CWORD]}"
     prev="${COMP_WORDS[COMP_CWORD-1]}"
 
-    opts="assemblies config pin pins repo repos unpin"
+    opts="assemblies config pin pins repo repos unpin which where"
 
     case "${prev}" in
       assemblies)

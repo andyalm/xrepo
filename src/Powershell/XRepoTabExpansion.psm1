@@ -61,7 +61,8 @@ function Get-AssembliesAndRepos {
 }
 
 function Get-XRepoCommands {
-	@('assemblies', 'config', 'pin', 'unpin', 'pins', 'repos')
+	
+	@('assemblies', 'config', 'pin', 'unpin', 'pins', 'repos', 'which', 'where')
 }
 
 function Write-Expansions($lastWord) {
