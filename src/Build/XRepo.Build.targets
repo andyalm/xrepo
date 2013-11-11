@@ -1,41 +1,44 @@
 ﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
-	<UsingTask TaskName="XRepo.Build.Tasks.ResolveAssemblyReferences"
+  <UsingTask TaskName="XRepo.Build.Tasks.ResolvePinnedReferences"
 			   AssemblyFile="$(MSBuildThisFileDirectory)\XRepo.Build.dll"/>
   <UsingTask TaskName="XRepo.Build.Tasks.RegisterAssembly"
 			   AssemblyFile="$(MSBuildThisFileDirectory)\XRepo.Build.dll"/>
 
   <PropertyGroup>
     <ResolveReferencesDependsOn>
-      _OverrideHintPaths;
+      _XRepoOverridePinnedReferences;
       $(ResolveReferencesDependsOn)
     </ResolveReferencesDependsOn>
   </PropertyGroup>
 
-  <Target Name="_OverrideHintPaths">
+  <Target Name="_XRepoOverridePinnedReferences">
     <PropertyGroup>
       <XRepoSkipUnchangedFiles Condition="$(XRepoSkipUnchangedFiles)==''">true</XRepoSkipUnchangedFiles>
     </PropertyGroup>
-    <XRepo.Build.Tasks.ResolveAssemblyReferences
+    <XRepo.Build.Tasks.ResolvePinnedReferences
         AssemblyReferences="@(Reference)"
         CustomConfigDir="$(XRepoConfigDir)"
         SkipUnchangedFiles="$(XRepoSkipUnchangedFiles)"
         DebugTask="false">
-      <Output TaskParameter="AssemblyReferenceOverrides" ItemName="ReferenceOverride"/>
-    </XRepo.Build.Tasks.ResolveAssemblyReferences>
+      <Output TaskParameter="AssemblyReferenceAdditions" ItemName="AssemblyReferenceAddition"/>
+      <Output TaskParameter="AssemblyReferenceRemovals" ItemName="AssemblyReferenceRemoval"/>
+      <Output TaskParameter="ProjectReferences" ItemName="ProjectReferenceAddition"/>
+    </XRepo.Build.Tasks.ResolvePinnedReferences>
     <ItemGroup>
-      <Reference Remove="%(ReferenceOverride.Identity)"/>
-      <Reference Include="@(ReferenceOverride)" />
+      <Reference Remove="%(AssemblyReferenceRemoval.Identity)"/>
+      <Reference Include="@(AssemblyReferenceAddition)" />
+      <ProjectReference Include="@(ProjectReferenceAddition)"/>
     </ItemGroup>
   </Target>
 
   <PropertyGroup>
     <BuildDependsOn>
       $(BuildDependsOn);
-      _RegisterAssembly
+      _XRepoRegisterAssembly
     </BuildDependsOn>
   </PropertyGroup>
   
-  <Target Name="_RegisterAssembly">
+  <Target Name="_XRepoRegisterAssembly">
     <Message Text="Registering the assembly $(TargetPath)" Importance="high"/>
     <XRepo.Build.Tasks.RegisterAssembly
       AssemblyPath="$(TargetPath)"
@@ -46,4 +49,26 @@
       DebugTask="false"/>
   </Target>
   
+  <!--
+    MSBuild will not build project references if it detects its building inside of Visual Studio. However,
+    if we converted some pinned assembly references into project references, then we DO want
+    it to build those projects. To make this work, we fool MSBuild into thinking it is not building
+    inside of Visual Studio during the ResolveProjectReferences target. We revert the setting back
+    to its original value as soon as that target is complete.
+  -->
+  <Target Name="_XRepoBeforeResolveProjectReferences" BeforeTargets="ResolveProjectReferences" DependsOnTargets="_XRepoOverridePinnedReferences">
+    <PropertyGroup Condition="@(ProjectReferenceAddition)!=''">
+      <IsActuallyBuildingInsideVisualStudio>$(BuildingInsideVisualStudio)</IsActuallyBuildingInsideVisualStudio>
+      <BuildingInsideVisualStudio>false</BuildingInsideVisualStudio>
+    </PropertyGroup>
+    <Message Condition="@(ProjectReferenceAddition)!=''" Text="Clearing Visual Studio bit '$(BuildingInsideVisualStudio)'"/>
+  </Target>
+  
+  <Target Name="_XRepoAfterResolveProjectReferences" AfterTargets="ResolveProjectReferences">
+    <PropertyGroup Condition="@(ProjectReferenceAddition)!=''">
+      <BuildingInsideVisualStudio>$(IsActuallyBuildingInsideVisualStudio)</BuildingInsideVisualStudio>
+    </PropertyGroup>
+    <Message Condition="@(ProjectReferenceAddition)!=''" Text="Reset Visual Studio bit '$(BuildingInsideVisualStudio)'"/>
+  </Target>
+
 </Project>

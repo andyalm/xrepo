@@ -1,9 +1,9 @@
-<?xml version="1.0"?>
+﻿<?xml version="1.0"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>xrepo</id>
     <title>xrepo</title>
-    <version>0.8.2</version>
+    <version>0.9.0-beta1</version>
     <authors>Andy Alm</authors>
     <summary>Cross repo development finally made easy</summary>
     <description>Finally makes it easy to develop when you need to make changes that spans more than one source code repository.</description>
@@ -13,9 +13,7 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <!--<iconUrl>https://github.com/andyalm/raw/master/xrepo/xrepo.gif</iconUrl>-->
     <releaseNotes>
-        Added better tab completion for the which and where commands. It can now autocomplete the assembly parameter.
-
-        Simplified the assemblies command as the rest of what it was doing can now be achieved through which and where.
+        Reworked the internals so that your build is faster when referencing pinned assemblies.
     </releaseNotes>
   </metadata>
   <files>

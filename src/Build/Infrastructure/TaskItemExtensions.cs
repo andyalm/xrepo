@@ -114,5 +114,14 @@ namespace XRepo.Build.Infrastructure
         {
             return !String.IsNullOrWhiteSpace(item.GetMetadata(name));
         }
+
+        public static string AssemblyShortName(this ITaskItem item)
+        {
+            var index = item.ItemSpec.IndexOf(',');
+            if (index >= 0)
+                return item.ItemSpec.Substring(0, index);
+            else
+                return item.ItemSpec;
+        }
     }
 }

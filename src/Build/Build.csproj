@@ -52,7 +52,7 @@
     <Compile Include="Infrastructure\TaskWithNoReturnFlag.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tasks\RegisterAssembly.cs" />
-    <Compile Include="Tasks\ResolveAssemblyReferences.cs" />
+    <Compile Include="Tasks\ResolvePinnedReferences.cs" />
     <Compile Include="Tasks\XRepoTask.cs" />
   </ItemGroup>
   <ItemGroup>
