@@ -60,6 +60,11 @@ function Get-AssembliesAndRepos {
 	return $repos + $assemblies
 }
 
+function Get-Assemblies {
+	$xrepo = [XRepo.Core.XRepoEnvironment]::ForCurrentUser()
+	return @($xrepo.AssemblyRegistry.GetAssemblies() | % { $_.Name })
+}
+
 function Get-XRepoCommands {
 	
 	@('assemblies', 'config', 'pin', 'unpin', 'pins', 'repos', 'which', 'where')
@@ -90,6 +95,12 @@ function XRepoTabExpansion($line, $lastWord) {
 		}
 		'config' {
 			@('copy_pins', 'pin_warnings', 'auto_build_pins') | Write-Expansions $lastWord
+		}
+		'which' {
+			Get-Assemblies | Write-Expansions $lastWord
+		}
+		'where' {
+			Get-Assemblies | Write-Expansions $lastWord
 		}
 		default {
 			return $null

@@ -3,7 +3,7 @@
   <metadata>
     <id>xrepo</id>
     <title>xrepo</title>
-    <version>0.8.1</version>
+    <version>0.8.2</version>
     <authors>Andy Alm</authors>
     <summary>Cross repo development finally made easy</summary>
     <description>Finally makes it easy to develop when you need to make changes that spans more than one source code repository.</description>
@@ -13,7 +13,9 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <!--<iconUrl>https://github.com/andyalm/raw/master/xrepo/xrepo.gif</iconUrl>-->
     <releaseNotes>
-        Added tab expansion for powershell and bash prompts.
+        Added better tab completion for the which and where commands. It can now autocomplete the assembly parameter.
+
+        Simplified the assemblies command as the rest of what it was doing can now be achieved through which and where.
     </releaseNotes>
   </metadata>
   <files>

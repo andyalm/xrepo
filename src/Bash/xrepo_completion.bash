@@ -36,6 +36,16 @@ _xrepo()
         local pinned_repos=$(xrepo pins | grep -v "pinned *" | grep -v "^\-" | grep -v -e '^$')
         COMPREPLY=($(compgen -W "${pinned_repos}" ${cur}))
         return 0
+		;;
+      which)
+        local pinned_repos=$(xrepo assemblies)
+        COMPREPLY=($(compgen -W "${pinned_repos}" ${cur}))
+        return 0
+        ;;
+	  where)
+        local pinned_repos=$(xrepo assemblies)
+        COMPREPLY=($(compgen -W "${pinned_repos}" ${cur}))
+        return 0
         ;;
       *)
         COMPREPLY=($(compgen -W "${opts}" ${cur}))  

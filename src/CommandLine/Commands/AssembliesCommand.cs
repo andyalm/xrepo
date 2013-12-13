@@ -1,7 +1,6 @@
 ﻿using System;
-
-using CommandLine.Infrastructure;
-
+using System.Collections.Generic;
+using System.Linq;
 using FubuCore.CommandLine;
 
 namespace CommandLine.Commands
@@ -11,16 +10,9 @@ namespace CommandLine.Commands
     {
         public override void ExecuteCommand()
         {
-            var assemblies = Environment.AssemblyRegistry.GetAssemblies();
-            Console.Out.WriteList("assemblies", assemblies, a =>
-            {
-                Console.WriteLine(a.Name);
-                foreach (var project in a.Projects)
-                {
-                    Console.WriteLine("\t{0}", project.AssemblyPath);
-                }
-                Console.WriteLine("----------------------");
-            });
+            Environment.AssemblyRegistry.GetAssemblies()
+                .OrderBy(a => a.Name)
+                .Each(a => Console.WriteLine(a.Name));
         }
     }
 }
