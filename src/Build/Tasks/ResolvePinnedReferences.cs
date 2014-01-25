@@ -59,11 +59,12 @@ namespace XRepo.Build.Tasks
                 {
                     ReplaceAssemblyReferenceWithProjectReference(assemblyReference, pinnedProject.Project.ProjectPath, assemblyName);
                 }
-                else if (configSettings.CopyPins && assemblyReference.ContainsMetadata("HintPath"))
+                //TODO: Move this to its own task that runs before the only during the build
+                if (configSettings.CopyPins && assemblyReference.ContainsMetadata("HintPath"))
                 {
                     CopyPinnedAssembly(assemblyName, pinnedProject, assemblyReference.GetMetadata("HintPath"));
                 }
-                else
+                else if(string.IsNullOrEmpty(pinnedProject.Project.ProjectPath))
                 {
                     OverrideHintPath(assemblyName, pinnedProject.Project.AssemblyPath, assemblyReference);
                 }

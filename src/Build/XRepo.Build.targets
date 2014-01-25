@@ -6,7 +6,7 @@
 
   <PropertyGroup>
     <ResolveReferencesDependsOn>
-      _XRepoOverridePinnedReferences;
+      _XRepoOverridePinnedReferences; <!--TODO: See if this can be removed because it simply needs to run before AssignProjectConfiguration -->
       $(ResolveReferencesDependsOn)
     </ResolveReferencesDependsOn>
   </PropertyGroup>
@@ -37,7 +37,7 @@
       _XRepoRegisterAssembly
     </BuildDependsOn>
   </PropertyGroup>
-  
+
   <Target Name="_XRepoRegisterAssembly">
     <Message Text="Registering the assembly $(TargetPath)" Importance="high"/>
     <XRepo.Build.Tasks.RegisterAssembly
@@ -48,7 +48,11 @@
       Condition="$(TargetPath)!=''"
       DebugTask="false"/>
   </Target>
-  
+
+  <!--Ensure that _XRepoOverridePinnedReferences runs before the AssignProjectConfiguration target so that both clean and build work -->
+  <Target Name="_XRepoBeforeAssignProjectConfiguration" BeforeTargets="AssignProjectConfiguration" DependsOnTargets="_XRepoOverridePinnedReferences">
+  </Target>
+
   <!--
     MSBuild will not build project references if it detects its building inside of Visual Studio. However,
     if we converted some pinned assembly references into project references, then we DO want
@@ -63,12 +67,34 @@
     </PropertyGroup>
     <Message Condition="@(ProjectReferenceAddition)!=''" Text="Clearing Visual Studio bit '$(BuildingInsideVisualStudio)'"/>
   </Target>
-  
+
   <Target Name="_XRepoAfterResolveProjectReferences" AfterTargets="ResolveProjectReferences">
     <PropertyGroup Condition="@(ProjectReferenceAddition)!=''">
       <BuildingInsideVisualStudio>$(IsActuallyBuildingInsideVisualStudio)</BuildingInsideVisualStudio>
     </PropertyGroup>
     <Message Condition="@(ProjectReferenceAddition)!=''" Text="Reset Visual Studio bit '$(BuildingInsideVisualStudio)'"/>
+    <Message Text="ProjectReference: @(ProjectReference)" />
+    <Message Text="ProjectReferenceWithConfiguration: @(ProjectReferenceWithConfiguration)" />
+    <Message Text="_ResolvedProjectReferencePaths: @(_ResolvedProjectReferencePaths)" />
+  </Target>
+
+  <!--TODO: Verify that this is actually necessary-->
+  <Target Name="_XRepoBeforeCleanReferencedProjects" BeforeTargets="CleanReferencedProjects">
+    <PropertyGroup Condition="@(ProjectReferenceAddition)!=''">
+      <IsActuallyBuildingInsideVisualStudio>$(BuildingInsideVisualStudio)</IsActuallyBuildingInsideVisualStudio>
+      <BuildingInsideVisualStudio>false</BuildingInsideVisualStudio>
+    </PropertyGroup>
+    <Message Condition="@(ProjectReferenceAddition)!=''" Text="Clearing Visual Studio bit '$(BuildingInsideVisualStudio)'"/>
+  </Target>
+
+  <Target Name="_XRepoAfterCleanReferencedProjects" AfterTargets="CleanReferencedProjects">
+    <PropertyGroup Condition="@(ProjectReferenceAddition)!=''">
+      <BuildingInsideVisualStudio>$(IsActuallyBuildingInsideVisualStudio)</BuildingInsideVisualStudio>
+    </PropertyGroup>
+    <Message Condition="@(ProjectReferenceAddition)!=''" Text="Reset Visual Studio bit '$(BuildingInsideVisualStudio)'"/>
+    <Message Text="ProjectReference: @(ProjectReference)" />
+    <Message Text="ProjectReferenceWithConfiguration: @(ProjectReferenceWithConfiguration)" />
+    <Message Text="_ResolvedProjectReferencePaths: @(_ResolvedProjectReferencePaths)" />
   </Target>
 
 </Project>
