@@ -13,7 +13,8 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <!--<iconUrl>https://github.com/andyalm/raw/master/xrepo/xrepo.gif</iconUrl>-->
     <releaseNotes>
-        Adds support for VS 2015 (MSBuild v14)
+        * Adds support for VS 2015 (MSBuild v14)
+        * Made the pin_warnings config setting on by default
     </releaseNotes>
   </metadata>
   <files>

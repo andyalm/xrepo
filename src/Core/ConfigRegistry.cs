@@ -94,7 +94,7 @@ namespace XRepo.Core
         public ConfigSettings()
         {
             CopyPins = true;
-            PinWarnings = false;
+            PinWarnings = true;
             AutoBuildPins = true;
         }
     }
