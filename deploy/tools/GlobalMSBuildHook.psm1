@@ -48,6 +48,8 @@ function Get-GlobalMSBuildHookFiles
         [IO.Directory]::CreateDirectory("$ProgramFilesX86\MSBuild\v4.0") | Out-Null
 		$files += "$ProgramFilesX86\MSBuild\v12.0\Custom.After.Microsoft.Common.Targets"
         [IO.Directory]::CreateDirectory("$ProgramFilesX86\MSBuild\v12.0") | Out-Null
+		$files += "$ProgramFilesX86\MSBuild\v14.0\Custom.After.Microsoft.Common.Targets"
+        [IO.Directory]::CreateDirectory("$ProgramFilesX86\MSBuild\v14.0") | Out-Null
     }
     if(Test-Path "$env:ProgramW6432\MSBuild")
     {
@@ -55,6 +57,8 @@ function Get-GlobalMSBuildHookFiles
         [IO.Directory]::CreateDirectory("$env:ProgramW6432\MSBuild\v4.0") | Out-Null
 		$files += "$env:ProgramW6432\MSBuild\v12.0\Custom.After.Microsoft.Common.Targets"
         [IO.Directory]::CreateDirectory("$env:ProgramW6432\MSBuild\v12.0") | Out-Null
+		$files += "$env:ProgramW6432\MSBuild\v14.0\Custom.After.Microsoft.Common.Targets"
+        [IO.Directory]::CreateDirectory("$env:ProgramW6432\MSBuild\v14.0") | Out-Null
     }
 
     return $files
