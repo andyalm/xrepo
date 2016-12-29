@@ -13,7 +13,7 @@ namespace CommandLine.Commands
             var assemblyRegistration = Environment.AssemblyRegistry.GetAssembly(input.AssemblyName);
             if (assemblyRegistration == null)
             {
-                Console.WriteLine("Assembly '{0}' not registered. Have you ever built it on this machine?");
+                Console.WriteLine("Assembly '{0}' not registered. Have you ever built it on this machine?", input.AssemblyName);
                 return;
             }
 
