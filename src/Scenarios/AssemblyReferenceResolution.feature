@@ -44,3 +44,50 @@ Scenario: A pinned repo overrides hint paths for all registered assemblies withi
 		And the copy_pins config setting is false
 	When the project is compiled
 	Then the reference to is resolved to the pinned copy of nunit.framework
+
+Scenario: A pinned assembly is resolved at a specific version by default
+	Given a class library project
+		And the project has a reference to assembly nunit.framework, Version=3.6.0.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL
+		And the assembly nunit.framework is registered
+		And the assembly nunit.framework is pinned
+		And the copypins config setting is false
+	When the project is compiled
+	Then the reference to is resolved to the pinned copy of nunit.framework
+		And the build should not give warning Could not resolve this reference. Could not locate the assembly "nunit.framework
+		And the build should succeed
+
+Scenario: A pinned assembly is resolved with specific version when SpecificVersion is False
+	Given a class library project
+		And the project has a reference to assembly nunit.framework, Version=2.6.4, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL
+		And the assembly nunit.framework is registered
+		And the assembly nunit.framework is pinned
+		And the copypins config setting is false
+		And the specificversion config setting is false
+	When the project is compiled
+	Then the reference to is resolved to the pinned copy of nunit.framework
+		And the build should not give warning Could not resolve this reference. Could not locate the assembly "nunit.framework
+		And the build should succeed
+
+Scenario: A pinned assembly is resolved at a specific version when SpecificVersion is True
+	Given a class library project
+		And the project has a reference to assembly nunit.framework, Version=3.6.0.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL
+		And the assembly nunit.framework is registered
+		And the assembly nunit.framework is pinned
+		And the copypins config setting is false
+		And the specificversion config setting is true
+	When the project is compiled
+	Then the reference to is resolved to the pinned copy of nunit.framework
+		And the build should not give warning Could not resolve this reference. Could not locate the assembly "nunit.framework
+		And the build should succeed
+
+Scenario: A pinned assembly is resolved with specific version when SpecificVersion is True
+	Given a class library project
+		And the project has a reference to assembly nunit.framework, Version=2.6.4, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL
+		And the assembly nunit.framework is registered
+		And the assembly nunit.framework is pinned
+		And the copypins config setting is false
+		And the specificversion config setting is true
+	When the project is compiled
+	Then the build should succeed
+		And the build should give warning Could not resolve this reference. Could not locate the assembly "nunit.framework, Version=2.6.4, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL". Check to make sure the assembly exists on disk. 
+

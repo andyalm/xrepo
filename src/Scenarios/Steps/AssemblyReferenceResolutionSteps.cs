@@ -30,13 +30,23 @@ namespace XRepo.Scenarios.Steps
         }
 
         [Given(@"the project has a reference to assembly (.*)")]
-        public void GivenTheProjectHasAReferenceToAssembly(string assemblyName)
+        public void GivenTheProjectHasAReferenceToAssembly(string assembly)
         {
+            var assemblyName = assembly;
+            var specificVersion = assembly.Contains(",");
+
+            if (specificVersion)
+            {
+                assemblyName = assembly.Substring(0, assembly.IndexOf(",", StringComparison.OrdinalIgnoreCase));
+            }
+
             var libPath = _environment.GetLibFilePath(assemblyName + ".dll");
+
             Directory.CreateDirectory(Path.GetDirectoryName(libPath));
+
             File.Copy(Path.Combine(_environment.Root, assemblyName + ".dll"), libPath);
 
-            _projectBuilder.AddReference(assemblyName, libPath);
+            _projectBuilder.AddReference(assembly, libPath, specificVersion);
         }
 
         [Given(@"the assembly (.*) is pinned")]
@@ -75,7 +85,7 @@ namespace XRepo.Scenarios.Steps
             var repoPath = _environment.GetRepoPath(repoName);
             var assemblyLocation = Path.Combine(repoPath, assemblyName + ".dll");
             _environment.AssemblyRegistry.RegisterAssembly(assemblyName, assemblyLocation, null);
-            
+
             File.Copy(Path.Combine(_environment.Root, assemblyFilename), Path.Combine(repoPath, assemblyFilename));
         }
 
@@ -128,7 +138,7 @@ namespace XRepo.Scenarios.Steps
         {
             var pinnedProject = _environment.XRepoEnvironment.FindPinForAssembly(assemblyName);
             var hintedPath = _environment.GetLibFilePath(assemblyName + ".dll");
-            
+
             var expectedRegex = new Regex(String.Format("from.*{0}.*to.*{1}.*", pinnedProject.Project.AssemblyPath.Replace("\\", "\\\\"), hintedPath.Replace("\\", "\\\\")));
             expectedRegex.IsMatch(_buildOutput).Should().BeTrue("Expected the regex '" + expectedRegex.ToString() + "' to match");
         }
@@ -144,6 +154,29 @@ namespace XRepo.Scenarios.Steps
                 .Should().OnlyContain(p => File.Exists(Path.Combine(p, assemblyName + ".dll")), "The file should exist");
         }
 
+        [Then(@"the build should succeed")]
+        public void ThenTheBuildShouldSucceed()
+        {
+            _buildOutput.Should().Contain("Build succeeded.");
+        }
+
+        [Then(@"the build should fail")]
+        public void ThenTheBuildShouldFail()
+        {
+            _buildOutput.Should().Contain("Build failed.");
+        }
+
+        [Then(@"the build should not give warning (.*)")]
+        public void ThenTheBuildShouldNotGiveWarning(string warning)
+        {
+            _buildOutput.Should().NotContain(warning);
+        }
+
+        [Then(@"the build should give warning (.*)")]
+        public void ThenTheBuildShouldGiveWarning(string warning)
+        {
+            _buildOutput.Should().Contain(warning);
+        }
 
     }
 }

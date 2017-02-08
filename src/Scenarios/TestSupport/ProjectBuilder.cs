@@ -45,9 +45,13 @@ namespace XRepo.Scenarios.TestSupport
             return logger.ToString();
         }
 
-        public void AddReference(string assemblyName, string hintPath)
+        public void AddReference(string assemblyName, string hintPath, bool specificVersion)
         {
             var metadata = new Dictionary<string, string> {{"HintPath", hintPath}};
+            if (specificVersion)
+            {
+                metadata.Add("SpecificVersion", "True");
+            }
             Project.AddItem("Reference", assemblyName, metadata);
             Project.Save();
         }
