@@ -90,12 +90,14 @@ namespace XRepo.Core
         public bool CopyPins { get; set; }
         public bool PinWarnings { get; set; }
         public bool AutoBuildPins { get; set; }
+        public bool SpecificVersion { get; set; }
 
         public ConfigSettings()
         {
             CopyPins = true;
             PinWarnings = true;
             AutoBuildPins = true;
+            SpecificVersion = true;
         }
     }
 
