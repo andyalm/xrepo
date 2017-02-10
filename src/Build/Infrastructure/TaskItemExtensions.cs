@@ -5,6 +5,7 @@ using System.Linq;
 
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
+using XRepo.Core;
 
 namespace XRepo.Build.Infrastructure
 {
@@ -105,7 +106,7 @@ namespace XRepo.Build.Infrastructure
         {
             var value = item.GetMetadata(name);
             if (String.IsNullOrEmpty(value))
-                throw new ApplicationException(message);
+                throw new XRepoException(message);
 
             return value;
         }

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 
 namespace XRepo.Core
 {
@@ -89,11 +90,25 @@ namespace XRepo.Core
             });
         }
 
+        private string _defaultConfigDir;
+
         private string DefaultConfigDir
         {
             get
             {
-                return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "XRepo");
+                if(_defaultConfigDir != null)
+                    return _defaultConfigDir;
+
+                var homeDir = Environment.GetEnvironmentVariable("HOME");
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                {
+                    _defaultConfigDir = Path.Combine(homeDir, "AppData", "Local", "XRepo");
+                }
+                else
+                {
+                    _defaultConfigDir = Path.Combine(homeDir, ".xrepo");
+                }
+                return _defaultConfigDir;
             }
         }
 
@@ -120,7 +135,7 @@ namespace XRepo.Core
             {
                 var assembly = AssemblyRegistry.GetAssembly(assemblyName);
                 if (assembly == null)
-                    throw new ApplicationException("I don't know where the assembly '" + assemblyName + "' is. Have you built it on your machine?");
+                    throw new XRepoException("I don't know where the assembly '" + assemblyName + "' is. Have you built it on your machine?");
 
                 return new PinnedProject
                 {

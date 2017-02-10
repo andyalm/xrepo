@@ -23,10 +23,10 @@ namespace XRepo.Core
             var canonicalName = name.Replace("_", "").ToLowerInvariant();
             PropertyInfo configProperty;
             if(!Data.TryGetProperty(canonicalName, out configProperty))
-                throw new ApplicationException("The config setting '" + name + "' is unrecognized by xrepo");
+                throw new XRepoException("The config setting '" + name + "' is unrecognized by xrepo");
             object typedValue;
             if(!value.TryChangeType(configProperty.PropertyType, out typedValue))
-                throw new ApplicationException("The config value '" + value + "' could not be converted to type '" + configProperty.PropertyType + "'");
+                throw new XRepoException("The config value '" + value + "' could not be converted to type '" + configProperty.PropertyType + "'");
             configProperty.SetValue(Data, typedValue); 
         }
 
@@ -42,7 +42,7 @@ namespace XRepo.Core
             {
                 if(_settingDescriptors == null)
                 {
-                    _settingDescriptors = (from prop in Settings.GetType().GetProperties()
+                    _settingDescriptors = (from prop in Settings.GetType().GetTypeInfo().DeclaredProperties
                                            select new ConfigSetting(prop, Settings)).ToList();
                 }
 
@@ -103,7 +103,7 @@ namespace XRepo.Core
     {
         public static bool TryGetProperty(this object obj, string propertyName, out PropertyInfo propertyInfo)
         {
-            propertyInfo = obj.GetType().GetProperty(propertyName, BindingFlags.IgnoreCase | BindingFlags.Instance | BindingFlags.Public);
+            propertyInfo = obj.GetType().GetTypeInfo().DeclaredProperties.Where(p => p.Name.Equals(propertyName, StringComparison.OrdinalIgnoreCase)).SingleOrDefault();
             
             return propertyInfo != null;
         }

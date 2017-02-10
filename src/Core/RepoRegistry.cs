@@ -21,7 +21,7 @@ namespace XRepo.Core
         public void RegisterRepo(string repoName, string repoPath)
         {
             if(Data.Contains(repoName))
-                throw new ApplicationException("The repo '" + repoName + "' is already registered");
+                throw new XRepoException("The repo '" + repoName + "' is already registered");
 
             Data.Add(new RepoRegistration(repoName, repoPath));
         }
@@ -29,7 +29,7 @@ namespace XRepo.Core
         public void UnregisterRepo(string repoName)
         {
             if(!Data.Contains(repoName))
-                throw new ApplicationException("The repo '" + repoName + "' is not registered");
+                throw new XRepoException("The repo '" + repoName + "' is not registered");
             Data.Remove(repoName);
         }
 

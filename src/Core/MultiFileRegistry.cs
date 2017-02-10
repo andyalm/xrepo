@@ -30,9 +30,9 @@ namespace XRepo.Core
             Directory.CreateDirectory(_directoryPath);
             var key = _keyComputer(item);
             var registryFile = FilenameFor(key);
-            using (var writer = new StreamWriter(registryFile))
+            using (var writer = new StreamWriter(File.OpenWrite(registryFile)))
             {
-                var serializer = new JsonSerializer {Formatting = Formatting.Indented};
+                var serializer = new JsonSerializer { Formatting = Formatting.Indented };
                 serializer.Serialize(writer, item);
             }
         }
@@ -60,7 +60,7 @@ namespace XRepo.Core
 
         private T DeserializeFile(string filePath)
         {
-            using (var reader = new StreamReader(filePath))
+            using (var reader = new StreamReader(File.OpenRead(filePath)))
             {
                 var serializer = new JsonSerializer();
                 return serializer.Deserialize<T>(new JsonTextReader(reader));

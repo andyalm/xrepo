@@ -1,0 +1,12 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Test">
+    <PropertyGroup>
+    <BuildDependsOn>
+      $(BuildDependsOn);
+      _TestAfterBuildHook
+    </BuildDependsOn>
+  </PropertyGroup>
+  
+  <Target Name="_TestAfterBuildHook">
+    <Message Text="XRepo: AfterBuildHook" Importance="High" />
+  </Target>
+</Project>

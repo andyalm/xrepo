@@ -1,6 +1,7 @@
 ﻿using System;
 
 using Microsoft.Build.Framework;
+using XRepo.Core;
 
 namespace XRepo.Build.Infrastructure
 {
@@ -20,7 +21,7 @@ namespace XRepo.Build.Infrastructure
         }
     }
 
-    public class ChildTaskFailedException : ApplicationException
+    public class ChildTaskFailedException : XRepoException
     {
         public ChildTaskFailedException(string message) : base(message) { }
     }

@@ -1,0 +1,5 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Test">
+    <Target Name="Test">
+        <Message Text="MSBuildExtensionsPath: $(MSBuildExtensionsPath)" Importance="High" />
+    </Target>
+</Project>

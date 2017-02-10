@@ -3,6 +3,7 @@ using System.Diagnostics;
 
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
+using XRepo.Core;
 
 namespace XRepo.Build.Infrastructure
 {
@@ -25,7 +26,7 @@ namespace XRepo.Build.Infrastructure
                 Log.LogMessage(MessageImportance.Low, ex.Message);
                 return false;
             }
-            catch (ApplicationException ex)
+            catch (XRepoException ex)
             {
                 //NOTE: The idea of catching ApplicationException here is that if an ApplicationException is thrown, it was thrown by our code, and thus the error message
                 //should have sufficient context.  If an exception goes unhandled in MSBuild it will print out the stack trace and it is very ugly because it looks like several errors occurred
