@@ -1,1 +1,1 @@
-%SYSTEMROOT%\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe %~dp0\build.proj
+dotnet msbuild %~dp0\build.proj

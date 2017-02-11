@@ -1,20 +1,23 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{637BF041-BB18-49E7-92CA-7922EB211592}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <ProjectGuid>{F78B490C-8323-4496-BB05-33473BCB5B39}</ProjectGuid>
+    <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>XRepo.Scenarios</RootNamespace>
     <AssemblyName>XRepo.Scenarios</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <RestorePackages>true</RestorePackages>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -24,6 +27,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -33,12 +37,30 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="FluentAssertions">
-      <HintPath>..\..\packages\FluentAssertions.2.0.0.1\lib\net40\FluentAssertions.dll</HintPath>
+      <HintPath>..\..\packages\FluentAssertions.4.19.0\lib\net45\FluentAssertions.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.Build" />
-    <Reference Include="Microsoft.Build.Framework" />
+    <Reference Include="FluentAssertions.Core">
+      <HintPath>..\..\packages\FluentAssertions.4.19.0\lib\net45\FluentAssertions.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Kekiri">
+      <HintPath>..\..\packages\Kekiri.3.0\lib\net452\Kekiri.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Build">
+      <HintPath>..\..\..\..\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\MSBuild\15.0\Bin\Microsoft.Build.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Build.Framework">
+      <HintPath>..\..\..\..\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\MSBuild\15.0\Bin\Microsoft.Build.Framework.dll</HintPath>
+    </Reference>
     <Reference Include="nunit.framework">
-      <HintPath>..\..\packages\NUnit.2.6.1\lib\nunit.framework.dll</HintPath>
+      <HintPath>..\..\packages\NUnit.3.6.0\lib\net45\nunit.framework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="nunitlite">
+      <HintPath>..\..\packages\NUnitLite.3.6.0\lib\net45\nunitlite.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -46,53 +68,44 @@
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
-    <Reference Include="TechTalk.SpecFlow">
-      <HintPath>..\..\packages\SpecFlow.1.9.0\lib\net35\TechTalk.SpecFlow.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AssemblyReferenceResolution.feature.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>AssemblyReferenceResolution.feature</DependentUpon>
-    </Compile>
+    <Compile Include="a_compiled_assembly_is_registered.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Steps\AssemblyReferenceResolutionSteps.cs" />
+    <Compile Include="Steps\a_backup_copy_of_the_original_ASSEMBLYNAME_is_kept.cs" />
+    <Compile Include="Steps\a_class_library_project.cs" />
+    <Compile Include="Steps\a_repo_REPONAME.cs" />
+    <Compile Include="Steps\the_assembly_ASSEMBLYNAME_is_not_pinned.cs" />
+    <Compile Include="Steps\the_assembly_ASSEMBLYNAME_is_pinned.cs" />
+    <Compile Include="Steps\the_assembly_ASSEMBLYNAME_is_registered.cs" />
+    <Compile Include="Steps\the_assembly_ASSEMBLYNAME_is_registered_at_a_location_within_PATH.cs" />
+    <Compile Include="Steps\the_project_has_a_reference_to_assembly_ASSEMBLYNAME.cs" />
+    <Compile Include="Steps\the_project_is_compiled.cs" />
+    <Compile Include="Steps\the_reference_is_resolved_to_the_pinned_copy_of_ASSEMBLYNAME.cs" />
+    <Compile Include="Steps\the_reference_to_ASSEMBLYNAME_is_resolved_via_standard_msbuild_rules.cs" />
+    <Compile Include="Steps\the_registered_copy_of_ASSEMBLYNAME_is_copied_to_the_hint_paths_location.cs" />
+    <Compile Include="Steps\the_repo_REPONAME_is_pinned.cs" />
+    <Compile Include="Steps\the_resulting_assembly_is_registered_by_xrepo.cs" />
+    <Compile Include="Steps\the_SETTINGNAME_config_setting_is_SETTINGVALUE.cs" />
     <Compile Include="TestSupport\CapturingLogger.cs" />
-    <Compile Include="TestSupport\TestEnvironment.cs" />
     <Compile Include="TestSupport\ProjectBuilder.cs" />
+    <Compile Include="TestSupport\TestEnvironment.cs" />
+    <Compile Include="TestSupport\XRepoEnvironmentContext.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="..\Build\XRepo.Build.targets">
-      <Link>XRepo.Build.targets</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <None Include="App.config" />
-    <None Include="AssemblyReferenceResolution.feature">
-      <Generator>SpecFlowSingleFileGenerator</Generator>
-      <LastGenOutput>AssemblyReferenceResolution.feature.cs</LastGenOutput>
-    </None>
+    <None Include="AssemblyReferenceResolution.feature" />
     <None Include="packages.config" />
-    <EmbeddedResource Include="TestSupport\ClassLibrary.csproj.template" />
+    <None Include="TestSupport\ClassLibrary.csproj.template" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Build\Build.csproj">
-      <Project>{de24d3b6-eed5-44c7-a0ca-ae66a364365b}</Project>
-      <Name>Build</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Core\Core.csproj">
       <Project>{355ad8cd-3fb2-42a3-ab3f-585ce58cc69e}</Project>
       <Name>Core</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="..\..\packages\SpecFlow.1.9.0\tools\TechTalk.SpecFlow.targets" Condition="Exists('..\..\packages\SpecFlow.1.9.0\tools\TechTalk.SpecFlow.targets')" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
 </Project>
