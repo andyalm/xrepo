@@ -4,6 +4,7 @@
     <TargetFramework>netcoreapp1.0</TargetFramework>
     <AssemblyName>XRepo.Scenarios</AssemblyName>
     <RootNamespace>XRepo.Scenarios</RootNamespace>
+    <IsPackable>false</IsPackable>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="FluentAssertions">

@@ -1,1 +1,1 @@
-dotnet msbuild %~dp0\build.proj
+dotnet pack
