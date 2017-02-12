@@ -3,12 +3,17 @@
         <Configuration Condition="$(Configuration)==''">Debug</Configuration>
     </PropertyGroup>
 
+    <ItemGroup>
+        <TestProject Include="src\Tests\Tests.csproj" />
+        <TestProject Include="src\Scenarios\Scenarios.csproj" />
+    </ItemGroup>
+
     <Target Name="Build">
         <MSBuild Projects="xrepo.sln" />
     </Target>
 
     <Target Name="Test" DependsOnTargets="Build">
-        <Exec Command="src\Scenarios\bin\$(Configuration)\XRepo.Scenarios.exe" />
+        <Exec Command="dotnet run" WorkingDirectory="%(TestProject.RootDir)%(TestProject.Directory)" />
     </Target>
 
     <Target Name="Package" DependsOnTargets="Test">

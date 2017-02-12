@@ -4,14 +4,7 @@
   <UsingTask TaskName="XRepo.Build.Tasks.RegisterAssembly"
 			   AssemblyFile="$(MSBuildThisFileDirectory)\XRepo.Build.dll"/>
 
-  <PropertyGroup>
-    <ResolveReferencesDependsOn>
-      _OverrideHintPaths;
-      $(ResolveReferencesDependsOn)
-    </ResolveReferencesDependsOn>
-  </PropertyGroup>
-
-  <Target Name="_OverrideHintPaths">
+  <Target Name="_OverrideHintPaths" AfterTargets="ResolveReferences">
     <PropertyGroup>
       <XRepoSkipUnchangedFiles Condition="$(XRepoSkipUnchangedFiles)==''">true</XRepoSkipUnchangedFiles>
     </PropertyGroup>
