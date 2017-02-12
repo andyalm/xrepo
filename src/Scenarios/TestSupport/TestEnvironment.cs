@@ -1,6 +1,6 @@
 ﻿using System;
 using System.IO;
-
+using System.Reflection;
 using XRepo.Core;
 
 namespace XRepo.Scenarios.TestSupport
@@ -15,7 +15,7 @@ namespace XRepo.Scenarios.TestSupport
         public TestEnvironment()
         {
             _id = Guid.NewGuid().ToString().Substring(0, 8);
-            _root = Path.GetDirectoryName(this.GetType().Assembly.Location);
+            _root = Path.GetDirectoryName(this.GetType().GetTypeInfo().Assembly.Location);
             _tempDir = Path.Combine(_root, _id);
             Directory.CreateDirectory(_tempDir);
             _xRepoEnvironment = XRepoEnvironment.ForDirectory(XRepoConfigDir);

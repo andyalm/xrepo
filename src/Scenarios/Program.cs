@@ -21,9 +21,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // ***********************************************************************
 
+using System.Reflection;
 using NUnitLite;
 
-namespace NUnitLite.Tests
+namespace XRepo.Scenarios
 {
     public class Program
     {
@@ -35,7 +36,7 @@ namespace NUnitLite.Tests
         /// <param name="args"></param>
         public static int Main(string[] args)
         {
-            return new AutoRun().Execute(args);
+            return new AutoRun(typeof(Program).GetTypeInfo().Assembly).Execute(args);
         }
     }
 }

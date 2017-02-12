@@ -4,3 +4,4 @@
 *.suo
 packages/
 *.sublime-workspace
+TestResult.xml
