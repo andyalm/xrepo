@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 
-namespace CommandLine.Infrastructure
+namespace XRepo.CommandLine.Infrastructure
 {
     public static class WriterExtensions
     {
