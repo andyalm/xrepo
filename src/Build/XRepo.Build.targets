@@ -22,7 +22,7 @@
   </Target>
 
   <Target Name="_RegisterAssembly" AfterTargets="Build">
-    <Message Text="Registering the assembly $(TargetPath)" Importance="high"/>
+    <Message Text="XRepo: Registering the assembly $(TargetPath)" />
     <XRepo.Build.Tasks.RegisterAssembly
       AssemblyPath="$(TargetPath)"
       AssemblyName="$(AssemblyName)"

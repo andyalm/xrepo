@@ -1,10 +1,7 @@
 <Project ToolsVersion="15.0">
   <ItemGroup>
     <TestProject Include="src\Tests\Tests.csproj" />
-    <TestProject Include="src\Scenarios\Scenarios.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackProject Include="src\Core\Core.csproj" />
+    <!--TestProject Include="src\Scenarios\Scenarios.csproj" /-->
   </ItemGroup>
 
   <Target Name="_RunTests" AfterTargets="Build">
@@ -12,7 +9,10 @@
   </Target>
 
   <Target Name="Pack" DependsOnTargets="Build">
-    <Exec Command="dotnet pack" WorkingDirectory="%(PackProject.RootDir)%(PackProject.Directory)" />
+    <MSBuild
+        BuildInParallel="true"
+        Projects="@(ProjectReference)"
+        Targets="Pack" />
   </Target>
 
   <Target Name="_CreateChocolateyPackage" AfterTargets="Pack">
@@ -25,5 +25,4 @@
   <Target Name="Deploy" DependsOnTargets="Pack">
     <Exec Command="chocolatey uninstall xrepo" ContinueOnError="true" />
     <Exec Command="chocolatey install xrepo -source $(MSBuildProjectDirectory)\deploy\bin\$(Configuration) -pre" />
-  </Target>
 </Project>
