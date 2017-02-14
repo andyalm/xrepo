@@ -3,16 +3,18 @@
   <metadata>
     <id>xrepo</id>
     <title>xrepo</title>
-    <version>0.9.0</version>
+    <version>1.0.0-beta</version>
     <authors>Andy Alm</authors>
     <summary>Cross repo development finally made easy</summary>
     <description>Finally makes it easy to develop when you need to make changes that spans more than one source code repository.</description>
     <projectUrl>http://github.com/andyalm/xrepo</projectUrl>
     <tags>xrepo admin build msbuild cli commandline</tags>
-    <copyright>2012 Andy Alm</copyright>
+    <copyright>2017 Andy Alm</copyright>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <!--<iconUrl>https://github.com/andyalm/raw/master/xrepo/xrepo.gif</iconUrl>-->
     <releaseNotes>
+        * Adds support for overriding the SpecificVersion setting for an assembly reference
+        * Updating bash tab completion to tab complete assemblies when using the pin command
         * Adds support for MSBuild 15
     </releaseNotes>
   </metadata>
