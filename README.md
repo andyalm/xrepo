@@ -32,3 +32,9 @@ Determines whether pinned assemblies will be copied to the HintPath location of 
 ### pin_warnings
 
 Determines whether a build warning will be generated when a project is built referencing a pinned assembly. This can be a useful reminder when you have something pinned.
+
+### specific_version
+
+Determines whether the &lt;SpecificVersion&gt; element will be overridden at build time.  The default, `true`, will leave the &lt;SpecificVersion&gt; element in your project file(s) as-is.
+When set to `false`, &lt;SpecificVersion&gt; will be set to `False`, which eliminates the build warnings that would normally be seen if the pinned version of an assembly is not aligned 
+with the currently referenced version.

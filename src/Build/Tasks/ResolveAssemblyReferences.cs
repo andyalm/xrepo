@@ -46,7 +46,13 @@ namespace XRepo.Build.Tasks
                 {
                     OverrideHintPath(assemblyName, pinnedProject.Project.AssemblyPath, assemblyReference, referenceOverrides);
                 }
-                
+
+                // if the settings dictate a specific version be used, then leave the hint/metadata as-is in the 
+                // project definition.  if it's NOT specific version, override it to 'False'
+                if (!configSettings.SpecificVersion)
+                {
+                    assemblyReference.SetMetadata("SpecificVersion", "False");
+                }
             }
 
             AssemblyReferenceOverrides = referenceOverrides.ToArray();
