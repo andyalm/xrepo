@@ -1,10 +1,13 @@
-$package_path = split-path -parent (split-path -parent $MyInvocation.MyCommand.Definition)
+$package_path = split-path -parent -resolve (split-path -parent $MyInvocation.MyCommand.Definition)
 Write-Host "Current package path: $package_path"
 
 $global_msbuild_hook_script = "$package_path\tools\installGlobalMSBuildHook.ps1"
 Start-ChocolateyProcessAsAdmin "& `'$global_msbuild_hook_script`' $package_path"
 
 $profile = Join-Path $(Split-Path -Parent $profile) profile.ps1
+$dotNetPath = Get-Command dotnet | Select-Object -ExpandProperty Definition
+Write-Host "dotnet cli path is $dotNetPath"
+Install-BinFile -Name xrepo -Path $dotNetPath -Command "$package_path\app\xrepo.dll"
 
 #install powershell tab expansion
 #DISABLED UNTIL IT CAN BE STABLE
@@ -21,6 +24,6 @@ if(-not (Test-Path $bash_profile)) {
 	New-Item $bash_profile -ItemType File -Force
 }
 $xrepo_bash_path = "$package_path\bash\xrepo_completion.bash" -replace '([a-z]):\\', '/${1}/' -replace '\\', '/'
-$xrepo_exe_path = "$package_path\tools\xrepo.exe" -replace '([a-z]):\\', '/${1}/' -replace '\\', '/'
+$xrepo_exe_path = "$($env:ChocolateyInstall)\bin\xrepo.exe" -replace '([a-z]):\\', '/${1}/' -replace '\\', '/'
 Add-Content $bash_profile "alias xrepo='$xrepo_exe_path'"
 Add-Content $bash_profile ". $xrepo_bash_path"

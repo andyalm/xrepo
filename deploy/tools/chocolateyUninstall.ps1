@@ -4,6 +4,8 @@ Write-Host "Current package path: $package_path"
 $global_msbuild_hook_script = "$package_path\tools\uninstallGlobalMSBuildHook.ps1"
 Start-ChocolateyProcessAsAdmin "& `'$global_msbuild_hook_script`' $package_path"
 
+Uninstall-BinFile -Name xrepo
+
 #uninstall powershell tab expansion
 #DISABLED UNTIL IT CAN BE STABLE
 #if(Test-Path $profile) {
