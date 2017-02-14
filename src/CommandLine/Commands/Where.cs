@@ -6,30 +6,25 @@ using XRepo.Core;
 
 namespace XRepo.CommandLine.Commands
 {
-    public static class WhereExtensions
+    [CommandName("where", "Lists all locations of a registered assembly")]
+    public class WhereCommand : Command
     {
-        public static void Where(this CommandLineApplication app, XRepoEnvironment environment)
+        [Required]
+        [Description("The name of the assembly")]
+        public CommandArgument AssemblyName { get; set; }
+
+        public override void Execute()
         {
-            app.Command("where", where =>
+            var assemblyRegistration = Environment.AssemblyRegistry.GetAssembly(AssemblyName.Value);
+            if (assemblyRegistration == null)
             {
-                where.Description = "Lists all locations of a registered assembly";
-                var assemblyName = where.Argument("assemblyName", "The name of the assembly");
-                where.OnExecuteWithHelp(() =>
-                {
-                    var assemblyRegistration = environment.AssemblyRegistry.GetAssembly(assemblyName.Value);
-                    if (assemblyRegistration == null)
-                    {
-                        throw new CommandFailureException(12, $"Assembly '{assemblyName.Value}' not registered. Have you ever built it on this machine?");
-                    }
+                throw new CommandFailureException(12, $"Assembly '{AssemblyName.Value}' not registered. Have you ever built it on this machine?");
+            }
 
-                    foreach (var registeredProject in assemblyRegistration.Projects.OrderByDescending(p => p.Timestamp))
-                    {
-                        Console.WriteLine(registeredProject.AssemblyPath);
-                    }
-
-                    return 0;
-                });
-            });
+            foreach (var registeredProject in assemblyRegistration.Projects.OrderByDescending(p => p.Timestamp))
+            {
+                Console.WriteLine(registeredProject.AssemblyPath);
+            }
         }
     }
 }

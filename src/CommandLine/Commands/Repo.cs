@@ -3,54 +3,60 @@ using System.IO;
 
 using Microsoft.Extensions.CommandLineUtils;
 using XRepo.CommandLine.Infrastructure;
-using XRepo.Core;
 
 namespace XRepo.CommandLine.Commands
 {
-    public static class RepoExtensions
+    [CommandName("repo", "Registers or unregisters a repo")]
+    public class RepoCommand : Command
     {
-        public static void Repo(this CommandLineApplication app, XRepoEnvironment environment)
+        public override void Setup()
         {
-            app.Command("repo", repo =>
+            App.Command("register", register =>
             {
-                repo.Description = "Registers or unregisters a repo";
-                repo.Command("register", register =>
+                register.Description = "Registers a repo at the current or specified path";
+                var input = register.RepoInput();
+                register.OnExecuteWithHelp(() =>
                 {
-                    register.Description = "Registers a repo at the current or specified path";
-                    var input = register.RepoInput();
-                    register.OnExecuteWithHelp(() =>
-                    {
-                        var fullRepoPath = input.GetFullPath();
-                        if (!Directory.Exists(fullRepoPath))
-                            throw new CommandFailureException(10, "The path '" + fullRepoPath + "' does not exist");
+                    input.Validate(register);
 
-                        if (environment.RepoRegistry.IsRepoRegistered(input.Name.Value))
-                            environment.RepoRegistry.UnregisterRepo(input.Name.Value);
-                        environment.RepoRegistry.RegisterRepo(input.Name.Value, fullRepoPath);
-                        environment.RepoRegistry.Save();
+                    var fullRepoPath = input.GetFullPath();
+                    if (!Directory.Exists(fullRepoPath))
+                        throw new CommandFailureException(10, "The path '" + fullRepoPath + "' does not exist");
 
-                        return 0;
-                    });
+                    if (Environment.RepoRegistry.IsRepoRegistered(input.Name.Value))
+                        Environment.RepoRegistry.UnregisterRepo(input.Name.Value);
+                    Environment.RepoRegistry.RegisterRepo(input.Name.Value, fullRepoPath);
+                    Environment.RepoRegistry.Save();
 
+                    return 0;
                 });
-                repo.Command("unregister", unregister =>
+
+            });
+            App.Command("unregister", unregister =>
+            {
+                unregister.Description = "Unregisters a repo with the given name";
+                var input = unregister.RepoInput();
+                unregister.OnExecuteWithHelp(() =>
                 {
-                    unregister.Description = "Unregisters a repo with the given name";
-                    var input = unregister.RepoInput();
-                    unregister.OnExecuteWithHelp(() =>
-                    {
-                        if (environment.RepoRegistry.IsRepoRegistered(input.Name.Value))
-                            environment.RepoRegistry.UnregisterRepo(input.Name.Value);
-                        environment.RepoRegistry.Save();
+                    input.Validate(unregister);
+                    if (Environment.RepoRegistry.IsRepoRegistered(input.Name.Value))
+                        Environment.RepoRegistry.UnregisterRepo(input.Name.Value);
+                    Environment.RepoRegistry.Save();
 
-                        return 0;
-                    });
+                    return 0;
                 });
-                repo.ShowHelpOnEmptyExecute();
             });
         }
 
-        private static RepoInput RepoInput(this CommandLineApplication app)
+        public override void Execute()
+        {
+            App.Out.WriteLine(App.GetHelpText());
+        }
+    }
+
+    static class RepoExtensions
+    {
+        public static RepoInput RepoInput(this CommandLineApplication app)
         {
             var input = new RepoInput();
             input.Name = app.Argument("name", "The name of the repo being registered");
@@ -69,6 +75,12 @@ namespace XRepo.CommandLine.Commands
         public string GetFullPath()
         {
             return System.IO.Path.GetFullPath(Path.Value() ?? AppContext.BaseDirectory);
+        }
+
+        public void Validate(CommandLineApplication app)
+        {
+            if(string.IsNullOrWhiteSpace(Name.Value))
+                throw new CommandSyntaxException(app, "The argument 'name' is required");
         }
     }
 }

@@ -19,7 +19,9 @@
     <MakeDir Directories="deploy\bin\$(Configuration)">
       <Output TaskParameter="DirectoriesCreated" ItemName="OutputDirectory"/>
     </MakeDir>
-    <!--Exec Command=".nuget\nuget.exe pack deploy\xrepo.nuspec -OutputDirectory &quot;@(OutputDirectory)&quot; -Properties &quot;configuration=$(Configuration)&quot; -NoPackageAnalysis" /-->
+    <Exec Command="dotnet publish"
+      WorkingDirectory="src\CommandLine" />
+    <Exec Command=".nuget\nuget.exe pack deploy\xrepo.nuspec -OutputDirectory &quot;@(OutputDirectory)&quot; -Properties &quot;configuration=$(Configuration)&quot; -NoPackageAnalysis" />
   </Target>
 
   <Target Name="Deploy" DependsOnTargets="Pack">

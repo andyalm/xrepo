@@ -1,27 +1,16 @@
-﻿using System;
-using System.Linq;
-using Microsoft.Extensions.CommandLineUtils;
+﻿using System.Linq;
 using XRepo.CommandLine.Infrastructure;
-using XRepo.Core;
 
 namespace XRepo.CommandLine.Commands
 {
-    public static class AssembliesExtensions
+    [CommandName("assemblies", "Lists all registered assemblies")]
+    public class AssembliesCommand : Command
     {
-        public static void Assemblies(this CommandLineApplication app, XRepoEnvironment environment)
+        public override void Execute()
         {
-            app.Command("assemblies", assemblies =>
-            {
-                assemblies.Description = "Lists all registered assemblies";
-                assemblies.OnExecuteWithHelp(() =>
-                {
-                    environment.AssemblyRegistry.GetAssemblies()
-                        .OrderBy(a => a.Name)
-                        .Each(a => Console.WriteLine(a.Name));
-
-                    return 0;
-                });
-            });
+            Environment.AssemblyRegistry.GetAssemblies()
+                .OrderBy(a => a.Name)
+                .Each(a => App.Out.WriteLine(a.Name));
         }
     }
 }

@@ -1,27 +1,16 @@
 ﻿using System;
-
-using Microsoft.Extensions.CommandLineUtils;
 using XRepo.CommandLine.Infrastructure;
-using XRepo.Core;
 
 namespace XRepo.CommandLine.Commands
 {
-    public static class ReposExtensions
+    [CommandName("repos", "Lists all registered repos")]
+    public class ReposCommand : Command
     {
-        public static void Repos(this CommandLineApplication app, XRepoEnvironment environment)
+        public override void Execute()
         {
-            app.Command("repos", repos =>
-            {
-                repos.Description = "Lists all registered repos";
-                repos.OnExecuteWithHelp(() =>
-                {
-                    var repoList = environment.RepoRegistry.GetRepos();
+            var repoList = Environment.RepoRegistry.GetRepos();
 
-                    repos.Out.WriteList("repos", repoList, r => Console.WriteLine("{0} - {1}", r.Name, r.Path));
-
-                    return 0;
-                });
-            });
+            App.Out.WriteList("repos", repoList, r => Console.WriteLine("{0} - {1}", r.Name, r.Path));
         }
     }
 }

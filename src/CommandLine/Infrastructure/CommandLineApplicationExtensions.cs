@@ -20,16 +20,5 @@ namespace XRepo.CommandLine.Infrastructure
                 return action();
             });
         }
-
-        public static void ShowHelpOnEmptyExecute(this CommandLineApplication app)
-        {
-            app.OnExecute(() =>
-            {
-                app.Out.WriteLine(app.GetHelpText());
-
-                return 0;
-            });
-            
-        }
     }
 }

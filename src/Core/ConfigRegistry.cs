@@ -72,16 +72,7 @@ namespace XRepo.Core
 
         public string ConvertNameToCommandLineFriendlyName()
         {
-            var builder = new StringBuilder();
-            builder.Append(Char.ToLowerInvariant(_settingProperty.Name[0]));
-            for (int i = 1; i < _settingProperty.Name.Length; i++)
-            {
-                var ch = _settingProperty.Name[i];
-                if (Char.IsUpper(ch))
-                    builder.Append("_");
-                builder.Append(Char.ToLowerInvariant(ch));
-            }
-            return builder.ToString();
+            return _settingProperty.Name.ToSnakeCase();
         }
     }
 

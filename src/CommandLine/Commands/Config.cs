@@ -1,51 +1,47 @@
 ﻿using System;
+using System.ComponentModel;
 using Microsoft.Extensions.CommandLineUtils;
 using XRepo.CommandLine.Infrastructure;
 using XRepo.Core;
 
 namespace XRepo.CommandLine.Commands
 {
-    public static class ConfigExtensions
+    [CommandName("config", "Lists or updates config settings")]
+    public class ConfigCommand : Command
     {
-        public static void Config(this CommandLineApplication app, XRepoEnvironment environment)
+        [Description("The name of the setting you are setting")]
+        public CommandArgument Name { get; set; }
+
+        [Description("The value of the setting you are setting")]
+        public CommandArgument Value { get; set; }
+
+        public override void Execute()
         {
-            app.Command("config", config =>
+            App.Out.WriteLine();
+            if (string.IsNullOrEmpty(Name.Value))
             {
-                config.Description = "Lists or updates config settings";
-                var name = config.Argument("name", "The name of the setting you are setting");
-                var value = config.Argument("value", "The value of the setting you are setting");
-                config.OnExecuteWithHelp(() =>
-                {
-                    Console.WriteLine();
-                    if (string.IsNullOrEmpty(name.Value))
-                    {
-                        ListSettings(environment);
-                    }
-                    else
-                    {
-                        UpdateSettings(environment, name, value);
-                    }
-                    Console.WriteLine();
-
-                    return 0;
-                });
-            });
-
+                ListSettings();
+            }
+            else
+            {
+                UpdateSettings();
+            }
+            App.Out.WriteLine();
         }
 
-        private static void ListSettings(XRepoEnvironment environment)
+        private void ListSettings()
         {
-            Console.Out.WriteList("name - value", environment.ConfigRegistry.SettingDescriptors, d =>
+            App.Out.WriteList("name - value", Environment.ConfigRegistry.SettingDescriptors, d =>
             {
-                Console.Out.WriteLine("{0} - {1}", d.Name, d.Value);
+                App.Out.WriteLine("{0} - {1}", d.Name, d.Value);
             });
         }
 
-        private static void UpdateSettings(XRepoEnvironment environment, CommandArgument name, CommandArgument value)
+        private void UpdateSettings()
         {
-            environment.ConfigRegistry.UpdateSetting(name.Value, value.Value);
-            environment.ConfigRegistry.Save();
-            Console.WriteLine($"xrepo setting '{name.Value}' updated to '{value.Value}'");
+            Environment.ConfigRegistry.UpdateSetting(Name.Value, Value.Value);
+            Environment.ConfigRegistry.Save();
+            App.Out.WriteLine($"xrepo setting '{Name.Value}' updated to '{Value.Value}'");
         }
     }
 }

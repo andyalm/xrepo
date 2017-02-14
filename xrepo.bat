@@ -1,0 +1,1 @@
+dotnet xrepo.dll %*

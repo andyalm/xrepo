@@ -1,32 +1,25 @@
 ﻿using System;
 using Microsoft.Extensions.CommandLineUtils;
 using XRepo.CommandLine.Infrastructure;
-using XRepo.Core;
 
 namespace XRepo.CommandLine.Commands
 {
-    public static class WhichExtensions
+    [CommandName("which", "Lists the location that an assembly resolves to based on your current pins")]
+    public class WhichCommand : Command
     {
-        public static void Which(this CommandLineApplication app, XRepoEnvironment environment)
+        [Required]
+        [Description("The name of the assembly")]
+        public CommandArgument AssemblyName { get; set; }
+
+        public override void Execute()
         {
-            app.Command("which", which =>
+            var pinnedProject = Environment.FindPinForAssembly(AssemblyName.Value);
+            if (pinnedProject == null)
             {
-                which.Description = "Lists the location that an assembly resolves to based on your current pins";
-                var assemblyName = which.Argument("assemblyName", "The name of the assembly");
+                throw new CommandFailureException(13, $"The assembly '{AssemblyName.Value}' is not pinned and does not exist in a pinned repo.");
+            }
 
-                which.OnExecuteWithHelp(() =>
-                {
-                    var pinnedProject = environment.FindPinForAssembly(assemblyName.Value);
-                    if (pinnedProject == null)
-                    {
-                        throw new CommandFailureException(13, $"The assembly '{assemblyName.Value}' is not pinned and does not exist in a pinned repo.");
-                    }
-
-                    Console.WriteLine(pinnedProject.Project.AssemblyPath);
-
-                    return 0;
-                });
-            });
+            Console.WriteLine(pinnedProject.Project.AssemblyPath);
         }
     }
 }
