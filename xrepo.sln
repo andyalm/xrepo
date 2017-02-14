@@ -29,10 +29,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{D12DB11C
 		deploy\tools\chocolateyInstall.ps1 = deploy\tools\chocolateyInstall.ps1
 		deploy\tools\chocolateyUninstall.ps1 = deploy\tools\chocolateyUninstall.ps1
 		deploy\tools\GlobalMSBuildHook.psm1 = deploy\tools\GlobalMSBuildHook.psm1
-		deploy\tools\install.ps1 = deploy\tools\install.ps1
 		deploy\tools\installGlobalMsBuildHook.ps1 = deploy\tools\installGlobalMsBuildHook.ps1
 		deploy\tools\uninstallGlobalMsBuildHook.ps1 = deploy\tools\uninstallGlobalMsBuildHook.ps1
-		xrepo.bat = xrepo.bat
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{A983F4B8-92F8-44E6-B7C9-C33823F3E890}"
