@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>XRepo.Scenarios</RootNamespace>
     <AssemblyName>XRepo.Scenarios</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
@@ -43,14 +43,14 @@
       <HintPath>..\..\packages\FluentAssertions.4.19.0\lib\net45\FluentAssertions.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Kekiri, Version=2.1.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Kekiri.3.0\lib\net452\Kekiri.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.Build" />
     <Reference Include="Microsoft.Build.Framework" />
     <Reference Include="nunit.framework, Version=3.6.0.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
       <HintPath>..\..\packages\NUnit.3.6.0\lib\net45\nunit.framework.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="SpecRun.SpecFlowPlugin, Version=1.5.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\SpecRun.SpecFlow.1.5.2\lib\net45\SpecRun.SpecFlowPlugin.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -60,49 +60,41 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="TechTalk.SpecFlow, Version=2.1.0.0, Culture=neutral, PublicKeyToken=0778194805d6db41, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\SpecFlow.2.1.0\lib\net45\TechTalk.SpecFlow.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="TechTalk.SpecRun, Version=1.5.2.0, Culture=neutral, PublicKeyToken=d0fc5cc18b3b389b, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\SpecRun.SpecFlow.1.5.2\lib\net45\TechTalk.SpecRun.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AssemblyReferenceResolution.feature.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>AssemblyReferenceResolution.feature</DependentUpon>
-    </Compile>
+    <Compile Include="a_compiled_assembly_is_registered.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Steps\AssemblyReferenceResolutionSteps.cs" />
+    <Compile Include="Steps\a_backup_copy_of_the_original_ASSEMBLYNAME_is_kept.cs" />
+    <Compile Include="Steps\a_class_library_project.cs" />
+    <Compile Include="Steps\a_repo_REPONAME.cs" />
+    <Compile Include="Steps\the_assembly_ASSEMBLYNAME_is_not_pinned.cs" />
+    <Compile Include="Steps\the_assembly_ASSEMBLYNAME_is_pinned.cs" />
+    <Compile Include="Steps\the_assembly_ASSEMBLYNAME_is_registered.cs" />
+    <Compile Include="Steps\the_assembly_ASSEMBLYNAME_is_registered_at_a_location_within_REPONAME.cs" />
+    <Compile Include="Steps\the_build_should_not_give_warning_WARNINGTEXT.cs" />
+    <Compile Include="Steps\the_project_has_a_reference_to_assembly_ASSEMBLYNAME.cs" />
+    <Compile Include="Steps\the_project_is_compiled.cs" />
+    <Compile Include="Steps\the_reference_is_resolved_to_the_pinned_copy_of_ASSEMBLYNAME.cs" />
+    <Compile Include="Steps\the_reference_to_ASSEMBLYNAME_is_resolved_via_standard_msbuild_rules.cs" />
+    <Compile Include="Steps\the_registered_copy_of_ASSEMBLYNAME_is_copied_to_the_hint_paths_location.cs" />
+    <Compile Include="Steps\the_repo_REPONAME_is_pinned.cs" />
+    <Compile Include="Steps\the_resulting_assembly_is_registered_by_xrepo.cs" />
+    <Compile Include="Steps\the_SETTINGNAME_config_setting_is_SETTINGVALUE.cs" />
     <Compile Include="TestSupport\CapturingLogger.cs" />
     <Compile Include="TestSupport\TestEnvironment.cs" />
     <Compile Include="TestSupport\ProjectBuilder.cs" />
+    <Compile Include="TestSupport\XRepoEnvironmentContext.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="..\Build\XRepo.Build.targets">
       <Link>XRepo.Build.targets</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Include="App.config" />
-    <None Include="AssemblyReferenceResolution.feature">
-      <Generator>SpecFlowSingleFileGenerator</Generator>
-      <LastGenOutput>AssemblyReferenceResolution.feature.cs</LastGenOutput>
-    </None>
-    <None Include="Default.srprofile">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    <None Include="App.config">
+      <SubType>Designer</SubType>
     </None>
     <None Include="packages.config" />
     <EmbeddedResource Include="TestSupport\ClassLibrary.csproj.template" />
-    <None Include="runtests.cmd" />
-    <None Include="SpecRunTestProfile.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="SpecRunTestProfile_2011_09.xsd">
-      <SubType>Designer</SubType>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Build\Build.csproj">
