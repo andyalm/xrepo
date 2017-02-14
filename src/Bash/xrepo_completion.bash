@@ -18,7 +18,8 @@ _xrepo()
         ;;
       pin)
         local repos=$(xrepo repos | grep ".* - .*" | awk -F " - " '{print $1}')
-        COMPREPLY=($(compgen -W "${repos}" ${cur}))
+        local assemblies=$(xrepo assemblies | tr -s '\r\n' ' ')
+        COMPREPLY=($(compgen -W "${repos} ${assemblies}" ${cur}))
         return 0
         ;;
       pins)
