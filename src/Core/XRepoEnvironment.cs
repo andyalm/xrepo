@@ -26,28 +26,19 @@ namespace XRepo.Core
         }
 
         private AssemblyRegistry _assemblyRegistry;
-        public AssemblyRegistry AssemblyRegistry
-        {
-            get { return _assemblyRegistry ?? (_assemblyRegistry = AssemblyRegistry.ForDirectory(_directory)); }
-        }
+        public AssemblyRegistry AssemblyRegistry => _assemblyRegistry ?? (_assemblyRegistry = AssemblyRegistry.ForDirectory(_directory));
+
+        private PackageRegistry _packageRegistry;
+        public PackageRegistry PackageRegistry => _packageRegistry ?? (_packageRegistry = PackageRegistry.ForDirectory(_directory));
 
         private PinRegistry _pinRegistry;
-        public PinRegistry PinRegistry
-        {
-            get { return _pinRegistry ?? (_pinRegistry = PinRegistry.ForDirectory(_directory)); }
-        }
+        public PinRegistry PinRegistry => _pinRegistry ?? (_pinRegistry = PinRegistry.ForDirectory(_directory));
 
         private RepoRegistry _repoRegistry;
-        public RepoRegistry RepoRegistry
-        {
-            get { return _repoRegistry ?? (_repoRegistry = RepoRegistry.ForDirectory(_directory)); }
-        }
+        public RepoRegistry RepoRegistry => _repoRegistry ?? (_repoRegistry = RepoRegistry.ForDirectory(_directory));
 
         private ConfigRegistry _configRegistry;
-        public ConfigRegistry ConfigRegistry
-        {
-            get { return _configRegistry ?? (_configRegistry = ConfigRegistry.ForDirectory(_directory)); }
-        }
+        public ConfigRegistry ConfigRegistry => _configRegistry ?? (_configRegistry = ConfigRegistry.ForDirectory(_directory));
 
         private bool IsAssemblyInPinnedRepo(string assemblyName, out PinnedProject project)
         {
@@ -113,10 +104,7 @@ namespace XRepo.Core
             }
         }
 
-        public string Directory
-        {
-            get { return _directory; }
-        }
+        public string Directory => _directory;
 
         public bool IsAssemblyPinned(string assemblyName)
         {

@@ -6,13 +6,21 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.Build.Tasks.Core">
-      <Version>15.1-*</Version>
+      <Version>15.1.0-preview-000545-01</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Build.Utilities.Core">
-      <Version>15.1-*</Version>
+      <Version>15.1.0-preview-000545-01</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Core\Core.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="XRepo.Build.targets">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="XRepo.Build.Legacy.targets">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 </Project>

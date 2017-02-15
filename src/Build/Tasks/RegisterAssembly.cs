@@ -1,6 +1,4 @@
 ﻿using Microsoft.Build.Framework;
-
-using XRepo.Core;
 using XRepo.Build.Infrastructure;
 
 namespace XRepo.Build.Tasks
