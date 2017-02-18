@@ -9,6 +9,7 @@ namespace XRepo.Core
     public interface IPin
     {
         string Name { get; }
+        string Description { get; }
         AssemblyBackupCollection Backups { get; }
     }
 

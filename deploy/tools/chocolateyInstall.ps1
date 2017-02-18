@@ -2,7 +2,8 @@ $package_path = split-path -parent -resolve (split-path -parent $MyInvocation.My
 Write-Host "Current package path: $package_path"
 
 $global_msbuild_hook_script = "$package_path\tools\installGlobalMSBuildHook.ps1"
-Start-ChocolateyProcessAsAdmin "& `'$global_msbuild_hook_script`' $package_path"
+& $global_msbuild_hook_script $package_path
+#Start-ChocolateyProcessAsAdmin "& `'$global_msbuild_hook_script`' $package_path"
 
 $profile = Join-Path $(Split-Path -Parent $profile) profile.ps1
 $dotNetPath = Get-Command dotnet | Select-Object -ExpandProperty Definition

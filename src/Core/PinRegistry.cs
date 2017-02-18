@@ -16,10 +16,15 @@ namespace XRepo.Core
             get { return "pin.registry"; }
         }
 
-        public void PinAssembly(string assemblyName)
+        public AssemblyPin PinAssembly(string assemblyName)
         {
-            if(!Data.Assemblies.Contains(assemblyName))
-                Data.Assemblies.Add(new AssemblyPin(assemblyName));
+            if(Data.Assemblies.Contains(assemblyName))
+                throw new InvalidOperationException($"The assembly '{assemblyName}' is already pinned.");
+
+            var pin = new AssemblyPin(assemblyName);
+            Data.Assemblies.Add(pin);
+
+            return pin;
         }
 
         public bool IsAssemblyPinned(string assemblyName)
@@ -44,10 +49,41 @@ namespace XRepo.Core
             return Data.Assemblies;
         }
 
-        public void PinRepo(string repoName)
+        public bool IsPackagePinned(string packageId)
         {
-            if (!Data.Repos.Contains(repoName))
-                Data.Repos.Add(new RepoPin(repoName));
+            return Data.Packages.Contains(packageId);
+        }
+
+        public PackagePin GetPackagePin(string packageId)
+        {
+            return Data.Packages[packageId];
+        }
+
+        public PackagePin PinPackage(string packageId)
+        {
+            if(Data.Packages.Contains(packageId))
+                throw new InvalidOperationException($"The package '{packageId}' is already pinned");
+
+            var pin = new PackagePin(packageId);
+            Data.Packages.Add(pin);
+
+            return pin;
+        }
+
+        public IEnumerable<PackagePin> GetPinnedPackages()
+        {
+            return Data.Packages;
+        }
+
+        public RepoPin PinRepo(string repoName)
+        {
+            if (Data.Repos.Contains(repoName))
+                throw new InvalidOperationException($"The repo '{repoName}' is already pinned");
+
+            var pin = new RepoPin(repoName);
+            Data.Repos.Add(pin);
+
+            return pin;
         }
 
         public bool IsRepoPinned(string repoName)
@@ -82,6 +118,7 @@ namespace XRepo.Core
         {
             Data.Repos.Clear();
             Data.Assemblies.Clear();
+            Data.Packages.Clear();
         }
 
         public IEnumerable<RepoPin> GetPinnedRepos()
@@ -93,11 +130,13 @@ namespace XRepo.Core
     public class PinHolder
     {
         public AssemblyPinCollection Assemblies { get; private set; }
+        public PackagePinCollection Packages { get; private set; }
         public RepoPinCollection Repos { get; private set; }
 
         public PinHolder()
         {
             Assemblies = new AssemblyPinCollection();
+            Packages = new PackagePinCollection();
             Repos = new RepoPinCollection();
         }
     }
@@ -112,6 +151,8 @@ namespace XRepo.Core
         
         public string Name { get; private set; }
 
+        public string Description => $"The assembly '{Name}' has been pinned. All references to this assembly will now be resolved to local copies.";
+
         public AssemblyBackupCollection Backups { get; private set; }
     }
 
@@ -125,6 +166,32 @@ namespace XRepo.Core
         }
     }
 
+    public class PackagePin : IPin
+    {
+        public string PackageId { get; }
+
+        public string Name { get; set; }
+
+        public string Description => $"The package '{Name}' has been pinned. All references to this package will now be resolved to local copies.";
+
+        public AssemblyBackupCollection Backups { get; }
+
+        public PackagePin(string packageId)
+        {
+            PackageId = packageId;
+            Name = packageId;
+            Backups = new AssemblyBackupCollection();
+        }
+    }
+
+    public class PackagePinCollection : KeyedCollection<string,PackagePin>
+    {
+        protected override string GetKeyForItem(PackagePin item)
+        {
+            return item.PackageId;
+        }
+    }
+
     public class RepoPin : IPin
     {
         public RepoPin(string name)
@@ -134,6 +201,8 @@ namespace XRepo.Core
         }
 
         public string Name { get; private set; }
+
+        public string Description => $"The repo {Name} has been pinned. All references to packages and assemblies built within this repo will now be resolved to local copies.";
         public AssemblyBackupCollection Backups { get; private set; }
     }
 

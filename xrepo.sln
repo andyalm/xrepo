@@ -36,11 +36,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{A983F4B8-92F8-44E6-B7C9-C33823F3E890}"
 	ProjectSection(SolutionItems) = preProject
 		deploy\build\Custom.After.Microsoft.Common.Targets = deploy\build\Custom.After.Microsoft.Common.Targets
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{D1BFF699-243E-4C40-BD22-91EC0B0BDCD3}"
-	ProjectSection(SolutionItems) = preProject
-		build.proj = build.proj
+		deploy\build\XRepo.ImportAfter.targets = deploy\build\XRepo.ImportAfter.targets
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "src\Tests\Tests.csproj", "{CBB0C721-6A27-4E05-8543-389EF5814714}"

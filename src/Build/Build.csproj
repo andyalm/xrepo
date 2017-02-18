@@ -2,6 +2,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard1.4</TargetFramework>
     <AssemblyName>XRepo.Build</AssemblyName>
+    <RootNamespace>XRepo.Build</RootNamespace>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
   <ItemGroup>

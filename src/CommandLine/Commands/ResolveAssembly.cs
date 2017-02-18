@@ -4,11 +4,11 @@ using XRepo.CommandLine.Infrastructure;
 
 namespace XRepo.CommandLine.Commands
 {
-    [CommandName("which", "Lists the location that an assembly resolves to based on your current pins")]
-    public class WhichCommand : Command
+    [CommandName("resolve-assembly", "Lists the location that an assembly resolves to based on your current pins")]
+    public class ResolveAssemblyCommand : Command
     {
         [Required]
-        [Description("The name of the assembly")]
+        [Description("The name of the assembly or package")]
         public CommandArgument AssemblyName { get; set; }
 
         public override void Execute()
@@ -19,7 +19,7 @@ namespace XRepo.CommandLine.Commands
                 throw new CommandFailureException(13, $"The assembly '{AssemblyName.Value}' is not pinned and does not exist in a pinned repo.");
             }
 
-            Console.WriteLine(pinnedProject.Project.AssemblyPath);
+            Console.WriteLine(pinnedProject.Project.OutputPath);
         }
     }
 }

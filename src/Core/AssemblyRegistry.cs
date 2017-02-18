@@ -56,9 +56,9 @@ namespace XRepo.Core
     public class AssemblyRegistration
     {
         [JsonProperty(PropertyName = "Projects")]
-        private readonly List<RegisteredProject> _projects = new List<RegisteredProject>();
+        private readonly List<RegisteredAssemblyProject> _projects = new List<RegisteredAssemblyProject>();
         
-        public IEnumerable<RegisteredProject> Projects
+        public IEnumerable<RegisteredAssemblyProject> Projects
         {
             get { return _projects; }
         }
@@ -78,7 +78,7 @@ namespace XRepo.Core
             var project = _projects.SingleOrDefault(p => p.ProjectPath.Equals(projectPath, StringComparison.OrdinalIgnoreCase));  
             if(project == null)
             {
-                project = new RegisteredProject();
+                project = new RegisteredAssemblyProject();
                 _projects.Insert(0, project);
             }
 
@@ -98,12 +98,18 @@ namespace XRepo.Core
         }
     }
 
-    public class RegisteredProject
+    public abstract class RegisteredProject
     {
         public string ProjectPath { get; set; }
-
-        public string AssemblyPath { get; set; }
         
         public DateTime Timestamp { get; set; }
+
+        public abstract string OutputPath { get; }
+    }
+
+    public class RegisteredAssemblyProject : RegisteredProject
+    {
+        public string AssemblyPath { get; set; }
+        public override string OutputPath => AssemblyPath;
     }
 }

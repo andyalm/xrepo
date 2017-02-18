@@ -23,7 +23,7 @@ function Remove-XRepoImport($Path)
     {
         foreach($import in $project.SelectNodes("//msb:Import", $NamespaceManager))
         {
-            if($import.GetAttribute("Project").ToLowerInvariant().Contains("xrepo.build.targets"))
+            if($import.GetAttribute("Project").ToLowerInvariant().Contains("xrepo.build."))
             {
                 Write-Host $("Removing import of '" + $import.GetAttribute("Project") + "' from '$Path'")
                 $import.ParentNode.RemoveChild($import) | Out-Null
@@ -42,8 +42,7 @@ function Get-GlobalMSBuildHookFiles
 {
     $files = @()
     $ProgramFilesX86 = $(Get-Item "env:ProgramFiles(x86)").Value
-    if(Test-Path "$ProgramFilesX86\MSBuild")
-    {
+    if(Test-Path "$ProgramFilesX86\MSBuild") {
         $files += "$ProgramFilesX86\MSBuild\v4.0\Custom.After.Microsoft.Common.Targets"
         [IO.Directory]::CreateDirectory("$ProgramFilesX86\MSBuild\v4.0") | Out-Null
 		$files += "$ProgramFilesX86\MSBuild\v12.0\Custom.After.Microsoft.Common.Targets"
@@ -51,8 +50,7 @@ function Get-GlobalMSBuildHookFiles
 		$files += "$ProgramFilesX86\MSBuild\v14.0\Custom.After.Microsoft.Common.Targets"
         [IO.Directory]::CreateDirectory("$ProgramFilesX86\MSBuild\v14.0") | Out-Null
     }
-    if(Test-Path "$env:ProgramW6432\MSBuild")
-    {
+    if(Test-Path "$env:ProgramW6432\MSBuild") {
         $files += "$env:ProgramW6432\MSBuild\v4.0\Custom.After.Microsoft.Common.Targets"
         [IO.Directory]::CreateDirectory("$env:ProgramW6432\MSBuild\v4.0") | Out-Null
 		$files += "$env:ProgramW6432\MSBuild\v12.0\Custom.After.Microsoft.Common.Targets"
@@ -60,6 +58,15 @@ function Get-GlobalMSBuildHookFiles
 		$files += "$env:ProgramW6432\MSBuild\v14.0\Custom.After.Microsoft.Common.Targets"
         [IO.Directory]::CreateDirectory("$env:ProgramW6432\MSBuild\v14.0") | Out-Null
     }
+
+	$sdks = @("1.0.0-rc4-004771")
+	foreach($sdk in $sdks) {
+		if(Test-Path "$env:ProgramFiles\dotnet\sdk\$sdk") {
+			$importAfterDir = "$env:ProgramFiles\dotnet\sdk\$sdk\15.0\Microsoft.Common.targets\ImportAfter"
+			$files += "$importAfterDir\XRepo.ImportAfter.targets"
+			[IO.Directory]::CreateDirectory($importAfterDir) | Out-Null
+		}
+	}
 
     return $files
 }

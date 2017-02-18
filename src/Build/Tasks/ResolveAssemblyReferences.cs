@@ -44,7 +44,7 @@ namespace XRepo.Build.Tasks
                 }
                 else
                 {
-                    OverrideHintPath(assemblyName, pinnedProject.Project.AssemblyPath, assemblyReference, referenceOverrides);
+                    OverrideHintPath(assemblyName, pinnedProject.Project.OutputPath, assemblyReference, referenceOverrides);
                 }
                 
             }
@@ -82,7 +82,7 @@ namespace XRepo.Build.Tasks
             Log.LogMessage("Copying pinned assembly '" + assemblyName + "' to hint path location '" + hintPath + "'...");
             this.ExecTask(() => new CopyAssembly
             {
-                Assemblies = project.Project.AssemblyPath.ToTaskItems(),
+                Assemblies = project.Project.OutputPath.ToTaskItems(),
                 DestinationFolder = hintPath.ToTaskItem().FullDirectoryPath().ToTaskItem(),
                 CopyDependencies = false,
                 SkipUnchangedFiles = SkipUnchangedFiles

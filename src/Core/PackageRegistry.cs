@@ -134,13 +134,12 @@ namespace XRepo.Core
         }
     }
 
-    public class RegisteredPackageProject
+    public class RegisteredPackageProject : RegisteredProject
     {
         public string PackageVersion { get; set; }
-        public string ProjectPath { get; set; }
 
         public string PackagePath { get; set; }
-        
-        public DateTime Timestamp { get; set; }
+
+        public override string OutputPath => PackagePath;
     }
 }

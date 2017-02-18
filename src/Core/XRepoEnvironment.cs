@@ -112,6 +112,31 @@ namespace XRepo.Core
             return PinRegistry.IsAssemblyPinned(assemblyName) || IsAssemblyInPinnedRepo(assemblyName, out notUsed);
         }
 
+        public bool IsPackagePinned(PackageIdentifier packageId)
+        {
+            PinnedProject notUsed;
+            return PinRegistry.IsPackagePinned(packageId.Version); //TODO: Support repos
+        }
+
+        public PinnedProject FindPinForPackage(string packageId)
+        {
+            if (PinRegistry.IsPackagePinned(packageId))
+            {
+                var package = PackageRegistry.GetPackage(packageId);
+                if(package == null)
+                    throw new XRepoException($"I don't know where the package '{packageId}' is. Have you built it on your machine?");
+
+                //TODO: Do version resolution
+                return new PinnedProject
+                {
+                    Pin = PinRegistry.GetPackagePin(packageId),
+                    Project = package.Projects.OrderByDescending(p => p.Timestamp).First()
+                };
+            }
+
+            return null;
+        }
+
         public PinnedProject FindPinForAssembly(string assemblyName)
         {
             PinnedProject pinnedProject;
@@ -134,6 +159,26 @@ namespace XRepo.Core
             }
 
             return null;
+        }
+
+        public IPin Pin(string name)
+        {
+            if (RepoRegistry.IsRepoRegistered(name))
+            {
+                return PinRegistry.PinRepo(name);
+            }
+
+            if (PackageRegistry.IsPackageRegistered(name))
+            {
+                return PinRegistry.PinPackage(name);
+            }
+
+            if (AssemblyRegistry.IsAssemblyRegistered(name))
+            {
+                return PinRegistry.PinAssembly(name);
+            }
+
+            throw new XRepoException($"There is no repo, package or assembly registered by the name of '{name}'. Either go build that assembly/package or register the repo.");
         }
     }
 }

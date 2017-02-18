@@ -1,15 +1,13 @@
 ﻿using FluentAssertions;
-using NUnit.Framework;
+using Xunit;
 
 namespace XRepo.Tests
 {
     using Support;
     
-    [TestFixture]
-    public class ResolvingPins
+    public class AsseblyResolutionSpecs
     {
-        [SetUp]
-        public void BeforeEach()
+        public AsseblyResolutionSpecs()
         {
             _testEnvironment = new TestEnvironment();
             _testEnvironment.RegisterAssemblyAt("multiplyregisteredassembly", "location1");
@@ -17,21 +15,21 @@ namespace XRepo.Tests
             _testEnvironment.RegisterAssembly("myassembly");
         }
         
-        [Test]
+        [Fact]
         public void AssemblyRegisteredInMultipleLocationsResolvesToLastBuilt()
         {
             _testEnvironment.XRepoEnvironment.PinRegistry.PinAssembly("multiplyregisteredassembly");
             var pinnedProject = _testEnvironment.XRepoEnvironment.FindPinForAssembly("multiplyregisteredassembly");
-            pinnedProject.Project.AssemblyPath.Should().Contain("location2");
+            pinnedProject.Project.OutputPath.Should().Contain("location2");
         }
 
-        [Test]
+        [Fact]
         public void AssemblyRegisteredInMultipleLocationsWithinAPinnedRepoResolvesToLastBuilt()
         {
             _testEnvironment.RegisterRepo("root", "");
             _testEnvironment.PinRegistry.PinRepo("root");
             var pinnedProject = _testEnvironment.XRepoEnvironment.FindPinForAssembly("multiplyregisteredassembly");
-            pinnedProject.Project.AssemblyPath.Should().Contain("location2");
+            pinnedProject.Project.OutputPath.Should().Contain("location2");
         }
 
 

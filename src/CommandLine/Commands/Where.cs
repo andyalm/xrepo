@@ -6,24 +6,30 @@ using XRepo.Core;
 
 namespace XRepo.CommandLine.Commands
 {
-    [CommandName("where", "Lists all locations of a registered assembly")]
+    [CommandName("where", "Lists all locations of a registered assembly or package")]
     public class WhereCommand : Command
     {
         [Required]
-        [Description("The name of the assembly")]
-        public CommandArgument AssemblyName { get; set; }
+        [Description("The name of an assembly or package")]
+        public CommandArgument Name { get; set; }
 
         public override void Execute()
         {
-            var assemblyRegistration = Environment.AssemblyRegistry.GetAssembly(AssemblyName.Value);
-            if (assemblyRegistration == null)
+            var packageRegistration = Environment.PackageRegistry.GetPackage(Name.Value);
+            if (packageRegistration != null)
             {
-                throw new CommandFailureException(12, $"Assembly '{AssemblyName.Value}' not registered. Have you ever built it on this machine?");
+                Console.Out.WriteList("packages", packageRegistration.Projects.OrderByDescending(p => p.Timestamp).Select(p => p.OutputPath));
             }
 
-            foreach (var registeredProject in assemblyRegistration.Projects.OrderByDescending(p => p.Timestamp))
+            var assemblyRegistration = Environment.AssemblyRegistry.GetAssembly(Name.Value);
+            if (assemblyRegistration != null)
             {
-                Console.WriteLine(registeredProject.AssemblyPath);
+                Console.Out.WriteList("assemblies", packageRegistration.Projects.OrderByDescending(p => p.Timestamp).Select(p => p.OutputPath));
+            }
+
+            if (packageRegistration == null && assemblyRegistration == null)
+            {
+                throw new CommandFailureException(12, $"No package or assembly with name '{Name.Value}' is registered. Have you ever built it on this machine?");
             }
         }
     }

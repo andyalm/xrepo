@@ -16,7 +16,7 @@ namespace XRepo.Scenarios.Steps
         public override void Execute()
         {
             var pinnedProject = Context.Environment.XRepoEnvironment.FindPinForAssembly(_assemblyName);
-            var expectedString = "/reference:" + pinnedProject.Project.AssemblyPath;
+            var expectedString = "/reference:" + pinnedProject.Project.OutputPath;
             Context.BuildOutput.Should().Contain(expectedString);
         }
     }

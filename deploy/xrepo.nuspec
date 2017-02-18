@@ -20,7 +20,7 @@
     <file src="..\src\CommandLine\bin\$configuration$\netcoreapp1.0\publish\**\*.*" target="app" />
     <file src="..\deploy\tools\*.*" target="tools" />
     <file src="..\deploy\build\*.*" target="build" />
-    <file src="..\src\Build\bin\$configuration$\*.*" target="build" />
+    <file src="..\src\Build\bin\$configuration$\netstandard1.4\*.*" target="build" />
     <file src="..\src\Powershell\*.*" target="powershell" />
     <file src="..\src\Bash\*.*" target="bash" />
   </files>

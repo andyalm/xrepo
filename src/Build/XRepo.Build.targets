@@ -1,6 +1,6 @@
 ﻿<Project ToolsVersion="15.0">
-  <!--UsingTask TaskName="XRepo.Build.Tasks.ResolvePackageReferences"
-			   AssemblyFile="$(MSBuildThisFileDirectory)\XRepo.Build.dll"/-->
+  <UsingTask TaskName="XRepo.Build.Tasks.ResolvePackageReferences"
+			   AssemblyFile="$(MSBuildThisFileDirectory)\XRepo.Build.dll"/>
   <UsingTask TaskName="XRepo.Build.Tasks.RegisterPackage"
 			   AssemblyFile="$(MSBuildThisFileDirectory)\XRepo.Build.dll"/>
 
@@ -17,6 +17,27 @@
       CustomConfigDir="$(XRepoConfigDir)"
       Condition="$(XRepoPackageOutputFullPath)!=''"
       DebugTask="false"/>
+  </Target>
+
+  <Target Name="_XRepoOverridePackageReferences" BeforeTargets="_SplitProjectReferencesByFileExistence">
+    <XRepo.Build.Tasks.ResolvePackageReferences
+        PackageReferences="@(PackageReference)"
+        CustomConfigDir="$(XRepoConfigDir)"
+        DebugTask="false">
+      <Output TaskParameter="PackageReferenceOverrides" ItemName="PackageReferenceOverride"/>
+    </XRepo.Build.Tasks.ResolvePackageReferences>
+    <ItemGroup>
+      <PackageReference Remove="%(PackageReferenceOverride.Identity)"/>
+      <ProjectReference Include="%(PackageReferenceOverride.ProjectPath)" />
+    </ItemGroup>
+
+    <Message Text="BeforeRestore $(MSBuildProjectName) PackageReference: @(PackageReference)" Importance="High" />
+    <Message Text="BeforeRestore $(MSBuildProjectName) ProjectReference: @(ProjectReference)" Importance="High" />
+  </Target>
+
+  <Target Name="_XRepoDebug" AfterTargets="Restore">
+    <Message Text="AfterRestore $(MSBuildProjectName) PackageReference: @(PackageReference)" Importance="High" />
+    <Message Text="AfterRestore $(MSBuildProjectName) ProjectReference: @(ProjectReference)" Importance="High" />
   </Target>
   
 </Project>
