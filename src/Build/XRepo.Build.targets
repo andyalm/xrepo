@@ -31,13 +31,13 @@
       <ProjectReference Include="%(PackageReferenceOverride.ProjectPath)" />
     </ItemGroup>
 
-    <Message Text="BeforeRestore $(MSBuildProjectName) PackageReference: @(PackageReference)" Importance="High" />
-    <Message Text="BeforeRestore $(MSBuildProjectName) ProjectReference: @(ProjectReference)" Importance="High" />
+    <Message Text="BeforeRestore $(MSBuildProjectName) PackageReference: @(PackageReference)" Importance="Normal" />
+    <Message Text="BeforeRestore $(MSBuildProjectName) ProjectReference: @(ProjectReference)" Importance="Normal" />
   </Target>
 
   <Target Name="_XRepoDebug" AfterTargets="Restore">
-    <Message Text="AfterRestore $(MSBuildProjectName) PackageReference: @(PackageReference)" Importance="High" />
-    <Message Text="AfterRestore $(MSBuildProjectName) ProjectReference: @(ProjectReference)" Importance="High" />
+    <Message Text="AfterRestore $(MSBuildProjectName) PackageReference: @(PackageReference)" Importance="Normal" />
+    <Message Text="AfterRestore $(MSBuildProjectName) ProjectReference: @(ProjectReference)" Importance="Normal" />
   </Target>
   
 </Project>

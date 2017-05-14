@@ -2,6 +2,6 @@
 [Oo]bj/
 *.user
 *.suo
-packages/
+.vscode/
 *.sublime-workspace
 TestResult.xml

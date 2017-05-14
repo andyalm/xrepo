@@ -59,7 +59,7 @@ function Get-GlobalMSBuildHookFiles
         [IO.Directory]::CreateDirectory("$env:ProgramW6432\MSBuild\v14.0") | Out-Null
     }
 
-	$sdks = @("1.0.0-rc4-004771")
+	$sdks = @("1.0.0")
 	foreach($sdk in $sdks) {
 		if(Test-Path "$env:ProgramFiles\dotnet\sdk\$sdk") {
 			$importAfterDir = "$env:ProgramFiles\dotnet\sdk\$sdk\15.0\Microsoft.Common.targets\ImportAfter"

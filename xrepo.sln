@@ -43,10 +43,16 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "src\Tests\Tests.cs
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Scenarios", "src\Scenarios\Scenarios.csproj", "{F78B490C-8323-4496-BB05-33473BCB5B39}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XRepo.Installer", "deploy\installer\XRepo.Installer.csproj", "{846F3C54-A93C-475D-8E9B-C923D9E793F7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{DE24D3B6-EED5-44C7-A0CA-AE66A364365B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -69,6 +75,18 @@ Global
 		{F78B490C-8323-4496-BB05-33473BCB5B39}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F78B490C-8323-4496-BB05-33473BCB5B39}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F78B490C-8323-4496-BB05-33473BCB5B39}.Release|Any CPU.Build.0 = Release|Any CPU
+		{846F3C54-A93C-475D-8E9B-C923D9E793F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{846F3C54-A93C-475D-8E9B-C923D9E793F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{846F3C54-A93C-475D-8E9B-C923D9E793F7}.Debug|x64.ActiveCfg = Debug|x64
+		{846F3C54-A93C-475D-8E9B-C923D9E793F7}.Debug|x64.Build.0 = Debug|x64
+		{846F3C54-A93C-475D-8E9B-C923D9E793F7}.Debug|x86.ActiveCfg = Debug|x86
+		{846F3C54-A93C-475D-8E9B-C923D9E793F7}.Debug|x86.Build.0 = Debug|x86
+		{846F3C54-A93C-475D-8E9B-C923D9E793F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{846F3C54-A93C-475D-8E9B-C923D9E793F7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{846F3C54-A93C-475D-8E9B-C923D9E793F7}.Release|x64.ActiveCfg = Release|x64
+		{846F3C54-A93C-475D-8E9B-C923D9E793F7}.Release|x64.Build.0 = Release|x64
+		{846F3C54-A93C-475D-8E9B-C923D9E793F7}.Release|x86.ActiveCfg = Release|x86
+		{846F3C54-A93C-475D-8E9B-C923D9E793F7}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -76,5 +94,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{D12DB11C-F3F5-4547-9C11-1DBABB6883C6} = {ECEEC24B-63FE-4404-AC66-9A94FB19B83D}
 		{A983F4B8-92F8-44E6-B7C9-C33823F3E890} = {ECEEC24B-63FE-4404-AC66-9A94FB19B83D}
+		{846F3C54-A93C-475D-8E9B-C923D9E793F7} = {ECEEC24B-63FE-4404-AC66-9A94FB19B83D}
 	EndGlobalSection
 EndGlobal
