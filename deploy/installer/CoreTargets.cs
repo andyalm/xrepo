@@ -18,7 +18,8 @@ namespace XRepo.Installer
                     var filename = "XRepo.ImportAfter.targets";
                     var importAfterDirectory = Path.Combine(sdkPath, "15.0", "Microsoft.Common.targets", "ImportAfter");
                     Console.WriteLine($"Installing the {filename} file for sdk {sdk} to {importAfterDirectory}...");
-                    File.Copy(filename, importAfterDirectory);
+                    if(!File.Exists(Path.Combine(importAfterDirectory, filename)))
+                        File.Copy(filename, Path.Combine(importAfterDirectory, filename));
 
                     var extensionImport = Path.Combine(buildTargetsDirectory, "XRepo.Build.targets");
                     new MsBuildProject(Path.Combine(importAfterDirectory, filename)).AddExtensionImport(extensionImport);

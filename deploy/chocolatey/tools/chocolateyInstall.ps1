@@ -1,7 +1,17 @@
 $package_path = split-path -parent -resolve (split-path -parent $MyInvocation.MyCommand.Definition)
 Write-Host "Current package path: $package_path"
 
-dotnet XRepo.Installer.dll install
+$toolsPath = "$package_path\tools"
+
+pushd "$package_path\tools"
+try {
+    dotnet XRepo.Installer.dll install "$package_path\build"
+}
+finally
+{
+    popd
+}
+
 
 $profile = Join-Path $(Split-Path -Parent $profile) profile.ps1
 $dotNetPath = Get-Command dotnet | Select-Object -ExpandProperty Definition

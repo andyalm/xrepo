@@ -20,7 +20,8 @@ namespace XRepo.Installer
                 var filename = "Custom.After.Microsoft.Common.targets";
                 Console.WriteLine($"Installing the {filename} file to {targetDirectory}...");
                 Directory.CreateDirectory(targetDirectory);
-                File.Copy(filename, targetDirectory);
+                if(!File.Exists(Path.Combine(targetDirectory, filename)))
+                    File.Copy(filename, Path.Combine(targetDirectory, filename));
                 var extensionImport = Path.Combine(buildTargetsDirectory, "XRepo.Build.Desktop.targets");
                 new MsBuildProject(Path.Combine(targetDirectory, filename)).AddExtensionImport(extensionImport);
             }
@@ -47,7 +48,7 @@ namespace XRepo.Installer
 
         private IEnumerable<string> ExtensionDirectories()
         {
-            var programFilesX86 = Environment.GetEnvironmentVariable("ProgramFilesX86");
+            var programFilesX86 = Environment.GetEnvironmentVariable("ProgramFiles(x86)");
             var programFiles = Environment.GetEnvironmentVariable("ProgramFiles");
 
             yield return Path.Combine(programFilesX86, "MSBuild", "v14.0");

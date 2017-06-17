@@ -13,7 +13,7 @@ namespace XRepo.Installer
             switch(command)
             {
                 case "install":
-                    var buildTargetsDirectory = Path.GetFullPath(args[0]);
+                    var buildTargetsDirectory = Path.GetFullPath(args[1]);
                     EachInstallable(i => i.Install(buildTargetsDirectory));
                     break;
                 case "uninstall":
