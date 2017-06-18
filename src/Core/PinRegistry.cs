@@ -70,6 +70,18 @@ namespace XRepo.Core
             return pin;
         }
 
+        public PackagePin UnpinPackage(string packageId)
+        {
+            if(Data.Packages.Contains(packageId))
+            {
+                var pinToRemove = Data.Packages[packageId];
+                Data.Packages.Remove(pinToRemove);
+                return pinToRemove;
+            }
+
+            return null;
+        }
+
         public IEnumerable<PackagePin> GetPinnedPackages()
         {
             return Data.Packages;

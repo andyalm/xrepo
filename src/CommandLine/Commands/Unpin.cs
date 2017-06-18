@@ -20,12 +20,13 @@ namespace XRepo.CommandLine.Commands
         {
             if (Name.Value.Equals("all", StringComparison.OrdinalIgnoreCase))
                 UnpinAll();
-            else if (Environment.RepoRegistry.IsRepoRegistered(Name.Value))
-                UnpinRepo(Name.Value);
-            else if (Environment.AssemblyRegistry.IsAssemblyRegistered(Name.Value))
-                UnpinAssembly(Name.Value);
             else
-                throw new CommandFailureException(11, "There is no repo or assembly registered by the name of '" + Name.Value + "'. Either go build that assembly or register the repo.");
+            {
+                var pin = Environment.Unpin(Name.Value);
+                LogUnpinSuccess(pin);
+                RestoreBackupsForPin(pin);
+            }
+            Environment.PinRegistry.Save();
         }
 
         private void UnpinAll()
@@ -35,32 +36,20 @@ namespace XRepo.CommandLine.Commands
             Console.WriteLine("Everything has been unpinned.");
         }
 
-        private void UnpinRepo(string repoName)
+        private void LogUnpinSuccess(IPin pin)
         {
-            if (!Environment.PinRegistry.IsRepoPinned(repoName))
+            if(pin is RepoPin repoPin)
             {
-                Console.WriteLine("The repo '" + repoName + "' is not pinned.");
-                return;
+                Console.WriteLine("The repo '" + repoPin.Name + "' has been unpinned. All references to assemblies built within this repo will now be resolved via standard behavior.");
             }
-            
-            var removedPin = Environment.PinRegistry.UnpinRepo(repoName);
-            RestoreBackupsForPin(removedPin);
-            Environment.PinRegistry.Save();
-            Console.WriteLine("The repo '" + repoName + "' has been unpinned. All references to assemblies built within this repo will now be resolved via standard behavior.");
-        }
-
-        private void UnpinAssembly(string assemblyName)
-        {
-            if(!Environment.PinRegistry.IsAssemblyPinned(assemblyName))
+            else if(pin is PackagePin packagePin)
             {
-                Console.WriteLine("The assembly '" + assemblyName + "' is not pinned.");
-                return;
+                Console.WriteLine("The package '" + packagePin.Name + "' has been unpinned. All references to this package will now be resolved via standard behavior.");
             }
-            
-            var removedPin = Environment.PinRegistry.UnpinAssembly(assemblyName);
-            RestoreBackupsForPin(removedPin);
-            Environment.PinRegistry.Save();
-            Console.WriteLine("The assembly '" + assemblyName + "' has been unpinned. All references to this assembly will now be resolved via standard behavior.");
+            else if(pin is AssemblyPin assemblyPin)
+            {
+                Console.WriteLine("The assembly '" + assemblyPin.Name + "' has been unpinned. All references to this assembly will now be resolved via standard behavior.");
+            }
         }
 
         private void RestoreBackupsForPin(IPin removedPin)
@@ -72,20 +61,27 @@ namespace XRepo.CommandLine.Commands
             {
                 foreach (var assemblyRestore in assemblyBackup.GetRestorePaths(Environment.Directory))
                 {
-                    if(Directory.Exists(assemblyRestore.OriginalDirectory) && Directory.Exists(assemblyRestore.BackupDirectory))
+                    try
                     {
-                        Console.WriteLine("Restoring original copies of assembly '" + assemblyBackup.AssemblyName + "' to '" + assemblyRestore.OriginalDirectory + "'...");
-                        foreach(var backedUpFilePath in Directory.GetFiles(assemblyRestore.BackupDirectory, "*.*", SearchOption.AllDirectories))
+                        if(Directory.Exists(assemblyRestore.OriginalDirectory) && Directory.Exists(assemblyRestore.BackupDirectory))
                         {
-                            var relativePath = backedUpFilePath.PathRelativeTo(assemblyRestore.BackupDirectory);
-                            var destinationFullPath = Path.Combine(assemblyRestore.OriginalDirectory, relativePath);
-                            File.Copy(backedUpFilePath, destinationFullPath, overwrite:true);
+                            Console.WriteLine("Restoring original copies of assembly '" + assemblyBackup.AssemblyName + "' to '" + assemblyRestore.OriginalDirectory + "'...");
+                            foreach(var backedUpFilePath in Directory.GetFiles(assemblyRestore.BackupDirectory, "*.*", SearchOption.AllDirectories))
+                            {
+                                var relativePath = backedUpFilePath.PathRelativeTo(assemblyRestore.BackupDirectory);
+                                var destinationFullPath = Path.Combine(assemblyRestore.OriginalDirectory, relativePath);
+                                File.Copy(backedUpFilePath, destinationFullPath, overwrite:true);
+                            }
+                            Directory.Delete(assemblyRestore.BackupDirectory, recursive:true);
                         }
-                        Directory.Delete(assemblyRestore.BackupDirectory, recursive:true);
+                        if(IsDirectoryEmpty(assemblyBackup.GetAssemblyDir(Environment.Directory)))
+                        {
+                            Directory.Delete(assemblyBackup.GetAssemblyDir(Environment.Directory));
+                        }
                     }
-                    if(IsDirectoryEmpty(assemblyBackup.GetAssemblyDir(Environment.Directory)))
+                    catch(Exception)
                     {
-                        Directory.Delete(assemblyBackup.GetAssemblyDir(Environment.Directory));
+                        Console.WriteLine($"WARNING: An error occurred trying to restore backups from the '{removedPin.Name}' pin. The assembly in '{assemblyRestore.OriginalDirectory}' may still contain a locally built assembly.");
                     }
                 }
             }

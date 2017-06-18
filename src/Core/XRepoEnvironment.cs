@@ -180,5 +180,25 @@ namespace XRepo.Core
 
             throw new XRepoException($"There is no repo, package or assembly registered by the name of '{name}'. Either go build that assembly/package or register the repo.");
         }
+
+        public IPin Unpin(string name)
+        {
+            if(PinRegistry.IsRepoPinned(name))
+            {
+                return PinRegistry.UnpinRepo(name);
+            }
+
+            if(PinRegistry.IsPackagePinned(name))
+            {
+                return PinRegistry.UnpinPackage(name);
+            }
+
+            if(PinRegistry.IsAssemblyPinned(name))
+            {
+                return PinRegistry.UnpinAssembly(name);
+            }
+
+            throw new XRepoException($"There is nothing pinned with the name '{name}'.");
+        }
     }
 }

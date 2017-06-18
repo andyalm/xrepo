@@ -19,7 +19,7 @@
       DebugTask="false"/>
   </Target>
 
-  <Target Name="_XRepoOverridePackageReferences" BeforeTargets="_SplitProjectReferencesByFileExistence">
+  <Target Name="_XRepoOverridePackageReferences" BeforeTargets="_SplitProjectReferencesByFileExistence;AssignProjectConfiguration;_GetRestoreProjectStyle">
     <XRepo.Build.Tasks.ResolvePackageReferences
         PackageReferences="@(PackageReference)"
         CustomConfigDir="$(XRepoConfigDir)"
