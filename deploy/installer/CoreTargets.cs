@@ -15,14 +15,8 @@ namespace XRepo.Installer
                 var sdkPath = Path.Combine(sdkBasePath, sdk);
                 if(Directory.Exists(sdkPath))
                 {
-                    var filename = "XRepo.ImportAfter.targets";
-                    var importAfterDirectory = Path.Combine(sdkPath, "15.0", "Microsoft.Common.targets", "ImportAfter");
-                    Console.WriteLine($"Installing the {filename} file for sdk {sdk} to {importAfterDirectory}...");
-                    if(!File.Exists(Path.Combine(importAfterDirectory, filename)))
-                        File.Copy(filename, Path.Combine(importAfterDirectory, filename));
-
-                    var extensionImport = Path.Combine(buildTargetsDirectory, "XRepo.Build.targets");
-                    new MsBuildProject(Path.Combine(importAfterDirectory, filename)).AddExtensionImport(extensionImport);
+                    InstallImportAfterTargets(buildTargetsDirectory, sdkPath, sdk, "XRepo.Build.targets", "Microsoft.Common.targets");
+                    InstallImportAfterTargets(buildTargetsDirectory, sdkPath, sdk, "XRepo.Build.SolutionFile.targets", "SolutionFile");
                 }
                 else
                 {
@@ -31,18 +25,38 @@ namespace XRepo.Installer
             }
         }
 
+        private static void InstallImportAfterTargets(string buildTargetsDirectory, string sdkPath, string sdk, string buildTargetsFilename, string importAfterType)
+        {
+            var filename = "XRepo.ImportAfter.targets";
+            var importAfterProjectDirectory = Path.Combine(sdkPath, "15.0", importAfterType, "ImportAfter");
+            Console.WriteLine($"Installing the {filename} file for sdk {sdk} to {importAfterProjectDirectory}...");
+            if (!File.Exists(Path.Combine(importAfterProjectDirectory, filename)))
+                File.Copy(Path.Combine(AppContext.BaseDirectory, filename),
+                    Path.Combine(importAfterProjectDirectory, filename));
+
+            var extensionImport = Path.Combine(buildTargetsDirectory, buildTargetsFilename);
+            new MsBuildProject(Path.Combine(importAfterProjectDirectory, filename)).AddExtensionImport(extensionImport);
+        }
+
         public void Uninstall()
         {
             var sdkBasePath = SdkBasePath();
             foreach(var sdk in Sdks())
             {
-                var sdkPath = Path.Combine(sdkBasePath);
+                var sdkPath = Path.Combine(sdkBasePath, sdk);
 
-                var xrepoTargets = Path.Combine(sdkPath, "15.0", "Microsoft.Common.targets", "ImportAfter", "XRepo.Build.targets");
-                if(File.Exists(xrepoTargets))
+                var projectTargets = Path.Combine(sdkPath, "15.0", "Microsoft.Common.targets", "ImportAfter", "XRepo.ImportAfter.targets");
+                if(File.Exists(projectTargets))
                 {
-                    Console.WriteLine($"Deleting the global xrepo targets file '{xrepoTargets}'...");
-                    File.Delete(xrepoTargets);
+                    Console.WriteLine($"Deleting the global xrepo targets file '{projectTargets}'...");
+                    File.Delete(projectTargets);
+                }
+                
+                var slnTargets = Path.Combine(sdkPath, "15.0", "SolutionFile", "ImportAfter", "XRepo.ImportAfter.targets");
+                if(File.Exists(slnTargets))
+                {
+                    Console.WriteLine($"Deleting the global xrepo targets file '{slnTargets}'...");
+                    File.Delete(slnTargets);
                 }
             }
         }

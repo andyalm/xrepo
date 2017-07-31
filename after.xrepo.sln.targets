@@ -23,7 +23,8 @@
       WorkingDirectory="$(MSBuildThisFileDirectory)\src\CommandLine" />
     <Exec Command="dotnet publish"
       WorkingDirectory="$(MSBuildThisFileDirectory)\deploy\installer" />
-    <Exec Command=".nuget\nuget.exe pack deploy\chocolatey\xrepo.nuspec -OutputDirectory &quot;@(OutputDirectory)&quot; -Properties &quot;configuration=$(Configuration)&quot; -NoPackageAnalysis" />
+    <Exec Command=".nuget\nuget.exe pack deploy\chocolatey\xrepo.nuspec -OutputDirectory &quot;@(OutputDirectory)&quot; -Properties &quot;configuration=$(Configuration)&quot; -NoPackageAnalysis" 
+          Condition="$(OS)=='Windows'" />
   </Target>
 
   <Target Name="Deploy" DependsOnTargets="Pack">
