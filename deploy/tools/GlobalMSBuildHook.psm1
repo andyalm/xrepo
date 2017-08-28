@@ -42,6 +42,15 @@ function Get-GlobalMSBuildHookFiles
 {
     $files = @()
     $ProgramFilesX86 = $(Get-Item "env:ProgramFiles(x86)").Value
+
+    foreach ($edition in @("BuildTools", "Enterprise", "Professional", "Community"))
+    {
+        $path = "$ProgramFilesX86\Microsoft Visual Studio\2017\$edition\MSBuild\15.0"
+        if (Test-Path $path)
+        {
+            $files += "$path\Microsoft.Common.targets\ImportAfter\XRepo.ImportAfter.targets"
+        }
+    }
     if(Test-Path "$ProgramFilesX86\MSBuild")
     {
         $files += "$ProgramFilesX86\MSBuild\v4.0\Custom.After.Microsoft.Common.Targets"
