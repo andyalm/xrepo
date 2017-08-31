@@ -21,7 +21,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Bash", "Bash", "{17C2ADC8-E
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Deploy", "Deploy", "{ECEEC24B-63FE-4404-AC66-9A94FB19B83D}"
 	ProjectSection(SolutionItems) = preProject
-		deploy\xrepo.nuspec = deploy\xrepo.nuspec
+		deploy\chocolatey\xrepo.nuspec = deploy\chocolatey\xrepo.nuspec
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{D12DB11C-F3F5-4547-9C11-1DBABB6883C6}"

@@ -37,6 +37,8 @@ namespace XRepo.Installer
                 .FirstOrDefault(e => ((string)e.Attribute("Project")).Equals(projectPath, StringComparison.OrdinalIgnoreCase));
             
             importElement.Remove();
+
+            Save(project);
         }
 
         public void RemoveImportsMatching(string projectPathSubstring)
@@ -51,6 +53,8 @@ namespace XRepo.Installer
             {
                 importToRemove.Remove();
             }
+
+            Save(project);
         }
 
         public IEnumerable<string> Imports

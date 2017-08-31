@@ -9,5 +9,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Core\Core.csproj" />
     <PackageReference Include="Microsoft.Extensions.CommandLineUtils" Version="1.1.0" />
+    <PackageReference Include="System.Collections.Specialized" Version="4.3.*" />
+    <PackageReference Include="Microsoft.Build" Version="15.1.*" />
   </ItemGroup>
 </Project>

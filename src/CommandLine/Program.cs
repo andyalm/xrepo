@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using XRepo.CommandLine.Infrastructure;
 using XRepo.Core;
 

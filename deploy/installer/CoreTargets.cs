@@ -35,7 +35,9 @@ namespace XRepo.Installer
                     Path.Combine(importAfterProjectDirectory, filename));
 
             var extensionImport = Path.Combine(buildTargetsDirectory, buildTargetsFilename);
-            new MsBuildProject(Path.Combine(importAfterProjectDirectory, filename)).AddExtensionImport(extensionImport);
+            var importAfterProject = new MsBuildProject(Path.Combine(importAfterProjectDirectory, filename));
+            importAfterProject.RemoveImportsMatching("XRepo.Build.targets");
+            importAfterProject.AddExtensionImport(extensionImport);
         }
 
         public void Uninstall()

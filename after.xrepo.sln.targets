@@ -4,11 +4,18 @@
     <!--TestProject Include="src\Scenarios\Scenarios.csproj" /-->
   </ItemGroup>
 
+  <ItemGroup>
+    <PublishProject Include="src\CommandLine\CommandLine.csproj" />
+    <PublishProject Include="src\Build\Build.csproj" />
+    <PublishProject Include="deploy\Installer\XRepo.Installer.csproj" />
+  </ItemGroup>
+
   <Target Name="_RunTests" AfterTargets="Build">
     <Exec Command="dotnet run" WorkingDirectory="%(TestProject.RootDir)%(TestProject.Directory)" />
   </Target>
 
   <Target Name="Pack" DependsOnTargets="Build">
+    <MSBuild Projects="@(PublishProject)" Targets="Publish" />
     <MSBuild
         BuildInParallel="true"
         Projects="@(ProjectReference)"
@@ -19,10 +26,6 @@
     <MakeDir Directories="deploy\chocolatey\bin\$(Configuration)">
       <Output TaskParameter="DirectoriesCreated" ItemName="OutputDirectory"/>
     </MakeDir>
-    <Exec Command="dotnet publish"
-      WorkingDirectory="$(MSBuildThisFileDirectory)\src\CommandLine" />
-    <Exec Command="dotnet publish"
-      WorkingDirectory="$(MSBuildThisFileDirectory)\deploy\installer" />
     <Exec Command=".nuget\nuget.exe pack deploy\chocolatey\xrepo.nuspec -OutputDirectory &quot;@(OutputDirectory)&quot; -Properties &quot;configuration=$(Configuration)&quot; -NoPackageAnalysis" 
           Condition="$(OS)=='Windows'" />
   </Target>

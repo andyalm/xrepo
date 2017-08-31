@@ -98,6 +98,8 @@ namespace XRepo.Core
             get { return _projects; }
         }
 
+        public RegisteredPackageProject MostRecentProject => Projects.OrderByDescending(p => p.Timestamp).FirstOrDefault();
+
         [JsonProperty(PropertyName = "PackageId")]
         public string PackageId { get; set; }
 
