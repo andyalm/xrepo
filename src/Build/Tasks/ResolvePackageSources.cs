@@ -30,7 +30,9 @@ namespace XRepo.Build.Tasks
                 .Select(pin => Environment.PackageRegistry.GetPackage(pin.PackageId))
                 .Select(package => Path.GetDirectoryName(package.Projects.First().PackagePath))
                 .Distinct(StringComparer.OrdinalIgnoreCase)
-                .Select(s => s.StartsWith("/") ? "file://" + s : s); //msbuild will mangle the sources if we don't convert this into URI format
+                //msbuild will mangle the sources if we don't convert this into URI format
+                //This is a workaround for https://github.com/Microsoft/msbuild/issues/1622
+                .Select(s => s.StartsWith("/") ? "file://" + s : s); 
 
             var defaultSources = nuGetSourceProvider.LoadPackageSources().Select(s => s.Source);
             
