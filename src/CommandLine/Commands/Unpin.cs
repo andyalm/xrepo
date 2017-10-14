@@ -1,11 +1,8 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
-
 using XRepo.Core;
 
 using Microsoft.Extensions.CommandLineUtils;
-using XRepo.CommandLine.Infrastructure;
 
 namespace XRepo.CommandLine.Commands
 {
@@ -57,39 +54,34 @@ namespace XRepo.CommandLine.Commands
             if(removedPin == null)
                 return;
 
-            foreach (var assemblyBackup in removedPin.Backups)
+            Console.WriteLine($"HELOO: There are {removedPin.Backups.Count} backups");
+
+            foreach (var pinBackup in removedPin.Backups)
             {
-                foreach (var assemblyRestore in assemblyBackup.GetRestorePaths(Environment.Directory))
+                foreach (var backupPaths in pinBackup.GetRestorePaths(Environment.Directory))
                 {
                     try
                     {
-                        if(Directory.Exists(assemblyRestore.OriginalDirectory) && Directory.Exists(assemblyRestore.BackupDirectory))
+                        if(!string.IsNullOrWhiteSpace(backupPaths.OriginalDirectory) && Directory.Exists(backupPaths.OriginalDirectory))
                         {
-                            Console.WriteLine("Restoring original copies of assembly '" + assemblyBackup.AssemblyName + "' to '" + assemblyRestore.OriginalDirectory + "'...");
-                            foreach(var backedUpFilePath in Directory.GetFiles(assemblyRestore.BackupDirectory, "*.*", SearchOption.AllDirectories))
+                            Console.WriteLine(
+                                $"Deleting files in \'{backupPaths.OriginalDirectory}\' as they were overridden by pin '{removedPin.Name}'");
+                            
+                            //We don't actually delete the directory because it can be locked by ReSharper. We'll 
+                            //just delete all files in the directory instead. This will typically be the NuGet package
+                            //directory which will get repopulated on the next restore anyways.
+                            foreach(var modifiedFile in Directory.GetFiles(backupPaths.OriginalDirectory, "*.*", SearchOption.AllDirectories))
                             {
-                                var relativePath = backedUpFilePath.PathRelativeTo(assemblyRestore.BackupDirectory);
-                                var destinationFullPath = Path.Combine(assemblyRestore.OriginalDirectory, relativePath);
-                                File.Copy(backedUpFilePath, destinationFullPath, overwrite:true);
+                                File.Delete(modifiedFile);
                             }
-                            Directory.Delete(assemblyRestore.BackupDirectory, recursive:true);
-                        }
-                        if(IsDirectoryEmpty(assemblyBackup.GetAssemblyDir(Environment.Directory)))
-                        {
-                            Directory.Delete(assemblyBackup.GetAssemblyDir(Environment.Directory));
                         }
                     }
                     catch(Exception)
                     {
-                        Console.WriteLine($"WARNING: An error occurred trying to restore backups from the '{removedPin.Name}' pin. The assembly in '{assemblyRestore.OriginalDirectory}' may still contain a locally built assembly.");
+                        Console.WriteLine($"WARNING: An error occurred trying to restore backups from the '{removedPin.Name}' pin. The assembly in '{backupPaths.OriginalDirectory}' may still contain a locally built assembly.");
                     }
                 }
             }
-        }
-
-        private static bool IsDirectoryEmpty(string path)
-        {
-            return !Directory.EnumerateFileSystemEntries(path).Any();
         }
     }
 }

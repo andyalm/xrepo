@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Microsoft.Build.Framework;
@@ -32,15 +33,16 @@ namespace XRepo.Build.Tasks
 
                 foreach (var existingDefinition in definitionsForPinnedPackage)
                 {
-                    var packageRegistration = Environment.PackageRegistry.GetPackage(pinnedPackage.PackageId);
+                    var pinnedProject = Environment.FindPinForPackage(pinnedPackage.PackageId);
+                    var project = (RegisteredPackageProject) pinnedProject.Project;
 
                     if (Settings.CopyPins)
                     {
-                        CopyPackageFiles(existingDefinition, packageRegistration);
+                        CopyPackageFiles(existingDefinition, project, pinnedProject.Pin);
                     }
                     else
                     {
-                        OverridePackageLocations(existingDefinition, packageRegistration, overriddenDefinitions, pinnedDefinitions);
+                        OverridePackageLocations(existingDefinition, project, overriddenDefinitions, pinnedDefinitions);
                     }
                 }
 
@@ -54,42 +56,82 @@ namespace XRepo.Build.Tasks
             PinnedDefinitions = pinnedDefinitions.ToArray();
         }
 
-        private void CopyPackageFiles(ITaskItem existingDefinition, PackageRegistration packageRegistration)
+        private void CopyPackageFiles(ITaskItem existingDefinition, RegisteredPackageProject project, IPin pin)
         {
-            var localPackageDir = packageRegistration.LatestProject.PackageDirectory;
-            var packageRelativePath = existingDefinition.GetMetadata("Path");
-
-            if(!packageRelativePath.StartsWith($"lib{Path.DirectorySeparatorChar}"))
+            if (!TryResolveLocalPackageFile(existingDefinition, project, out var sourceFullPath))
             {
-                LogXRepoDebugMessage("Unable to copy file '{sourceFullPath}' from pinned package '{packageRegistration.PackageId}' because only lib assemblies are supported right now");
+                LogDebug("Unable to copy file '{sourceFullPath}' from pinned package '{packageRegistration.PackageId}' because only lib assemblies are supported right now");
                 return;
             }
-
-            var sourceFullPath = Path.Combine(localPackageDir, packageRelativePath.Substring(4));
+            
             var destinationFullPath = existingDefinition.FullPath();
 
             if (File.GetLastWriteTimeUtc(sourceFullPath) != File.GetLastWriteTimeUtc(destinationFullPath))
             {
-                LogXRepoDebugMessage($"Copying file '{sourceFullPath}' from pinned package '{packageRegistration.PackageId}' to '{destinationFullPath}'");
+                LogDebug($"Copying file '{sourceFullPath}' from pinned package '{project.PackageId}' to '{destinationFullPath}'");
     
                 File.Copy(sourceFullPath, destinationFullPath, overwrite:true);
             }
             else
             {
-                LogXRepoDebugMessage($"File '{sourceFullPath}' for pinned package '{packageRegistration.PackageId}' has already been copied to '{destinationFullPath}'");
+                LogDebug($"File '{sourceFullPath}' for pinned package '{project.PackageId}' has already been copied to '{destinationFullPath}'");
+            }
+            
+            var backupEntry = pin.GetBackups(project.PackageId);
+            var originalPackageDirectory = ResolvePackageDirectory(existingDefinition);
+            if (!backupEntry.ContainsOriginalDirectory(originalPackageDirectory))
+            {
+                LogDebug($"Adding backup entry for '{originalPackageDirectory}' because its contents are being overridden");
+                backupEntry.AddEntry(Environment.Directory, originalPackageDirectory);
+                Environment.PinRegistry.Save();
             }
         }
 
-        private void OverridePackageLocations(ITaskItem existingDefinition, PackageRegistration packageRegistration,
+        private void OverridePackageLocations(ITaskItem existingDefinition, RegisteredPackageProject project,
             List<ITaskItem> overriddenDefinitions, List<ITaskItem> pinnedDefinitions)
         {
-            if (!existingDefinition.FullPath().StartsWith(packageRegistration.LatestProject.PackageDirectory))
+            if (TryResolveLocalPackageFile(existingDefinition, project, out var localFilePath))
             {
-                var pinnedDefinition = ToPinnedFileDefinition(existingDefinition, packageRegistration);
+                var pinnedDefinition = ToPinnedFileDefinition(existingDefinition, localFilePath);
+                
+                LogDebug($"Overriding referenced location to '{pinnedDefinition.FullPath()}' for pinned package '{project.PackageId}'");
 
                 overriddenDefinitions.Add(existingDefinition);
                 pinnedDefinitions.Add(pinnedDefinition);
             }
+            else
+            {
+                LogDebug($"Unable to override referenced location '{existingDefinition.FullPath()}' for pinned package '{project.PackageId}' because only lib assemblies are supported right now");
+            }
+        }
+
+        private string ResolvePackageDirectory(ITaskItem fileDefinition)
+        {
+            var fileRelativePath = fileDefinition.GetMetadata("Path");
+            var fullPath = fileDefinition.FullPath();
+            var indexToRemove = fullPath.IndexOf(fileRelativePath);
+            if (indexToRemove <= 0)
+            {
+                throw new XRepoException($"Unable to figure out the installed package location for '{fullPath}'");
+            }
+
+            return fullPath.Remove(indexToRemove);
+        }
+
+        private bool TryResolveLocalPackageFile(ITaskItem fileDefinition, RegisteredPackageProject project, out string fullPath)
+        {
+            var packageRelativePath = fileDefinition.GetMetadata("Path");
+
+            //TODO: Add support for resolving non assembly files
+            if (!packageRelativePath.StartsWith($"lib{Path.DirectorySeparatorChar}",
+                StringComparison.OrdinalIgnoreCase))
+            {
+                fullPath = null;
+                return false;
+            }
+
+            fullPath = Path.Combine(project.PackageDirectory, packageRelativePath.Substring(4));
+            return true;
         }
 
         private void WarnAboutPinnedPackage(string packageId)
@@ -104,26 +146,13 @@ namespace XRepo.Build.Tasks
             }
         }
 
-        private TaskItem ToPinnedFileDefinition(ITaskItem existingDefinition, PackageRegistration packageRegistration)
+        private TaskItem ToPinnedFileDefinition(ITaskItem existingDefinition, string localFilePath)
         {
-            var relativeAssemblyPath = RelativeAssemblyPath(existingDefinition.ItemSpec);
-            var projectOutputDirectory =
-                Path.GetDirectoryName(packageRegistration.LatestProject.PackagePath);
-            
-            var pinnedAssemblyPath = Path.Combine(projectOutputDirectory, relativeAssemblyPath);
-            var pinnedDefinition = new TaskItem(pinnedAssemblyPath);
+            var pinnedDefinition = new TaskItem(localFilePath);
             existingDefinition.CopyMetadataTo(pinnedDefinition);
             pinnedDefinition.SetMetadata("XRepoPin", "true");
             
             return pinnedDefinition;
-        }
-
-        private string RelativeAssemblyPath(string assemblyFullPath)
-        {
-            var lastLibIndex =
-                assemblyFullPath.LastIndexOf($"{Path.DirectorySeparatorChar}lib{Path.DirectorySeparatorChar}");
-
-            return assemblyFullPath.Substring(lastLibIndex + 5);
         }
     }
 }

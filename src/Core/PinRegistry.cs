@@ -158,14 +158,14 @@ namespace XRepo.Core
         public AssemblyPin(string name)
         {
             Name = name;
-            Backups = new AssemblyBackupCollection();
+            Backups = new PinBackupCollection();
         }
         
         public string Name { get; private set; }
 
         public string Description => $"The assembly '{Name}' has been pinned. All references to this assembly will now be resolved to local copies.";
 
-        public AssemblyBackupCollection Backups { get; private set; }
+        public PinBackupCollection Backups { get; private set; }
     }
 
     public class AssemblyPinCollection : KeyedCollection<string,AssemblyPin>
@@ -186,13 +186,13 @@ namespace XRepo.Core
 
         public string Description => $"The package '{Name}' has been pinned. All references to this package will now be resolved to local copies.";
 
-        public AssemblyBackupCollection Backups { get; }
+        public PinBackupCollection Backups { get; }
 
         public PackagePin(string packageId)
         {
             PackageId = packageId;
             Name = packageId;
-            Backups = new AssemblyBackupCollection();
+            Backups = new PinBackupCollection();
         }
     }
 
@@ -209,13 +209,13 @@ namespace XRepo.Core
         public RepoPin(string name)
         {
             Name = name;
-            Backups = new AssemblyBackupCollection();
+            Backups = new PinBackupCollection();
         }
 
         public string Name { get; private set; }
 
         public string Description => $"The repo {Name} has been pinned. All references to packages and assemblies built within this repo will now be resolved to local copies.";
-        public AssemblyBackupCollection Backups { get; private set; }
+        public PinBackupCollection Backups { get; private set; }
     }
 
     public class RepoPinCollection : KeyedCollection<string,RepoPin>

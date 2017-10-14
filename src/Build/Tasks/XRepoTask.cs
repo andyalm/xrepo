@@ -18,7 +18,7 @@ namespace XRepo.Build.Tasks
 
         public ConfigSettings Settings => Environment.ConfigRegistry.Settings;
 
-        public void LogXRepoDebugMessage(string message)
+        public void LogDebug(string message)
         {
             var importance = XRepoDebug ? MessageImportance.High : MessageImportance.Normal;
             

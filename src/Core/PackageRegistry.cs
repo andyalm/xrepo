@@ -119,6 +119,7 @@ namespace XRepo.Core
                 _projects.Insert(0, project);
             }
 
+            project.PackageId = PackageId;
             project.PackageVersion = packageVersion;
             project.ProjectPath = projectPath;
             project.PackagePath = packagePath;
@@ -136,10 +137,16 @@ namespace XRepo.Core
         }
     }
 
+    [JsonObject(MemberSerialization.OptIn)]
     public class RegisteredPackageProject : RegisteredProject
     {
+        [JsonProperty("PackageId")]
+        public string PackageId { get; set; }
+        
+        [JsonProperty("PackageVersion")]
         public string PackageVersion { get; set; }
 
+        [JsonProperty("PackagePath")]
         public string PackagePath { get; set; }
 
         public override string OutputPath => PackagePath;

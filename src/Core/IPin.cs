@@ -10,32 +10,34 @@ namespace XRepo.Core
     {
         string Name { get; }
         string Description { get; }
-        AssemblyBackupCollection Backups { get; }
+        PinBackupCollection Backups { get; }
     }
 
     public static class PinExtensions
     {
-        public static AssemblyBackup GetBackupForAssembly(this IPin pin, string assemblyName)
+        public static PinBackup GetBackups(this IPin pin, string pinName = null)
         {
-            if (pin.Backups.Contains(assemblyName))
-                return pin.Backups[assemblyName];
+            pinName = pinName ?? pin.Name;
+            
+            if (pin.Backups.Contains(pinName))
+                return pin.Backups[pinName];
 
-            var backup = new AssemblyBackup(assemblyName);
+            var backup = new PinBackup(pinName);
             pin.Backups.Add(backup);
 
             return backup;
         }
     }
 
-    public class AssemblyBackup
+    public class PinBackup
     {
-        public AssemblyBackup(string assemblyName)
+        public PinBackup(string pinName)
         {
-            AssemblyName = assemblyName;
+            PinName = pinName;
             OriginalDirectories = new List<string>();
         }
 
-        public string AssemblyName { get; private set; }
+        public string PinName { get; private set; }
         public List<string> OriginalDirectories { get; private set; }
 
         public IEnumerable<string> GetBackupLocations(string environmentRoot)
@@ -65,11 +67,11 @@ namespace XRepo.Core
             return Path.Combine(GetAssemblyDir(environmentRoot), index.ToString());
         }
 
-        public IEnumerable<AssemblyRestorePaths> GetRestorePaths(string environmentRoot)
+        public IEnumerable<BackupPaths> GetRestorePaths(string environmentRoot)
         {
             for (int i = 0; i < OriginalDirectories.Count; i++)
             {
-                yield return new AssemblyRestorePaths
+                yield return new BackupPaths
                 {
                     OriginalDirectory = OriginalDirectories[i],
                     BackupDirectory = GetBackupPath(environmentRoot, i)
@@ -79,24 +81,24 @@ namespace XRepo.Core
 
         public string GetAssemblyDir(string environmentRoot)
         {
-            return Path.Combine(Path.Combine(environmentRoot, "backups"), AssemblyName);
+            return Path.Combine(Path.Combine(environmentRoot, "backups"), PinName);
         }
     }
 
-    public class AssemblyRestorePaths
+    public class BackupPaths
     {
         public string OriginalDirectory { get; set; }
 
         public string BackupDirectory { get; set; }
     }
 
-    public class AssemblyBackupCollection : KeyedCollection<string,AssemblyBackup>
+    public class PinBackupCollection : KeyedCollection<string,PinBackup>
     {
-        public AssemblyBackupCollection() : base(StringComparer.OrdinalIgnoreCase) {}
+        public PinBackupCollection() : base(StringComparer.OrdinalIgnoreCase) {}
 
-        protected override string GetKeyForItem(AssemblyBackup item)
+        protected override string GetKeyForItem(PinBackup item)
         {
-            return item.AssemblyName;
+            return item.PinName;
         }
 
         public IEnumerable<string> GetBackupLocations(string environmentRoot)
