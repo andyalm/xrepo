@@ -68,6 +68,7 @@ namespace XRepo.Installer
             yield return "1.0.2";
             yield return "1.0.3";
             yield return "1.0.4";
+            yield return "2.0.0";
         }
 
         private string SdkBasePath()

@@ -1,7 +1,7 @@
 #!/bin/bash
 
-sudo dotnet run -p deploy/installer/XRepo.Installer.csproj uninstall
+sudo dotnet run --no-restore -p deploy/installer/XRepo.Installer.csproj uninstall
 
-dotnet pack
-dotnet publish src/Build/Build.csproj
-sudo dotnet run -p deploy/installer/XRepo.Installer.csproj install src/Build/bin/Debug/netstandard1.5/publish
+dotnet pack --no-restore
+dotnet publish --no-restore src/Build/Build.csproj
+sudo dotnet run --no-restore -p deploy/installer/XRepo.Installer.csproj install src/Build/bin/Debug/netstandard1.5/publish

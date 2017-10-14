@@ -5,6 +5,8 @@
 			   AssemblyFile="$(MSBuildThisFileDirectory)\XRepo.Build.dll"/>
   <UsingTask TaskName="XRepo.Build.Tasks.ResolvePackageSources"
              AssemblyFile="$(MSBuildThisFileDirectory)\XRepo.Build.dll"/>
+  <UsingTask TaskName="XRepo.Build.Tasks.OverridePinnedDependencyLocations"
+             AssemblyFile="$(MSBuildThisFileDirectory)\XRepo.Build.dll"/>
 
   <Target Name="_XRepoRegisterPackage" AfterTargets="Pack">
     <PropertyGroup>
@@ -21,11 +23,25 @@
       DebugTask="false"/>
   </Target>
 
-  <Target Name="_XRepoOverridePackageReferences" BeforeTargets="Restore">
+  <Target Name="_XRepoAddPinnedPackagesAsSources" BeforeTargets="Restore">
     <XRepo.Build.Tasks.ResolvePackageSources
         ProjectDirectory="$(MSBuildProjectDirectory)">
       <Output TaskParameter="PackageSources" PropertyName="RestoreSources"/>
     </XRepo.Build.Tasks.ResolvePackageSources>
+  </Target>
+
+  <Target Name="_XRepoOverrideReferenceLocations" AfterTargets="_ComputeLockFileReferences">
+    <XRepo.Build.Tasks.OverridePinnedDependencyLocations
+      CompileFileDefinitions="@(ResolvedCompileFileDefinitions)"
+      XRepoDebug="$(XRepoDebug)">
+      <Output TaskParameter="OverriddenDefinitions" ItemName="OverriddenCompileFileDefinitions" />
+      <Output TaskParameter="PinnedDefinitions" ItemName="PinnedCompileFileDefinitions" />
+    </XRepo.Build.Tasks.OverridePinnedDependencyLocations>
+    
+    <ItemGroup>
+      <ResolvedCompileFileDefinitions Remove="@(OverriddenCompileFileDefinitions)" />
+      <ResolvedCompileFileDefinitions Include="@(PinnedCompileFileDefinitions)" />
+    </ItemGroup>
   </Target>
   
 </Project>

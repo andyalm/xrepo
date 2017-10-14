@@ -101,6 +101,8 @@ namespace XRepo.Core
     public abstract class RegisteredProject
     {
         public string ProjectPath { get; set; }
+
+        public string ProjectDirectory => Path.GetDirectoryName(ProjectPath);
         
         public DateTime Timestamp { get; set; }
 

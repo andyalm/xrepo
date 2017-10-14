@@ -101,6 +101,8 @@ namespace XRepo.Core
         [JsonProperty(PropertyName = "PackageId")]
         public string PackageId { get; set; }
 
+        public RegisteredPackageProject LatestProject => Projects.FirstOrDefault();
+
         private PackageRegistration() {}
 
         public PackageRegistration(string packageId)
@@ -141,5 +143,7 @@ namespace XRepo.Core
         public string PackagePath { get; set; }
 
         public override string OutputPath => PackagePath;
+
+        public string PackageDirectory => Path.GetDirectoryName(PackagePath);
     }
 }
