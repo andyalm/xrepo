@@ -1,49 +1,20 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26430.13
+VisualStudioVersion = 15.0.26730.16
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Build", "src\Build\Build.csproj", "{DE24D3B6-EED5-44C7-A0CA-AE66A364365B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Build", "src\Build\Build.csproj", "{DE24D3B6-EED5-44C7-A0CA-AE66A364365B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "src\Core\Core.csproj", "{355AD8CD-3FB2-42A3-AB3F-585CE58CC69E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core", "src\Core\Core.csproj", "{355AD8CD-3FB2-42A3-AB3F-585CE58CC69E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommandLine", "src\CommandLine\CommandLine.csproj", "{588D487A-E1AE-4576-9AFA-78C6C3F0AA3C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CommandLine", "src\CommandLine\CommandLine.csproj", "{588D487A-E1AE-4576-9AFA-78C6C3F0AA3C}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Powershell", "Powershell", "{2BA2342D-4ADE-44D1-9910-BF6B82125254}"
-	ProjectSection(SolutionItems) = preProject
-		src\Powershell\XRepoTabExpansion.psm1 = src\Powershell\XRepoTabExpansion.psm1
-		src\Powershell\XRepoTabExpansionBootstrapper.ps1 = src\Powershell\XRepoTabExpansionBootstrapper.ps1
-	EndProjectSection
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests", "src\Tests\Tests.csproj", "{CBB0C721-6A27-4E05-8543-389EF5814714}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Bash", "Bash", "{17C2ADC8-E150-4AF4-AF18-2696961FBA50}"
-	ProjectSection(SolutionItems) = preProject
-		src\Bash\xrepo_completion.bash = src\Bash\xrepo_completion.bash
-	EndProjectSection
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Scenarios", "src\Scenarios\Scenarios.csproj", "{F78B490C-8323-4496-BB05-33473BCB5B39}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Deploy", "Deploy", "{ECEEC24B-63FE-4404-AC66-9A94FB19B83D}"
-	ProjectSection(SolutionItems) = preProject
-		deploy\xrepo.nuspec = deploy\xrepo.nuspec
-	EndProjectSection
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "chocolatey", "deploy\chocolatey\chocolatey.csproj", "{894C6D99-69AD-448B-82CE-0E829FEA2617}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{D12DB11C-F3F5-4547-9C11-1DBABB6883C6}"
-	ProjectSection(SolutionItems) = preProject
-		deploy\tools\chocolateyInstall.ps1 = deploy\tools\chocolateyInstall.ps1
-		deploy\tools\chocolateyUninstall.ps1 = deploy\tools\chocolateyUninstall.ps1
-		deploy\tools\GlobalMSBuildHook.psm1 = deploy\tools\GlobalMSBuildHook.psm1
-		deploy\tools\installGlobalMsBuildHook.ps1 = deploy\tools\installGlobalMsBuildHook.ps1
-		deploy\tools\uninstallGlobalMsBuildHook.ps1 = deploy\tools\uninstallGlobalMsBuildHook.ps1
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{A983F4B8-92F8-44E6-B7C9-C33823F3E890}"
-	ProjectSection(SolutionItems) = preProject
-		deploy\build\Custom.After.Microsoft.Common.Targets = deploy\build\Custom.After.Microsoft.Common.Targets
-		deploy\build\XRepo.ImportAfter.targets = deploy\build\XRepo.ImportAfter.targets
-	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "src\Tests\Tests.csproj", "{CBB0C721-6A27-4E05-8543-389EF5814714}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Scenarios", "src\Scenarios\Scenarios.csproj", "{F78B490C-8323-4496-BB05-33473BCB5B39}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XRepo.Installer", "deploy\installer\XRepo.Installer.csproj", "{846F3C54-A93C-475D-8E9B-C923D9E793F7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XRepo.Installer", "deploy\installer\XRepo.Installer.csproj", "{A1E3BA67-3670-479D-99A7-8F4B3C731B4E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -95,25 +66,35 @@ Global
 		{F78B490C-8323-4496-BB05-33473BCB5B39}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F78B490C-8323-4496-BB05-33473BCB5B39}.Release|x64.ActiveCfg = Release|Any CPU
 		{F78B490C-8323-4496-BB05-33473BCB5B39}.Release|x86.ActiveCfg = Release|Any CPU
-		{846F3C54-A93C-475D-8E9B-C923D9E793F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{846F3C54-A93C-475D-8E9B-C923D9E793F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{846F3C54-A93C-475D-8E9B-C923D9E793F7}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{846F3C54-A93C-475D-8E9B-C923D9E793F7}.Debug|x64.Build.0 = Debug|Any CPU
-		{846F3C54-A93C-475D-8E9B-C923D9E793F7}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{846F3C54-A93C-475D-8E9B-C923D9E793F7}.Debug|x86.Build.0 = Debug|Any CPU
-		{846F3C54-A93C-475D-8E9B-C923D9E793F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{846F3C54-A93C-475D-8E9B-C923D9E793F7}.Release|Any CPU.Build.0 = Release|Any CPU
-		{846F3C54-A93C-475D-8E9B-C923D9E793F7}.Release|x64.ActiveCfg = Release|Any CPU
-		{846F3C54-A93C-475D-8E9B-C923D9E793F7}.Release|x64.Build.0 = Release|Any CPU
-		{846F3C54-A93C-475D-8E9B-C923D9E793F7}.Release|x86.ActiveCfg = Release|Any CPU
-		{846F3C54-A93C-475D-8E9B-C923D9E793F7}.Release|x86.Build.0 = Release|Any CPU
+		{894C6D99-69AD-448B-82CE-0E829FEA2617}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{894C6D99-69AD-448B-82CE-0E829FEA2617}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{894C6D99-69AD-448B-82CE-0E829FEA2617}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{894C6D99-69AD-448B-82CE-0E829FEA2617}.Debug|x64.Build.0 = Debug|Any CPU
+		{894C6D99-69AD-448B-82CE-0E829FEA2617}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{894C6D99-69AD-448B-82CE-0E829FEA2617}.Debug|x86.Build.0 = Debug|Any CPU
+		{894C6D99-69AD-448B-82CE-0E829FEA2617}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{894C6D99-69AD-448B-82CE-0E829FEA2617}.Release|Any CPU.Build.0 = Release|Any CPU
+		{894C6D99-69AD-448B-82CE-0E829FEA2617}.Release|x64.ActiveCfg = Release|Any CPU
+		{894C6D99-69AD-448B-82CE-0E829FEA2617}.Release|x64.Build.0 = Release|Any CPU
+		{894C6D99-69AD-448B-82CE-0E829FEA2617}.Release|x86.ActiveCfg = Release|Any CPU
+		{894C6D99-69AD-448B-82CE-0E829FEA2617}.Release|x86.Build.0 = Release|Any CPU
+		{A1E3BA67-3670-479D-99A7-8F4B3C731B4E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A1E3BA67-3670-479D-99A7-8F4B3C731B4E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A1E3BA67-3670-479D-99A7-8F4B3C731B4E}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{A1E3BA67-3670-479D-99A7-8F4B3C731B4E}.Debug|x64.Build.0 = Debug|Any CPU
+		{A1E3BA67-3670-479D-99A7-8F4B3C731B4E}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{A1E3BA67-3670-479D-99A7-8F4B3C731B4E}.Debug|x86.Build.0 = Debug|Any CPU
+		{A1E3BA67-3670-479D-99A7-8F4B3C731B4E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A1E3BA67-3670-479D-99A7-8F4B3C731B4E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A1E3BA67-3670-479D-99A7-8F4B3C731B4E}.Release|x64.ActiveCfg = Release|Any CPU
+		{A1E3BA67-3670-479D-99A7-8F4B3C731B4E}.Release|x64.Build.0 = Release|Any CPU
+		{A1E3BA67-3670-479D-99A7-8F4B3C731B4E}.Release|x86.ActiveCfg = Release|Any CPU
+		{A1E3BA67-3670-479D-99A7-8F4B3C731B4E}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{D12DB11C-F3F5-4547-9C11-1DBABB6883C6} = {ECEEC24B-63FE-4404-AC66-9A94FB19B83D}
-		{A983F4B8-92F8-44E6-B7C9-C33823F3E890} = {ECEEC24B-63FE-4404-AC66-9A94FB19B83D}
-		{846F3C54-A93C-475D-8E9B-C923D9E793F7} = {ECEEC24B-63FE-4404-AC66-9A94FB19B83D}
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {29F4818D-17B3-422A-9EB2-1957841EBD83}
 	EndGlobalSection
 EndGlobal
