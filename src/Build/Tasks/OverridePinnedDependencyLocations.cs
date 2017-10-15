@@ -56,11 +56,11 @@ namespace XRepo.Build.Tasks
             PinnedDefinitions = pinnedDefinitions.ToArray();
         }
 
-        private void CopyPackageFiles(ITaskItem existingDefinition, RegisteredPackageProject project, IPin pin)
+        private void CopyPackageFiles(ITaskItem existingDefinition, RegisteredPackageProject project, Pin pin)
         {
             if (!TryResolveLocalPackageFile(existingDefinition, project, out var sourceFullPath))
             {
-                LogDebug("Unable to copy file '{sourceFullPath}' from pinned package '{packageRegistration.PackageId}' because only lib assemblies are supported right now");
+                LogDebug($"Unable to copy file '{sourceFullPath}' from pinned package '{project.PackageId}' because only lib assemblies are supported right now (Path: {existingDefinition.GetMetadata("Path")})");
                 return;
             }
             
@@ -77,12 +77,10 @@ namespace XRepo.Build.Tasks
                 LogDebug($"File '{sourceFullPath}' for pinned package '{project.PackageId}' has already been copied to '{destinationFullPath}'");
             }
             
-            var backupEntry = pin.GetBackups(project.PackageId);
             var originalPackageDirectory = ResolvePackageDirectory(existingDefinition);
-            if (!backupEntry.ContainsOriginalDirectory(originalPackageDirectory))
+            if (pin.OverriddenDirectories.Add(originalPackageDirectory))
             {
-                LogDebug($"Adding backup entry for '{originalPackageDirectory}' because its contents are being overridden");
-                backupEntry.AddEntry(Environment.Directory, originalPackageDirectory);
+                LogDebug($"Tracking that the contents of directory '{originalPackageDirectory}' have been overridden");
                 Environment.PinRegistry.Save();
             }
         }
@@ -107,7 +105,7 @@ namespace XRepo.Build.Tasks
 
         private string ResolvePackageDirectory(ITaskItem fileDefinition)
         {
-            var fileRelativePath = fileDefinition.GetMetadata("Path");
+            var fileRelativePath = fileDefinition.GetMetadata("Path").Replace('/', Path.DirectorySeparatorChar);
             var fullPath = fileDefinition.FullPath();
             var indexToRemove = fullPath.IndexOf(fileRelativePath);
             if (indexToRemove <= 0)
@@ -123,7 +121,7 @@ namespace XRepo.Build.Tasks
             var packageRelativePath = fileDefinition.GetMetadata("Path");
 
             //TODO: Add support for resolving non assembly files
-            if (!packageRelativePath.StartsWith($"lib{Path.DirectorySeparatorChar}",
+            if (!packageRelativePath.StartsWith($"lib/",
                 StringComparison.OrdinalIgnoreCase))
             {
                 fullPath = null;

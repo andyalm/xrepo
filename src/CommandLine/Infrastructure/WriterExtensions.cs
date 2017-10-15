@@ -8,8 +8,12 @@ namespace XRepo.CommandLine.Infrastructure
     {
         public static void WriteList<T>(this TextWriter writer, string title, IEnumerable<T> items, Action<T> write)
         {
-            Console.WriteLine(title);
-            Console.WriteLine("-------------------");
+            if (!string.IsNullOrWhiteSpace(title))
+            {
+                Console.WriteLine(title);
+                Console.WriteLine("-------------------");
+            }
+            
             foreach (var item in items)
             {
                 write(item);

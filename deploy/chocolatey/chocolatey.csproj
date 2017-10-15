@@ -33,7 +33,7 @@
       <PackagePath>app\</PackagePath>
       <Visible>false</Visible>
     </Content>
-    <Content Include="..\..\src\Build\bin\$(Configuration)\netstandard1.4\*.*">
+    <Content Include="..\..\src\Build\bin\$(Configuration)\netstandard1.5\*.*">
       <Pack>true</Pack>
       <PackagePath>build\</PackagePath>
       <Visible>false</Visible>

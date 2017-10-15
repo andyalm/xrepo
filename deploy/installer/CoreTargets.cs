@@ -29,6 +29,9 @@ namespace XRepo.Installer
         {
             var filename = "XRepo.ImportAfter.targets";
             var importAfterProjectDirectory = Path.Combine(sdkPath, "15.0", importAfterType, "ImportAfter");
+            //ensure the target directory exists
+            Directory.CreateDirectory(importAfterProjectDirectory);
+
             Console.WriteLine($"Installing the {filename} file for sdk {sdk} to {importAfterProjectDirectory}...");
             if (!File.Exists(Path.Combine(importAfterProjectDirectory, filename)))
                 File.Copy(Path.Combine(AppContext.BaseDirectory, filename),

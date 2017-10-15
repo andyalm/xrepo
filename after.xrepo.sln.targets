@@ -5,29 +5,10 @@
   </ItemGroup>
 
   <Target Name="_RunTests" AfterTargets="Build">
-    <Exec Command="dotnet run" WorkingDirectory="%(TestProject.RootDir)%(TestProject.Directory)" />
+    <Exec Command="dotnet test" WorkingDirectory="%(TestProject.RootDir)%(TestProject.Directory)" />
   </Target>
 
-  <Target Name="Pack" DependsOnTargets="Build">
-    <MSBuild
-        BuildInParallel="true"
-        Projects="@(ProjectReference)"
-        Targets="Pack" />
-  </Target>
-
-  <Target Name="_CreateChocolateyPackage" AfterTargets="Pack">
-    <MakeDir Directories="deploy\chocolatey\bin\$(Configuration)">
-      <Output TaskParameter="DirectoriesCreated" ItemName="OutputDirectory"/>
-    </MakeDir>
-    <Exec Command="dotnet publish"
-      WorkingDirectory="$(MSBuildThisFileDirectory)\src\CommandLine" />
-    <Exec Command="dotnet publish"
-      WorkingDirectory="$(MSBuildThisFileDirectory)\deploy\installer" />
-    <Exec Command=".nuget\nuget.exe pack deploy\chocolatey\xrepo.nuspec -OutputDirectory &quot;@(OutputDirectory)&quot; -Properties &quot;configuration=$(Configuration)&quot; -NoPackageAnalysis" 
-          Condition="$(OS)=='Windows'" />
-  </Target>
-
-  <Target Name="Deploy" DependsOnTargets="Pack">
+  <Target Name="Deploy" DependsOnTargets="Build">
     <Exec Command="choco uninstall xrepo" ContinueOnError="true" />
     <Exec Command="choco install xrepo -source $(MSBuildThisFileDirectory)\deploy\chocolatey\bin\$(Configuration) -pre" />
   </Target>

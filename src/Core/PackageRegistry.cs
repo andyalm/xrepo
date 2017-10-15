@@ -64,7 +64,7 @@ namespace XRepo.Core
             if(version == null)
                 throw new ArgumentNullException(nameof(version));
             Id = id;
-            Version = version;
+            Version = NuGetVersion.Normalize(version);
         }
 
         public bool Equals(PackageIdentifier other)

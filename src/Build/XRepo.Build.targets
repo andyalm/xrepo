@@ -8,18 +8,23 @@
   <UsingTask TaskName="XRepo.Build.Tasks.OverridePinnedDependencyLocations"
              AssemblyFile="$(MSBuildThisFileDirectory)\XRepo.Build.dll"/>
 
-  <Target Name="_XRepoRegisterPackage" AfterTargets="Pack">
-    <PropertyGroup>
-        <XRepoPackageOutputFullPath Condition="$(PackageOutputAbsolutePath)!=''">$(PackageOutputAbsolutePath)$(PackageId).$(PackageVersion).nupkg</XRepoPackageOutputFullPath>
-    </PropertyGroup>
-    <Message Text="XRepo: Registering the package $(XRepoPackageOutputFullPath)" />
+  <Target Name="_XRepoRegisterPackageOnPack" AfterTargets="Pack">
+    <CallTarget Condition="$(IsPackable.ToLower())!='false'" Targets="_XRepoRegisterPackage" />
+  </Target>
+
+  <Target Name="_XRepoRegisterPackageOnBuild" AfterTargets="Build">
+    <CallTarget Condition="$(GeneratePackageOnBuild.ToLower())=='true'" Targets="_XRepoRegisterPackage" />
+  </Target>
+  
+  <Target Name="_XRepoRegisterPackage">
     <XRepo.Build.Tasks.RegisterPackage
-      PackagePath="$(XRepoPackageOutputFullPath)"
+      PackageOutputPath="$(PackageOutputPath)"
       PackageId="$(PackageId)"
-	  PackageVersion="$(PackageVersion)"
+      PackageVersion="$(PackageVersion)"
       ProjectPath="$(MSBuildProjectFullPath)"
       CustomConfigDir="$(XRepoConfigDir)"
-      Condition="$(XRepoPackageOutputFullPath)!=''"
+      Condition="$(PackageOutputPath)!=''"
+      XRepoDebug="$(XRepoDebug)"
       DebugTask="false"/>
   </Target>
 
@@ -31,6 +36,7 @@
   </Target>
 
   <Target Name="_XRepoOverrideReferenceLocations" AfterTargets="_ComputeLockFileReferences">
+    <Message Text="HHHHHIIIIIIIII" Importance="High" />
     <XRepo.Build.Tasks.OverridePinnedDependencyLocations
       CompileFileDefinitions="@(ResolvedCompileFileDefinitions)"
       XRepoDebug="$(XRepoDebug)">

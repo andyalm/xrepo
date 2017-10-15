@@ -18,13 +18,14 @@ namespace XRepo.CommandLine.Commands
             var packageRegistration = Environment.PackageRegistry.GetPackage(Name.Value);
             if (packageRegistration != null)
             {
+                
                 Console.Out.WriteList("packages", packageRegistration.Projects.OrderByDescending(p => p.Timestamp).Select(p => p.OutputPath));
             }
 
             var assemblyRegistration = Environment.AssemblyRegistry.GetAssembly(Name.Value);
             if (assemblyRegistration != null)
             {
-                Console.Out.WriteList("assemblies", packageRegistration.Projects.OrderByDescending(p => p.Timestamp).Select(p => p.OutputPath));
+                Console.Out.WriteList("assemblies", assemblyRegistration.Projects.OrderByDescending(p => p.Timestamp).Select(p => p.OutputPath));
             }
 
             if (packageRegistration == null && assemblyRegistration == null)
