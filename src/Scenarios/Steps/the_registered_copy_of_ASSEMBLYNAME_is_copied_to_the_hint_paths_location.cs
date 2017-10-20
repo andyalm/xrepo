@@ -20,8 +20,8 @@ namespace XRepo.Scenarios.Steps
             var pinnedProject = Context.Environment.XRepoEnvironment.FindPinForAssembly(_assemblyName);
             var hintedPath = Context.Environment.GetLibFilePath(_assemblyName + ".dll");
 
-            var expectedRegex = new Regex(String.Format("from.*{0}.*to.*{1}.*", pinnedProject.Project.OutputPath.Replace("\\", "\\\\"), hintedPath.Replace("\\", "\\\\")));
-            expectedRegex.IsMatch(Context.BuildOutput).Should().BeTrue("Expected the regex '" + expectedRegex.ToString() + "' to match");
+            Context.BuildOutput.Should().MatchRegex(String.Format("from.*{0}.*to.*{1}.*",
+                pinnedProject.Project.OutputPath.Replace("\\", "\\\\"), hintedPath.Replace("\\", "\\\\")));
         }
     }
 }

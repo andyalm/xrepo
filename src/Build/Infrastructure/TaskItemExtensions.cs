@@ -115,5 +115,18 @@ namespace XRepo.Build.Infrastructure
         {
             return !String.IsNullOrWhiteSpace(item.GetMetadata(name));
         }
+
+        public static bool HasMetadata(this ITaskItem item, string metadataName, string metadataValue)
+        {
+            return item.GetMetadata(metadataName)?.Equals(metadataValue, StringComparison.OrdinalIgnoreCase) == true;
+        }
+
+        public static void CopyMetadataFrom(this ITaskItem item, ITaskItem source)
+        {
+            foreach (string metadataName in source.MetadataNames)
+            {
+                item.SetMetadata(metadataName, source.GetMetadata(metadataName));
+            }
+        }
     }
 }

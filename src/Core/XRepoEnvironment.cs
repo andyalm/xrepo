@@ -161,7 +161,7 @@ namespace XRepo.Core
             return null;
         }
 
-        public IPin Pin(string name)
+        public Pin Pin(string name)
         {
             if (RepoRegistry.IsRepoRegistered(name))
             {
@@ -181,7 +181,7 @@ namespace XRepo.Core
             throw new XRepoException($"There is no repo, package or assembly registered by the name of '{name}'. Either go build that assembly/package or register the repo.");
         }
 
-        public IPin Unpin(string name)
+        public Pin Unpin(string name)
         {
             if(PinRegistry.IsRepoPinned(name))
             {

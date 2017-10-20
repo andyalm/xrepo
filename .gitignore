@@ -4,5 +4,6 @@
 *.suo
 .vscode/
 .idea/
+.vs/
 *.sublime-workspace
 TestResult.xml

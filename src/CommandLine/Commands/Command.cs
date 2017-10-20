@@ -23,7 +23,7 @@ namespace XRepo.CommandLine.Commands
 
         public IEnumerable<PropertyInfo> GetArgumentProperties()
         {
-            return GetType().GetTypeInfo().GetProperties()
+            return GetType().GetProperties()
                 .Where(t => t.PropertyType == typeof(CommandArgument));
         }
     }

@@ -64,27 +64,33 @@ namespace XRepo.Build.Tasks
 
         private void CopyPinnedAssembly(string assemblyName, PinnedProject project, string hintPath)
         {
-            var backupEntry = project.Pin.GetBackupForAssembly(assemblyName);
-            var hintPathDir = Path.GetFullPath(Path.GetDirectoryName(hintPath));
-            if(!backupEntry.ContainsOriginalDirectory(hintPathDir))
+            var fullHintPath = Path.GetFullPath(hintPath);
+            var assemblyAndRelatedFiles = this.GetRelatedAssemblyFiles(fullHintPath.ToTaskItems());
+            bool anyBackupsAdded = false;
+            foreach (var overriddenFile in assemblyAndRelatedFiles.AllPaths())
             {
-                var newBackupEntry = backupEntry.AddEntry(Environment.Directory, hintPathDir);
-                Environment.PinRegistry.Save();
-                Log.LogMessage("Backing up original copy of assembly '" + assemblyName + "' in '" + hintPath + "' because it is about to be overridden by a pinned copy of that assembly...");
-                this.ExecTask(() => new CopyAssembly
+                if (project.Pin.OverriddenFiles.Add(overriddenFile))
                 {
-                    Assemblies = hintPath.ToTaskItems(),
-                    DestinationFolder = newBackupEntry.ToTaskItem(),
-                    CopyDependencies = false,
-                    SkipUnchangedFiles = SkipUnchangedFiles
-                });
+                    anyBackupsAdded = true;
+                    LogDebug($"Tracking that the file '{overriddenFile}' have been overridden");
+                }
+            }
+            if (anyBackupsAdded)
+            {
+                Environment.PinRegistry.Save();
             }
             Log.LogMessage("Copying pinned assembly '" + assemblyName + "' to hint path location '" + hintPath + "'...");
-            this.ExecTask(() => new CopyAssembly
+            var destinationFolder = hintPath.ToTaskItem().FullDirectoryPath().ToTaskItem();
+            this.ExecTask(() => new Copy
             {
-                Assemblies = project.Project.OutputPath.ToTaskItems(),
-                DestinationFolder = hintPath.ToTaskItem().FullDirectoryPath().ToTaskItem(),
-                CopyDependencies = false,
+                SourceFiles = assemblyAndRelatedFiles.AssemblyAndRelatedFiles,
+                DestinationFolder = destinationFolder,
+                SkipUnchangedFiles = SkipUnchangedFiles
+            });
+            this.ExecTask(() => new Copy
+            {
+                SourceFiles = assemblyAndRelatedFiles.SatelliteFiles.ToTaskItems(a => a.SourcePath),
+                DestinationFiles = assemblyAndRelatedFiles.SatelliteFiles.ToTaskItems(a => a.GetDestinationPath(destinationFolder)),
                 SkipUnchangedFiles = SkipUnchangedFiles
             });
         }

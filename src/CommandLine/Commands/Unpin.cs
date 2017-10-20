@@ -1,11 +1,8 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
-
 using XRepo.Core;
 
 using Microsoft.Extensions.CommandLineUtils;
-using XRepo.CommandLine.Infrastructure;
 
 namespace XRepo.CommandLine.Commands
 {
@@ -24,7 +21,7 @@ namespace XRepo.CommandLine.Commands
             {
                 var pin = Environment.Unpin(Name.Value);
                 LogUnpinSuccess(pin);
-                RestoreBackupsForPin(pin);
+                RestoreModifiedFilesForPin(pin);
             }
             Environment.PinRegistry.Save();
         }
@@ -36,7 +33,7 @@ namespace XRepo.CommandLine.Commands
             Console.WriteLine("Everything has been unpinned.");
         }
 
-        private void LogUnpinSuccess(IPin pin)
+        private void LogUnpinSuccess(Pin pin)
         {
             if(pin is RepoPin repoPin)
             {
@@ -52,44 +49,55 @@ namespace XRepo.CommandLine.Commands
             }
         }
 
-        private void RestoreBackupsForPin(IPin removedPin)
+        private void RestoreModifiedFilesForPin(Pin removedPin)
         {
             if(removedPin == null)
                 return;
 
-            foreach (var assemblyBackup in removedPin.Backups)
+            foreach (var overriddenDirectory in removedPin.OverriddenDirectories)
             {
-                foreach (var assemblyRestore in assemblyBackup.GetRestorePaths(Environment.Directory))
+                try
                 {
-                    try
+                    if (!string.IsNullOrWhiteSpace(overriddenDirectory) && Directory.Exists(overriddenDirectory))
                     {
-                        if(Directory.Exists(assemblyRestore.OriginalDirectory) && Directory.Exists(assemblyRestore.BackupDirectory))
+                        Console.WriteLine(
+                            $"Deleting files in \'{overriddenDirectory}\' as they were overridden by pin '{removedPin.Name}'");
+
+                        //We don't actually delete the directory because it can be locked by ReSharper. We'll 
+                        //just delete all files in the directory instead. This will typically be the NuGet package
+                        //directory which will get repopulated on the next restore anyways.
+                        foreach (var modifiedFile in Directory.GetFiles(overriddenDirectory, "*.*", SearchOption.AllDirectories))
                         {
-                            Console.WriteLine("Restoring original copies of assembly '" + assemblyBackup.AssemblyName + "' to '" + assemblyRestore.OriginalDirectory + "'...");
-                            foreach(var backedUpFilePath in Directory.GetFiles(assemblyRestore.BackupDirectory, "*.*", SearchOption.AllDirectories))
-                            {
-                                var relativePath = backedUpFilePath.PathRelativeTo(assemblyRestore.BackupDirectory);
-                                var destinationFullPath = Path.Combine(assemblyRestore.OriginalDirectory, relativePath);
-                                File.Copy(backedUpFilePath, destinationFullPath, overwrite:true);
-                            }
-                            Directory.Delete(assemblyRestore.BackupDirectory, recursive:true);
+                            File.Delete(modifiedFile);
                         }
-                        if(IsDirectoryEmpty(assemblyBackup.GetAssemblyDir(Environment.Directory)))
-                        {
-                            Directory.Delete(assemblyBackup.GetAssemblyDir(Environment.Directory));
-                        }
-                    }
-                    catch(Exception)
-                    {
-                        Console.WriteLine($"WARNING: An error occurred trying to restore backups from the '{removedPin.Name}' pin. The assembly in '{assemblyRestore.OriginalDirectory}' may still contain a locally built assembly.");
                     }
                 }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                    Console.WriteLine();
+                    Console.WriteLine($"WARNING: An error occurred trying to delete modified files from the '{removedPin.Name}' pin. The assembly directory '{overriddenDirectory}' may still contain modified files and I suggest you manually delete them.");
+                }
             }
-        }
+            foreach (var overriddenFile in removedPin.OverriddenFiles)
+            {
+                try
+                {
+                    if (!string.IsNullOrWhiteSpace(overriddenFile) && File.Exists(overriddenFile))
+                    {
+                        Console.WriteLine(
+                            $"Deleting file \'{overriddenFile}\' as it was overridden by pin '{removedPin.Name}'");
 
-        private static bool IsDirectoryEmpty(string path)
-        {
-            return !Directory.EnumerateFileSystemEntries(path).Any();
+                        File.Delete(overriddenFile);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                    Console.WriteLine();
+                    Console.WriteLine($"WARNING: An error occurred trying to delete a modified file from the '{removedPin.Name}' pin. I suggest you manually delete it.");
+                }
+            }
         }
     }
 }

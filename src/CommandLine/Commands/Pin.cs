@@ -5,7 +5,7 @@ using XRepo.CommandLine.Infrastructure;
 
 namespace XRepo.CommandLine.Commands
 {
-    [CommandName("pin", "Pins a repo or assembly so that all references are resolved locally")]
+    [CommandName("pin", "Pins a repo, package, or assembly so that all references are resolved locally")]
     public class PinCommand : Command
     {
         [Required]

@@ -19,9 +19,7 @@ namespace XRepo.Scenarios.Steps
             Context.Environment.Reload(); //ensure we have a copy of the latest environment
             var pinnedProject = Context.Environment.XRepoEnvironment.FindPinForAssembly(_assemblyName);
             pinnedProject.Should().NotBeNull();
-            pinnedProject.Pin.Backups.Count.Should().BeGreaterThan(0, "there should be a backup entry for the pin");
-            pinnedProject.Pin.Backups.GetBackupLocations(Context.Environment.XRepoConfigDir)
-                .Should().OnlyContain(p => File.Exists(Path.Combine(p, _assemblyName + ".dll")), "The file should exist");
+            pinnedProject.Pin.OverriddenFiles.Count.Should().BeGreaterThan(0, "there should be a backup entry for the pin");
         }
     }
 }
