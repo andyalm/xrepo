@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 
 namespace XRepo.Installer
 {
-    public class CoreTargets : IInstallable
+    public class SdkTargets : IInstallable
     {
         public void Install(string buildTargetsDirectory)
         {
@@ -15,24 +15,40 @@ namespace XRepo.Installer
                 var sdkPath = Path.Combine(sdkBasePath, sdk);
                 if(Directory.Exists(sdkPath))
                 {
-                    InstallImportAfterTargets(buildTargetsDirectory, sdkPath, sdk, "XRepo.Build.targets", "Microsoft.Common.targets");
-                    InstallImportAfterTargets(buildTargetsDirectory, sdkPath, sdk, "XRepo.Build.SolutionFile.targets", "SolutionFile");
+                    InstallImportAfterTargets(buildTargetsDirectory, sdkPath, $"sdk {sdk}", "XRepo.Build.targets", "Microsoft.Common.targets");
+                    InstallImportAfterTargets(buildTargetsDirectory, sdkPath, $"sdk {sdk}", "XRepo.Build.SolutionFile.targets", "SolutionFile");
                 }
                 else
                 {
                     Console.WriteLine($"The sdk {sdk} was not detected. Skipping...");
                 }
             }
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                foreach (var visualStudioPath in VisualStudioMsbuildPaths())
+                {
+                    var vsFullPath = Path.Combine(Environment.GetEnvironmentVariable("ProgramFiles(x86)"), visualStudioPath);
+                    if (Directory.Exists(vsFullPath))
+                    {
+                        InstallImportAfterTargets(buildTargetsDirectory, vsFullPath, $"Visual Studio {visualStudioPath}", "XRepo.Build.targets", "Microsoft.Common.targets");
+                        InstallImportAfterTargets(buildTargetsDirectory, vsFullPath, $"Visual Studio {visualStudioPath}", "XRepo.Build.SolutionFile.targets", "SolutionFile");
+                    }
+                    else
+                    {
+                        Console.WriteLine($"No installation for Visual Studio at {visualStudioPath} detected. Skipping...");
+                    }
+                }
+            }
         }
 
-        private static void InstallImportAfterTargets(string buildTargetsDirectory, string sdkPath, string sdk, string buildTargetsFilename, string importAfterType)
+        private static void InstallImportAfterTargets(string buildTargetsDirectory, string sdkPath, string sdkDescription, string buildTargetsFilename, string importAfterType)
         {
             var filename = "XRepo.ImportAfter.targets";
             var importAfterProjectDirectory = Path.Combine(sdkPath, "15.0", importAfterType, "ImportAfter");
             //ensure the target directory exists
             Directory.CreateDirectory(importAfterProjectDirectory);
 
-            Console.WriteLine($"Installing the {filename} file for sdk {sdk} to {importAfterProjectDirectory}...");
+            Console.WriteLine($"Installing the {filename} file for {sdkDescription} to {importAfterProjectDirectory}...");
             if (!File.Exists(Path.Combine(importAfterProjectDirectory, filename)))
                 File.Copy(Path.Combine(AppContext.BaseDirectory, filename),
                     Path.Combine(importAfterProjectDirectory, filename));
@@ -72,6 +88,15 @@ namespace XRepo.Installer
             yield return "1.0.3";
             yield return "1.0.4";
             yield return "2.0.0";
+            yield return "2.0.1";
+            yield return "2.0.2";
+        }
+
+        private IEnumerable<string> VisualStudioMsbuildPaths()
+        {
+            yield return Path.Combine("Microsoft Visual Studio", "2017", "Community", "MSBuild");
+            yield return Path.Combine("Microsoft Visual Studio", "2017", "Professional", "MSBuild");
+            yield return Path.Combine("Microsoft Visual Studio", "2017", "Enterprise", "MSBuild");
         }
 
         private string SdkBasePath()

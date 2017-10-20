@@ -36,7 +36,6 @@
   </Target>
 
   <Target Name="_XRepoOverrideReferenceLocations" AfterTargets="_ComputeLockFileReferences">
-    <Message Text="HHHHHIIIIIIIII" Importance="High" />
     <XRepo.Build.Tasks.OverridePinnedDependencyLocations
       CompileFileDefinitions="@(ResolvedCompileFileDefinitions)"
       XRepoDebug="$(XRepoDebug)">
