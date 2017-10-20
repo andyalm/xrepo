@@ -28,13 +28,6 @@
       DebugTask="false"/>
   </Target>
 
-  <Target Name="_XRepoAddPinnedPackagesAsSources" BeforeTargets="Restore">
-    <XRepo.Build.Tasks.ResolvePackageSources
-        ProjectDirectory="$(MSBuildProjectDirectory)">
-      <Output TaskParameter="PackageSources" PropertyName="RestoreSources"/>
-    </XRepo.Build.Tasks.ResolvePackageSources>
-  </Target>
-
   <Target Name="_XRepoOverrideReferenceLocations" AfterTargets="_ComputeLockFileReferences">
     <XRepo.Build.Tasks.OverridePinnedDependencyLocations
       CompileFileDefinitions="@(ResolvedCompileFileDefinitions)"
