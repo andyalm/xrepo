@@ -5,7 +5,7 @@ namespace XRepo.Installer
 {
     class Program
     {
-        static readonly IInstallable[] installables = new IInstallable[] {new DesktopTargets(), new SdkTargets()};
+        static readonly IInstallable[] installables = new IInstallable[] {new SdkTargets()};
 
         static int Main(string[] args)
         {           

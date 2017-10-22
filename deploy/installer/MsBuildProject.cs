@@ -18,8 +18,18 @@ namespace XRepo.Installer
         public void AddExtensionImport(string importPath)
         {
             var project = Load();
-            
             var xmlns = project.Root.Name.Namespace;
+
+            //delete existing matches
+            var filename = Path.GetFileName(importPath);
+            var existingImports = project.Root.Elements(xmlns + "Import")
+                .Where(i => i.Attribute("Project")?.Value?.Contains(filename) == true);
+
+            foreach (var existingImport in existingImports)
+            {
+                existingImport.Remove();
+            }
+
             var import = new XElement(xmlns + "Import");
             import.SetAttributeValue("Project", importPath);
             import.SetAttributeValue("Condition", $"Exists('{importPath}') and $(DisableGlobalXRepo)!='true'");

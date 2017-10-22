@@ -53,7 +53,7 @@ namespace XRepo.Installer
 
             yield return Path.Combine(programFilesX86, "MSBuild", "v14.0");
             yield return Path.Combine(programFiles, "MSBuild", "v14.0");
-            //TODO: Add support for MSBuild 15
+            //msbuild 15 is in the SdkTargets class
         }
     }
 }

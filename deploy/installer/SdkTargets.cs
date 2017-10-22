@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Xml.Linq;
 
 namespace XRepo.Installer
 {
@@ -15,8 +16,14 @@ namespace XRepo.Installer
                 var sdkPath = Path.Combine(sdkBasePath, sdk);
                 if(Directory.Exists(sdkPath))
                 {
-                    InstallImportAfterTargets(buildTargetsDirectory, sdkPath, $"sdk {sdk}", "XRepo.Build.targets", "Microsoft.Common.targets");
-                    InstallImportAfterTargets(buildTargetsDirectory, sdkPath, $"sdk {sdk}", "XRepo.Build.SolutionFile.targets", "SolutionFile");
+                    InstallImportAfterTargets(sdkPath, $"sdk {sdk}", "Microsoft.Common.targets", new []
+                    {
+                        Path.Combine(buildTargetsDirectory, "XRepo.Build.targets")
+                    });
+                    InstallImportAfterTargets(sdkPath, $"sdk {sdk}", "SolutionFile", new []
+                    {
+                        Path.Combine(buildTargetsDirectory, "XRepo.Build.SolutionFile.targets")
+                    });
                 }
                 else
                 {
@@ -30,8 +37,15 @@ namespace XRepo.Installer
                     var vsFullPath = Path.Combine(Environment.GetEnvironmentVariable("ProgramFiles(x86)"), visualStudioPath);
                     if (Directory.Exists(vsFullPath))
                     {
-                        InstallImportAfterTargets(buildTargetsDirectory, vsFullPath, $"Visual Studio {visualStudioPath}", "XRepo.Build.targets", "Microsoft.Common.targets");
-                        InstallImportAfterTargets(buildTargetsDirectory, vsFullPath, $"Visual Studio {visualStudioPath}", "XRepo.Build.SolutionFile.targets", "SolutionFile");
+                        InstallImportAfterTargets(vsFullPath, $"Visual Studio", "Microsoft.Common.targets", new[]
+                        {
+                            Path.Combine(buildTargetsDirectory, "XRepo.Build.targets"),
+                            Path.Combine(buildTargetsDirectory, "XRepo.Build.Desktop.targets")
+                        });
+                        InstallImportAfterTargets(vsFullPath, $"Visual Studio", "SolutionFile", new []
+                        {
+                            Path.Combine(buildTargetsDirectory, "XRepo.Build.SolutionFile.targets")
+                        });
                     }
                     else
                     {
@@ -41,22 +55,29 @@ namespace XRepo.Installer
             }
         }
 
-        private static void InstallImportAfterTargets(string buildTargetsDirectory, string sdkPath, string sdkDescription, string buildTargetsFilename, string importAfterType)
+        private static void InstallImportAfterTargets(string sdkPath, string sdkDescription, string importAfterType, IEnumerable<string> buildTargetsFilenames)
         {
-            var filename = "XRepo.ImportAfter.targets";
             var importAfterProjectDirectory = Path.Combine(sdkPath, "15.0", importAfterType, "ImportAfter");
+            var importAfterFilename = $"XRepo.ImportAfter.targets";
             //ensure the target directory exists
             Directory.CreateDirectory(importAfterProjectDirectory);
 
-            Console.WriteLine($"Installing the {filename} file for {sdkDescription} to {importAfterProjectDirectory}...");
-            if (!File.Exists(Path.Combine(importAfterProjectDirectory, filename)))
-                File.Copy(Path.Combine(AppContext.BaseDirectory, filename),
-                    Path.Combine(importAfterProjectDirectory, filename));
+            Console.WriteLine($"Installing the {importAfterFilename} file for {sdkDescription} to {importAfterProjectDirectory}...");
 
-            var extensionImport = Path.Combine(buildTargetsDirectory, buildTargetsFilename);
-            var importAfterProject = new MsBuildProject(Path.Combine(importAfterProjectDirectory, filename));
-            importAfterProject.RemoveImportsMatching("XRepo.Build.targets");
-            importAfterProject.AddExtensionImport(extensionImport);
+            var importAfterProject = XDocument.Parse("<Project></Project>");
+            foreach (var importPath in buildTargetsFilenames)
+            {
+                var import = new XElement("Import");
+                import.SetAttributeValue("Project", importPath);
+                import.SetAttributeValue("Condition", $"Exists('{importPath}') and $(DisableGlobalXRepo)!='true'");
+                importAfterProject.Root.Add(import);
+            }
+
+            var importAfterFullPath = Path.Combine(importAfterProjectDirectory, importAfterFilename);
+            using (var stream = File.Open(importAfterFullPath, FileMode.Create))
+            {
+                importAfterProject.Save(stream);
+            }
         }
 
         public void Uninstall()
