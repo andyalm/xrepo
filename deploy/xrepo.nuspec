@@ -3,7 +3,7 @@
   <metadata>
     <id>xrepo</id>
     <title>xrepo</title>
-    <version>1.0.0-beta2</version>
+    <version>1.0.0</version>
     <authors>Andy Alm</authors>
     <summary>Cross repo development finally made easy</summary>
     <description>Finally makes it easy to develop when you need to make changes that spans more than one source code repository.</description>
@@ -16,6 +16,7 @@
         * Adds support for overriding the SpecificVersion setting for an assembly reference
         * Updating bash tab completion to tab complete assemblies when using the pin command
         * Adds support for MSBuild 15
+        * Sdk based projects (e.g. .NET Core) not supported, but support is provided in 2.0 beta.
     </releaseNotes>
   </metadata>
   <files>
