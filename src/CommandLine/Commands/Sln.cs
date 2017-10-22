@@ -1,7 +1,6 @@
 ﻿
 using System.IO;
 using System.Linq;
-using System.Xml.Linq;
 using Microsoft.Extensions.CommandLineUtils;
 using XRepo.CommandLine.Infrastructure;
 using XRepo.CommandLine.Infrastructure.SlnModel;

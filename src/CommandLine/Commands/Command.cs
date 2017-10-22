@@ -21,10 +21,18 @@ namespace XRepo.CommandLine.Commands
         public string Name => this.GetType().GetTypeInfo().GetCustomAttribute<CommandNameAttribute>().Name;
         public string Description => this.GetType().GetTypeInfo().GetCustomAttribute<CommandNameAttribute>().Description;
 
-        public IEnumerable<PropertyInfo> GetArgumentProperties()
+        internal IEnumerable<ArgumentProperty> GetArgumentProperties()
         {
             return GetType().GetProperties()
-                .Where(t => t.PropertyType == typeof(CommandArgument));
+                .Where(t => t.HasAttribute<CommandArgumentAttribute>())
+                .Select(p => new ArgumentProperty(p, p.GetCustomAttribute<CommandArgumentAttribute>()));
+        }
+
+        internal IEnumerable<OptionProperty> GetOptionProperties()
+        {
+            return GetType().GetProperties()
+                .Where(t => t.HasAttribute<CommandOptionAttribute>())
+                .Select(t => new OptionProperty(t, t.GetCustomAttribute<CommandOptionAttribute>()));
         }
     }
 
@@ -42,28 +50,12 @@ namespace XRepo.CommandLine.Commands
     }
 
     [AttributeUsage(AttributeTargets.Property)]
-    public class DescriptionAttribute : Attribute
-    {
-        public DescriptionAttribute(string value)
-        {
-            Value = value;
-        }
-
-        public string Value { get; }
-    }
-
-    [AttributeUsage(AttributeTargets.Property)]
     public class RequiredAttribute : ArgumentValidatorAttribute
     {
-        public override void Validate(CommandLineApplication app, CommandArgument argument)
+        public override void Validate(Command command, CommandArgument argument)
         {
             if(string.IsNullOrWhiteSpace(argument.Value))
-                throw new CommandSyntaxException(app, $"The argument '{argument.Name}' is required");
+                throw new CommandSyntaxException(command.App, $"The argument '{argument.Name}' is required");
         }
-    }
-
-    public abstract class ArgumentValidatorAttribute : Attribute
-    {
-        public abstract void Validate(CommandLineApplication app, CommandArgument argument);
     }
 }

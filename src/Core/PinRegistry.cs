@@ -126,11 +126,17 @@ namespace XRepo.Core
             return null;
         }
 
-        public void UnpinAll()
+        public IEnumerable<Pin> UnpinAll()
         {
+            var pins = new List<Pin>();
+            pins.AddRange(Data.Repos);
+            pins.AddRange(Data.Packages);
+            pins.AddRange(Data.Assemblies);
             Data.Repos.Clear();
             Data.Assemblies.Clear();
             Data.Packages.Clear();
+
+            return pins;
         }
 
         public IEnumerable<RepoPin> GetPinnedRepos()

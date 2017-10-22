@@ -42,8 +42,8 @@ function Load-XRepoAssembly($Path) {
 	Add-Type -Path $shadowCopyDir\$assemblyFile
 }
 
-$LocalDevAssemblyLocation = Join-Path $ThisScriptPath "..\Core\bin\Debug\XRepo.Core.dll"
-$DeployedAssemblyLocation = Join-Path $ThisScriptPath "..\tools\XRepo.Core.dll"
+$LocalDevAssemblyLocation = Join-Path $ThisScriptPath "..\Core\bin\Debug\netstandard1.4\XRepo.Core.dll"
+$DeployedAssemblyLocation = Join-Path $ThisScriptPath "..\app\XRepo.Core.dll"
 
 if(Test-Path $LocalDevAssemblyLocation) {
 	Load-XRepoAssembly $LocalDevAssemblyLocation

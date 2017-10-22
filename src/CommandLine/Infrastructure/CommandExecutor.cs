@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
 using Microsoft.Extensions.CommandLineUtils;
@@ -31,15 +30,17 @@ namespace XRepo.CommandLine.Infrastructure
                 {
                     var command = (Command)Activator.CreateInstance(commandType);
                     command.Environment = _environment;
-                    _app.Command(command.Name, cmd =>
+                    _app.Command(command.Name, app =>
                     {
-                        command.App = cmd;
-                        cmd.Description = command.Description;
-                        SetArguments(cmd, command);
+                        command.App = app;
+                        app.Description = command.Description;
+                        var arguments = GetArguments(app, command);
+                        var options = GetOptions(app, command);
                         command.Setup();
-                        cmd.OnExecuteWithHelp(() =>
+                        app.OnExecuteWithHelp(() =>
                         {
-                            ValidateArguments(cmd, command);
+                            BindArguments(command, arguments);
+                            BindOptions(command, options);
                             command.Execute();
 
                             return 0;
@@ -56,26 +57,37 @@ namespace XRepo.CommandLine.Infrastructure
             return _app.Execute(args);
         }
 
-        private void ValidateArguments(CommandLineApplication app, Command command)
+        private CommandArgument[] GetArguments(CommandLineApplication app, Command command)
         {
-            command.GetArgumentProperties()
-                .Each(property =>
-                {
-                    var arg = (CommandArgument)property.GetValue(command);
-                    property.GetCustomAttributes<ArgumentValidatorAttribute>().Each(validator => validator.Validate(app, arg));
-                });
+            return command.GetArgumentProperties()
+                .Select(property => app.Argument(property.Name.ToCamelCase(), property.Description))
+                .ToArray();
         }
 
-        private void SetArguments(CommandLineApplication app, Command command)
+        private IDictionary<string,CommandOption> GetOptions(CommandLineApplication app, Command command)
         {
-            command.GetArgumentProperties()
-                .Each(property =>
-                {
-                    var arg = app.Argument(property.Name.ToCamelCase(),
-                        property.GetCustomAttribute<DescriptionAttribute>()?.Value);
+            return command.GetOptionProperties()
+                .Select(property =>
+                    app.Option(property.Template, property.Description, property.OptionType))
+                .ToDictionary(o => o.Template);
+        }
 
-                    property.SetValue(command, arg);
-                });
+        private void BindArguments(Command command, CommandArgument[] arguments)
+        {
+            command.GetArgumentProperties().EachWithIndex((property, index) =>
+            {
+                var argument = arguments[index];
+                property.Bind(command, argument);
+            });
+        }
+
+        private void BindOptions(Command command, IDictionary<string,CommandOption> options)
+        {
+            command.GetOptionProperties().Each(property =>
+            {
+                var option = options[property.Template];
+                property.Bind(command, option);
+            });
         }
     }
 }

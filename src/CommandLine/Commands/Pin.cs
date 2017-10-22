@@ -1,7 +1,7 @@
 ﻿using System;
-
-using Microsoft.Extensions.CommandLineUtils;
+using System.Collections.Generic;
 using XRepo.CommandLine.Infrastructure;
+using XRepo.Core;
 
 namespace XRepo.CommandLine.Commands
 {
@@ -9,17 +9,66 @@ namespace XRepo.CommandLine.Commands
     public class PinCommand : Command
     {
         [Required]
-        [Description("The name of the repo, package or assembly")]
-        public CommandArgument Name { get; set; }
+        [CommandArgument("The name of the repo, package or assembly")]
+        public string Name { get; set; }
+
+        [CommandOption("-r|--repo", "When switch is specified, will try to pin a repo with the given name")]
+        public bool Repo { get; set; }
+
+        [CommandOption("-a|--assembly", "When switch is specified, will try to pin an assembly with the given name")]
+        public bool Assembly { get; set; }
+
+        [CommandOption("-p|--package", "When switch is specified, will try to pin a package with the given name")]
+        public bool Package { get; set; }
 
         public override void Execute()
         {
             try
             {
-                var pin = Environment.Pin(Name.Value);
+                List<Pin> pins = new List<Pin>();
+                if (!Repo && !Assembly && !Package)
+                {
+                    pins.Add(Environment.Pin(Name));
+                }
+
+                if (Repo)
+                {
+                    if (Environment.RepoRegistry.IsRepoRegistered(Name))
+                    {
+                        pins.Add(Environment.PinRegistry.PinRepo(Name));
+                    }
+                    else
+                    {
+                        throw new CommandFailureException(15, $"Could not apply pin. No repo with name '{Name}' is registered");
+                    }
+                }
+
+                if (Package)
+                {
+                    if (Environment.PackageRegistry.IsPackageRegistered(Name))
+                    {
+                        pins.Add(Environment.PinRegistry.PinPackage(Name));
+                    }
+                    else
+                    {
+                        throw new CommandFailureException(15, $"Could not apply pin. No package with id '{Name}' is registered. Do you need to build it?");
+                    }
+                }
+
+                if (Assembly)
+                {
+                    if (Environment.AssemblyRegistry.IsAssemblyRegistered(Name))
+                    {
+                        pins.Add(Environment.PinRegistry.PinAssembly(Name));
+                    }
+                    else
+                    {
+                        throw new CommandFailureException(15, $"Could not apply pin. No assembly with name '{Name}' is registered. Do you need to build it?");
+                    }
+                }
                 Environment.PinRegistry.Save();
 
-                Console.WriteLine(pin.Description);
+                pins.Each(pin => App.Out.WriteLine(pin.Description));
             }
             catch (InvalidOperationException ex)
             {

@@ -13,5 +13,15 @@ namespace XRepo.CommandLine.Infrastructure
                 action(item);
             }
         }
+
+        public static void EachWithIndex<T>(this IEnumerable<T> enumerable, Action<T, int> action)
+        {
+            int i = 0;
+            foreach (var item in enumerable)
+            {
+                action(item, i);
+                i += 1;
+            }
+        }
     }
 }

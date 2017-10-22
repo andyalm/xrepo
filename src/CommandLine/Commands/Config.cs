@@ -1,24 +1,20 @@
-﻿using System;
-using System.ComponentModel;
-using Microsoft.Extensions.CommandLineUtils;
-using XRepo.CommandLine.Infrastructure;
-using XRepo.Core;
+﻿using XRepo.CommandLine.Infrastructure;
 
 namespace XRepo.CommandLine.Commands
 {
     [CommandName("config", "Lists or updates config settings")]
     public class ConfigCommand : Command
     {
-        [Description("The name of the setting you are setting")]
-        public CommandArgument Name { get; set; }
+        [CommandArgument("The name of the setting you are setting")]
+        public string Name { get; set; }
 
-        [Description("The value of the setting you are setting")]
-        public CommandArgument Value { get; set; }
+        [CommandArgument("The value of the setting you are setting")]
+        public string Value { get; set; }
 
         public override void Execute()
         {
             App.Out.WriteLine();
-            if (string.IsNullOrEmpty(Name.Value))
+            if (string.IsNullOrEmpty(Name))
             {
                 ListSettings();
             }
@@ -39,9 +35,9 @@ namespace XRepo.CommandLine.Commands
 
         private void UpdateSettings()
         {
-            Environment.ConfigRegistry.UpdateSetting(Name.Value, Value.Value);
+            Environment.ConfigRegistry.UpdateSetting(Name, Value);
             Environment.ConfigRegistry.Save();
-            App.Out.WriteLine($"xrepo setting '{Name.Value}' updated to '{Value.Value}'");
+            App.Out.WriteLine($"xrepo setting '{Name}' updated to '{Value}'");
         }
     }
 }

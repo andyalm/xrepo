@@ -1,8 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using XRepo.Core;
-
-using Microsoft.Extensions.CommandLineUtils;
+using XRepo.CommandLine.Infrastructure;
 
 namespace XRepo.CommandLine.Commands
 {
@@ -10,27 +10,85 @@ namespace XRepo.CommandLine.Commands
     public class UnpinCommand : Command
     {
         [Required]
-        [Description("The name of the repo or assembly")]
-        public CommandArgument Name { get; set; }
+        [CommandArgument("The name of the repo or assembly")]
+        public string Name { get; set; }
+
+        [CommandOption("-r|--repo", "When switch is specified, will try to unpin a repo with the given name")]
+        public bool Repo { get; set; }
+
+        [CommandOption("-a|--assembly", "When switch is specified, will try to unpin an assembly with the given name")]
+        public bool Assembly { get; set; }
+
+        [CommandOption("-p|--package", "When switch is specified, will try to unpin a package with the given name")]
+        public bool Package { get; set; }
 
         public override void Execute()
         {
-            if (Name.Value.Equals("all", StringComparison.OrdinalIgnoreCase))
-                UnpinAll();
+            IEnumerable<Pin> pins;
+            if (Name.Equals("all", StringComparison.OrdinalIgnoreCase))
+            {
+                pins = Environment.PinRegistry.UnpinAll();
+                Console.WriteLine("Everything has been unpinned.");
+            }
             else
             {
-                var pin = Environment.Unpin(Name.Value);
+                pins = UnpinWithName();
+            }
+            foreach (var pin in pins)
+            {
                 LogUnpinSuccess(pin);
                 RestoreModifiedFilesForPin(pin);
             }
             Environment.PinRegistry.Save();
         }
 
-        private void UnpinAll()
+        private IEnumerable<Pin> UnpinWithName()
         {
-            Environment.PinRegistry.UnpinAll();
-            Environment.PinRegistry.Save();
-            Console.WriteLine("Everything has been unpinned.");
+            List<Pin> pins = new List<Pin>();
+            if (!Repo && !Assembly && !Package)
+            {
+                pins.AddRange(Environment.Unpin(Name));
+            }
+            if (Repo)
+            {
+                var pin = Environment.PinRegistry.UnpinRepo(Name);
+                if(pin != null)
+                {
+                    pins.Add(pin);
+                }
+                else
+                {
+                    throw new CommandFailureException(15, $"Could not unpin repo '{Name}'. There was no repo pinned by that name.");
+                }
+            }
+
+            if (Package)
+            {
+                var pin = Environment.PinRegistry.UnpinPackage(Name);
+                if (pin != null)
+                {
+                    pins.Add(pin);
+                }
+                else
+                {
+                    throw new CommandFailureException(15, $"Could not unpin package '{Name}'. There was no package pinned with that id.");
+                }
+            }
+
+            if (Assembly)
+            {
+                var pin = Environment.PinRegistry.UnpinAssembly(Name);
+                if (pin != null)
+                {
+                    pins.Add(pin);
+                }
+                else
+                {
+                    throw new CommandFailureException(15, $"Could not unpin assembly '{Name}'. There was no assembly pinned by that name.");
+                }
+            }
+
+            return pins;
         }
 
         private void LogUnpinSuccess(Pin pin)
