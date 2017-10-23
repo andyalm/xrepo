@@ -8,6 +8,7 @@
     <Description>Makes it easy to develop when you need to make changes that spans more than one source code repository.</Description>
     <Copyright>2017 Andy Alm</Copyright>
     <PackageProjectUrl>http://github.com/andyalm/xrepo</PackageProjectUrl>
+    <PackageLicenseUrl>https://opensource.org/licenses/MIT</PackageLicenseUrl>
     <PackageTags>xrepo;build;msbuild;cli;commandline;cross-repository;project;reference</PackageTags>
     <Authors>andyalm</Authors>
     <PackageReleaseNotes>
