@@ -24,31 +24,32 @@ namespace XRepo.Build.Tasks
         {
             var overriddenDefinitions = new List<ITaskItem>();
             var pinnedDefinitions = new List<ITaskItem>();
-            
-            foreach (var pinnedPackage in Environment.PinRegistry.GetPinnedPackages())
-            {
-                var definitionsForPinnedPackage = CompileFileDefinitions
-                    .Where(d => d.HasMetadata("NuGetPackageId", pinnedPackage.PackageId))
-                    .ToArray();
 
-                foreach (var existingDefinition in definitionsForPinnedPackage)
+            var referencedPackageDefinitions = CompileFileDefinitions
+                .Where(d => !string.IsNullOrWhiteSpace(d.GetMetadata("NuGetPackageId")));
+
+            foreach (var referencedPackageDefinition in referencedPackageDefinitions)
+            {
+                var packageId = referencedPackageDefinition.GetMetadata("NuGetPackageId");
+                var pinnedProject = Environment.FindPinForPackage(packageId);
+
+                if (pinnedProject != null)
                 {
-                    var pinnedProject = Environment.FindPinForPackage(pinnedPackage.PackageId);
-                    var project = (RegisteredPackageProject) pinnedProject.Project;
+                    var project = (RegisteredPackageProject)pinnedProject.Project;
 
                     if (Settings.CopyPins)
                     {
-                        CopyPackageFiles(existingDefinition, project, pinnedProject.Pin);
+                        CopyPackageFiles(referencedPackageDefinition, project, pinnedProject.Pin);
                     }
                     else
                     {
-                        OverridePackageLocations(existingDefinition, project, overriddenDefinitions, pinnedDefinitions);
+                        OverridePackageLocations(referencedPackageDefinition, project, overriddenDefinitions, pinnedDefinitions);
                     }
-                }
 
-                if (definitionsForPinnedPackage.Any() && Settings.PinWarnings)
-                {
-                    WarnAboutPinnedPackage(pinnedPackage.PackageId);
+                    if (Settings.PinWarnings)
+                    {
+                        WarnAboutPinnedPackage(packageId);
+                    }
                 }
             }
 

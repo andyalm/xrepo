@@ -48,14 +48,31 @@ namespace XRepo.Core
                 project = null;
                 return false;
             }
-            
+
+            return IsProjectInPinnedRepo(registeredAssembly.Projects, out project);
+        }
+
+        private bool IsPackageInPinnedRepo(string packageId, out PinnedProject project)
+        {
+            var registeredPackage = PackageRegistry.GetPackage(packageId);
+            if (registeredPackage == null)
+            {
+                project = null;
+                return false;
+            }
+
+            return IsProjectInPinnedRepo(registeredPackage.Projects, out project);
+        }
+
+        private bool IsProjectInPinnedRepo(IEnumerable<RegisteredProject> projects, out PinnedProject project)
+        {
             var pinnedRepos = GetPinnedRepos().ToList();
             var matchingProjectsInPinnedRepos = (from pinnedRepo in pinnedRepos
-                                                from aProject in registeredAssembly.Projects
-                                                where aProject.AssemblyPath.StartsWith(pinnedRepo.Repo.Path, StringComparison.OrdinalIgnoreCase)
-                                                select new { Repo = pinnedRepo, Project = aProject}).ToArray();
+                from aProject in projects
+                where aProject.OutputPath.StartsWith(pinnedRepo.Repo.Path, StringComparison.OrdinalIgnoreCase)
+                select new { Repo = pinnedRepo, Project = aProject }).ToArray();
 
-            if(matchingProjectsInPinnedRepos.Length == 0)
+            if (matchingProjectsInPinnedRepos.Length == 0)
             {
                 project = null;
                 return false;
@@ -120,13 +137,17 @@ namespace XRepo.Core
 
         public PinnedProject FindPinForPackage(string packageId)
         {
+            if (IsPackageInPinnedRepo(packageId, out var pinnedProject))
+            {
+                return pinnedProject;
+            }
+
             if (PinRegistry.IsPackagePinned(packageId))
             {
                 var package = PackageRegistry.GetPackage(packageId);
                 if(package == null)
                     throw new XRepoException($"I don't know where the package '{packageId}' is. Have you built it on your machine?");
 
-                //TODO: Do version resolution
                 return new PinnedProject
                 {
                     Pin = PinRegistry.GetPackagePin(packageId),
@@ -139,8 +160,7 @@ namespace XRepo.Core
 
         public PinnedProject FindPinForAssembly(string assemblyName)
         {
-            PinnedProject pinnedProject;
-            if (IsAssemblyInPinnedRepo(assemblyName, out pinnedProject))
+            if (IsAssemblyInPinnedRepo(assemblyName, out var pinnedProject))
             {
                 return pinnedProject;
             }

@@ -61,7 +61,6 @@
   </ItemGroup>
 
   <Target Name="_BuildDependencies" BeforeTargets="Build">
-    <Message Importance="High" Text="Running BeforeBUild" />
     <MSBuild Projects="@(BuildDependency)" Targets="Build" Properties="Configuration=$(Configuration)" />
     <MSBuild Projects="@(PublishDependency)" Targets="Publish" Properties="Configuration=$(Configuration)" />
   </Target>
