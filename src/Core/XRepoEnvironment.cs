@@ -106,7 +106,11 @@ namespace XRepo.Core
             {
                 if(_defaultConfigDir != null)
                     return _defaultConfigDir;
-                
+
+#if NET45
+                var localAppData = Environment.GetEnvironmentVariable("LOCALAPPDATA");
+                _defaultConfigDir = Path.Combine(localAppData, "XRepo");
+#else
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
                     var localAppData = Environment.GetEnvironmentVariable("LOCALAPPDATA");
@@ -117,6 +121,7 @@ namespace XRepo.Core
                     var homeDir = Environment.GetEnvironmentVariable("HOME");
                     _defaultConfigDir = Path.Combine(homeDir, ".xrepo");
                 }
+#endif
                 return _defaultConfigDir;
             }
         }

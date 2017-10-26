@@ -1,14 +1,21 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netstandard1.5</TargetFramework>
+    <TargetFrameworks>netstandard1.5;net45</TargetFrameworks>
     <AssemblyName>XRepo.Build</AssemblyName>
     <RootNamespace>XRepo.Build</RootNamespace>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
+  </ItemGroup>
+  <ItemGroup Condition="$(TargetFramework)=='netstandard1.5'">
     <PackageReference Include="Microsoft.Build.Tasks.Core" Version="15.3.*" />
     <PackageReference Include="Microsoft.Build.Utilities.Core" Version="15.3.*" />
-    <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
+  </ItemGroup>
+  <ItemGroup Condition="$(TargetFramework)=='net45'">
+    <Reference Include="Microsoft.Build.Framework" />
+    <Reference Include="Microsoft.Build.Tasks.v4.0" />
+    <Reference Include="Microsoft.Build.Utilities.v4.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Core\Core.csproj" />
@@ -22,7 +29,6 @@
     <PropertyGroup>
       <NewtonsoftPath Condition="$([System.String]::new('%(Reference.Identity)').Contains('Newtonsoft.Json'))">%(Reference.Identity)</NewtonsoftPath>
     </PropertyGroup>
-    <Copy SourceFiles="$(NewtonsoftPath)"
-          DestinationFolder="$(OutputPath)" />
+    <Copy SourceFiles="$(NewtonsoftPath)" DestinationFolder="$(OutputPath)" />
   </Target>
 </Project>

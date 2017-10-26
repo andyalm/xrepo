@@ -18,11 +18,11 @@ namespace XRepo.Installer
                 {
                     InstallImportAfterTargets(sdkPath, $"sdk {sdk}", "Microsoft.Common.targets", new []
                     {
-                        Path.Combine(buildTargetsDirectory, "XRepo.Build.targets")
+                        Path.Combine(buildTargetsDirectory, "netstandard", "XRepo.Build.targets")
                     });
                     InstallImportAfterTargets(sdkPath, $"sdk {sdk}", "SolutionFile", new []
                     {
-                        Path.Combine(buildTargetsDirectory, "XRepo.Build.SolutionFile.targets")
+                        Path.Combine(buildTargetsDirectory, "netstandard", "XRepo.Build.SolutionFile.targets")
                     });
                 }
                 else
@@ -39,12 +39,12 @@ namespace XRepo.Installer
                     {
                         InstallImportAfterTargets(vsFullPath, $"Visual Studio", "Microsoft.Common.targets", new[]
                         {
-                            Path.Combine(buildTargetsDirectory, "XRepo.Build.targets"),
-                            Path.Combine(buildTargetsDirectory, "XRepo.Build.Desktop.targets")
+                            Path.Combine(buildTargetsDirectory, "net45", "XRepo.Build.targets"),
+                            Path.Combine(buildTargetsDirectory, "net45", "XRepo.Build.Desktop.targets")
                         });
                         InstallImportAfterTargets(vsFullPath, $"Visual Studio", "SolutionFile", new []
                         {
-                            Path.Combine(buildTargetsDirectory, "XRepo.Build.SolutionFile.targets")
+                            Path.Combine(buildTargetsDirectory, "net45", "XRepo.Build.SolutionFile.targets")
                         });
                     }
                     else

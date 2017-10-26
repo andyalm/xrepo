@@ -375,15 +375,6 @@ namespace NuGet.Common
             return path.Replace(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
         }
 
-        public static ZipArchiveEntry GetEntry(ZipArchive archive, string path)
-        {
-            return archive.Entries.SingleOrDefault(
-                    z => string.Equals(
-                        Uri.UnescapeDataString(z.FullName),
-                        ReplaceDirSeparatorWithAltDirSeparator(path),
-                        StringComparison.OrdinalIgnoreCase));
-        }
-
         public static bool IsFileSystemCaseInsensitive
         {
             get { return _isFileSystemCaseInsensitive.Value; }

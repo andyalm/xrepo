@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <PackageId>xrepo</PackageId>
-    <PackageVersion>2.0.0-beta01</PackageVersion>
+    <PackageVersion>2.0.0-beta02</PackageVersion>
     <Title>xrepo</Title>
     <Description>Makes it easy to develop when you need to make changes that spans more than one source code repository.</Description>
     <Copyright>2017 Andy Alm</Copyright>
@@ -36,7 +36,12 @@
     </Content>
     <Content Include="..\..\src\Build\bin\$(Configuration)\netstandard1.5\*.*">
       <Pack>true</Pack>
-      <PackagePath>build\</PackagePath>
+      <PackagePath>build\netstandard</PackagePath>
+      <Visible>false</Visible>
+    </Content>
+    <Content Include="..\..\src\Build\bin\$(Configuration)\net45\*.*">
+      <Pack>true</Pack>
+      <PackagePath>build\net45</PackagePath>
       <Visible>false</Visible>
     </Content>
     <Content Include="..\..\src\Powershell\*.*">
