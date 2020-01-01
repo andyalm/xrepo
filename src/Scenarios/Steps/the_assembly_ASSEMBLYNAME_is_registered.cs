@@ -1,4 +1,5 @@
 using System.IO;
+using System.Threading.Tasks;
 using Kekiri;
 using XRepo.Scenarios.TestSupport;
 
@@ -13,9 +14,11 @@ namespace XRepo.Scenarios.Steps
             _assemblyName = assemblyName;
         }
 
-        public override void Execute()
+        public override Task ExecuteAsync()
         {
             Context.Environment.AssemblyRegistry.RegisterAssembly(_assemblyName, Path.Combine(Context.Environment.Root, _assemblyName + ".dll"), null);
+            
+            return Task.CompletedTask;
         }
     }
 }

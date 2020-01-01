@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Kekiri;
 using XRepo.Scenarios.TestSupport;
 
@@ -14,10 +15,12 @@ namespace XRepo.Scenarios.Steps
             _settingValue = settingValue;
         }
 
-        public override void Execute()
+        public override Task ExecuteAsync()
         {
             Context.Environment.ConfigRegistry.UpdateSetting(_settingName, _settingValue);
             Context.Environment.ConfigRegistry.Save();
+            
+            return Task.CompletedTask;
         }
 
     }

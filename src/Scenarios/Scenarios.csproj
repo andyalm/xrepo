@@ -1,18 +1,18 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <AssemblyName>XRepo.Scenarios</AssemblyName>
     <RootNamespace>XRepo.Scenarios</RootNamespace>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="FluentAssertions" Version="4.19.*" />
-    <PackageReference Include="Kekiri.TestRunner.xUnit" Version="1.0.0-*" />
-    <PackageReference Include="Microsoft.Build" Version="15.3.*" />
-    <PackageReference Include="Microsoft.Build.Framework" Version="15.3.*" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.3.*" />
-    <PackageReference Include="xunit" Version="2.2.*" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.2.*" />
+    <PackageReference Include="FluentAssertions" Version="5.9.0" />
+    <PackageReference Include="Kekiri.Xunit" Version="1.2.0" />
+    <PackageReference Include="Microsoft.Build" Version="16.4.0" />
+    <PackageReference Include="Microsoft.Build.Framework" Version="16.4.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.4.0" />
+    <PackageReference Include="xunit" Version="2.4.1" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.1" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Core\Core.csproj" />
@@ -20,7 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="TestSupport\ClassLibrary.csproj.template" />
-    <Content Include="..\Build\XRepo.Build.targets">
+    <Content Include="..\Build\Targets\XRepo.Build.targets">
       <Link>XRepo.Build.targets</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

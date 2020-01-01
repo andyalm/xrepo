@@ -1,19 +1,19 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netstandard1.5</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>XRepo.Build</AssemblyName>
     <RootNamespace>XRepo.Build</RootNamespace>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.Build.Tasks.Core" Version="15.1.*" />
-    <PackageReference Include="Microsoft.Build.Utilities.Core" Version="15.1.*" />
+    <PackageReference Include="Microsoft.Build.Tasks.Core" Version="16.4.0" />
+    <PackageReference Include="Microsoft.Build.Utilities.Core" Version="16.4.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Core\Core.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="*.targets">
+    <Content Include="Targets\*.targets">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

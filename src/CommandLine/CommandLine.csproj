@@ -1,13 +1,65 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <AssemblyName>xrepo</AssemblyName>
+    <PackageId>xrepo</PackageId>
+    <PackageVersion>2.0.0-preview-001</PackageVersion>
     <RootNamespace>XRepo.CommandLine</RootNamespace>
-    <IsPackable>false</IsPackable>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <PackAsTool>true</PackAsTool>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Core\Core.csproj" />
-    <PackageReference Include="Microsoft.Extensions.CommandLineUtils" Version="1.1.0" />
+    <PackageReference Include="Mono.Posix.NETStandard" Version="1.0.0" />
+    <PackageReference Include="System.Security.Principal.Windows" Version="4.3.0" />
+    <PackageReference Include="McMaster.Extensions.CommandLineUtils" Version="2.4.4" />
+    <PackageReference Include="RoslynCodeTaskFactory" Version="2.0.7" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Core\Core.csproj" />
+    <ProjectReference Include="..\Build\Build.csproj">
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <OutputItemType>Content</OutputItemType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\Build\Targets\*.targets">
+      <Link>Targets\%(Filename)%(Extension)</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <Target Name="_ComputeInformationalVersion" BeforeTargets="GetAssemblyVersion">
+    <ComputeHashForDirectory Directory="..\Build\Targets">
+      <Output TaskParameter="Hash" PropertyName="InformationalVersion" />
+    </ComputeHashForDirectory>
+  </Target>
+  <UsingTask TaskName="ComputeHashForDirectory" TaskFactory="CodeTaskFactory" AssemblyFile="$(RoslynCodeTaskFactory)" Condition="$(RoslynCodeTaskFactory)!=''">
+    <ParameterGroup>
+      <Directory Required="true" ParameterType="Microsoft.Build.Framework.ITaskItem" />
+      <Hash Output="true" />
+    </ParameterGroup>
+    <Task>
+      <Using Namespace="System" />
+      <Using Namespace="System.IO" />
+      <Using Namespace="System.Security.Cryptography" />
+      <Code Type="Fragment" Language="cs"><![CDATA[
+        var allContent = new StringBuilder();
+        var allFiles = System.IO.Directory.GetFiles(Directory.GetMetadata("FullPath"), "*.*", SearchOption.AllDirectories);
+        foreach(var file in allFiles)
+        {
+          var content = File.ReadAllText(file);
+          allContent.AppendLine(content);
+        }
+        using(var md5 = MD5.Create())
+        {
+           var bytes = Encoding.UTF8.GetBytes(allContent.ToString());
+           var hash = md5.ComputeHash(bytes);
+           Hash = Convert.ToBase64String(hash);
+           Log.LogMessage($"Computed version hash {Hash}");
+        }
+      ]]></Code>
+    </Task>
+  </UsingTask>
+
 </Project>

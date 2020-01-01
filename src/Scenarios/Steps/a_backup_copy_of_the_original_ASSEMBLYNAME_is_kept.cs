@@ -1,4 +1,4 @@
-using System.IO;
+using System.Threading.Tasks;
 using FluentAssertions;
 using Kekiri;
 using XRepo.Scenarios.TestSupport;
@@ -14,12 +14,14 @@ namespace XRepo.Scenarios.Steps
             _assemblyName = assemblyName;
         }
 
-        public override void Execute()
+        public override Task ExecuteAsync()
         {
             Context.Environment.Reload(); //ensure we have a copy of the latest environment
             var pinnedProject = Context.Environment.XRepoEnvironment.FindPinForAssembly(_assemblyName);
             pinnedProject.Should().NotBeNull();
             pinnedProject.Pin.OverriddenFiles.Count.Should().BeGreaterThan(0, "there should be a backup entry for the pin");
+            
+            return Task.CompletedTask;
         }
     }
 }

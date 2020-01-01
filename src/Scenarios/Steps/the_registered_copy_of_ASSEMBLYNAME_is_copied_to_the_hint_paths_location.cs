@@ -1,5 +1,6 @@
 using System;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using FluentAssertions;
 using Kekiri;
 using XRepo.Scenarios.TestSupport;
@@ -15,13 +16,15 @@ namespace XRepo.Scenarios.Steps
             _assemblyName = assemblyName;
         }
 
-        public override void Execute()
+        public override Task ExecuteAsync()
         {
             var pinnedProject = Context.Environment.XRepoEnvironment.FindPinForAssembly(_assemblyName);
             var hintedPath = Context.Environment.GetLibFilePath(_assemblyName + ".dll");
 
             Context.BuildOutput.Should().MatchRegex(String.Format("from.*{0}.*to.*{1}.*",
                 pinnedProject.Project.OutputPath.Replace("\\", "\\\\"), hintedPath.Replace("\\", "\\\\")));
+            
+            return Task.CompletedTask;
         }
     }
 }

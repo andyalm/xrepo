@@ -1,4 +1,5 @@
 using System.IO;
+using System.Threading.Tasks;
 using Kekiri;
 using XRepo.Scenarios.TestSupport;
 
@@ -15,7 +16,7 @@ namespace XRepo.Scenarios.Steps
             _repoName = repoName;
         }
 
-        public override void Execute()
+        public override Task ExecuteAsync()
         {
             var assemblyFilename = _assemblyName + ".dll";
             var repoPath = Context.Environment.GetRepoPath(_repoName);
@@ -23,6 +24,8 @@ namespace XRepo.Scenarios.Steps
             Context.Environment.AssemblyRegistry.RegisterAssembly(_assemblyName, assemblyLocation, null);
 
             File.Copy(Path.Combine(Context.Environment.Root, assemblyFilename), Path.Combine(repoPath, assemblyFilename));
+            
+            return Task.CompletedTask;
         }
     }
 }

@@ -7,9 +7,4 @@
   <Target Name="_RunTests" AfterTargets="Build">
     <Exec Command="dotnet test" WorkingDirectory="%(TestProject.RootDir)%(TestProject.Directory)" />
   </Target>
-
-  <Target Name="Deploy" DependsOnTargets="Build">
-    <Exec Command="choco uninstall xrepo" ContinueOnError="true" />
-    <Exec Command="choco install xrepo -source $(MSBuildThisFileDirectory)\deploy\chocolatey\bin\$(Configuration) -pre" />
-  </Target>
 </Project>

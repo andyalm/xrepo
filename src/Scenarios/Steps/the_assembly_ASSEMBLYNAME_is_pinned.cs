@@ -1,4 +1,5 @@
-﻿using Kekiri;
+﻿using System.Threading.Tasks;
+using Kekiri;
 using XRepo.Scenarios.TestSupport;
 
 namespace XRepo.Scenarios.Steps
@@ -12,10 +13,12 @@ namespace XRepo.Scenarios.Steps
             _assemblyName = assemblyName;
         }
 
-        public override void Execute()
+        public override Task ExecuteAsync()
         {
             Context.Environment.PinRegistry.PinAssembly(_assemblyName);
             Context.Environment.PinRegistry.Save();
+            
+            return Task.CompletedTask;
         }
     }
 }

@@ -2,7 +2,7 @@
 using System.IO;
 using XRepo.Core;
 
-using Microsoft.Extensions.CommandLineUtils;
+using McMaster.Extensions.CommandLineUtils;
 
 namespace XRepo.CommandLine.Commands
 {

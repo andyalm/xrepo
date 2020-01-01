@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-using Microsoft.Extensions.CommandLineUtils;
+using McMaster.Extensions.CommandLineUtils;
 using XRepo.CommandLine.Infrastructure;
 
 namespace XRepo.CommandLine.Commands

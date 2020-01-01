@@ -1,4 +1,5 @@
 using System.IO;
+using System.Threading.Tasks;
 using Kekiri;
 using XRepo.Scenarios.TestSupport;
 
@@ -13,7 +14,7 @@ namespace XRepo.Scenarios.Steps
             _repoName = repoName;
         }
 
-        public override void Execute()
+        public override Task ExecuteAsync()
         {
             var repoPath = Context.Environment.GetRepoPath(_repoName);
             Directory.CreateDirectory(repoPath);
@@ -21,6 +22,8 @@ namespace XRepo.Scenarios.Steps
             Context.Environment.RepoRegistry.Save();
 
             Context.RepoName = _repoName;
+            
+            return Task.CompletedTask;
         }
     }
 }

@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Kekiri;
 using XRepo.Scenarios.TestSupport;
 
@@ -12,10 +13,12 @@ namespace XRepo.Scenarios.Steps
             _repoName = repoName;
         }
 
-        public override void Execute()
+        public override Task ExecuteAsync()
         {
             Context.Environment.PinRegistry.PinRepo(_repoName);
             Context.Environment.PinRegistry.Save();
+            
+            return Task.CompletedTask;
         }
     }
 }

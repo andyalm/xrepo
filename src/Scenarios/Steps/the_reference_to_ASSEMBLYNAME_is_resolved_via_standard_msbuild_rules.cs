@@ -1,4 +1,5 @@
 using System.IO;
+using System.Threading.Tasks;
 using FluentAssertions;
 using Kekiri;
 using XRepo.Scenarios.TestSupport;
@@ -14,10 +15,12 @@ namespace XRepo.Scenarios.Steps
             _assemblyName = assemblyName;
         }
 
-        public override void Execute()
+        public override Task ExecuteAsync()
         {
             var unexpectedString = "/reference:" + Path.Combine(Context.Environment.Root, _assemblyName + ".dll");
             Context.BuildOutput.Should().NotContain(unexpectedString);
+            
+            return Task.CompletedTask;
         }
     }
 }

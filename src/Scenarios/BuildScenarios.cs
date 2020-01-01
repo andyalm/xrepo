@@ -1,4 +1,4 @@
-﻿using Kekiri.TestRunner.xUnit;
+﻿using Kekiri.Xunit;
 using XRepo.Scenarios.Steps;
 using XRepo.Scenarios.TestSupport;
 

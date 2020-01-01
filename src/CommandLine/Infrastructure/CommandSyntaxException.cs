@@ -1,5 +1,5 @@
 ﻿using System;
-using Microsoft.Extensions.CommandLineUtils;
+using McMaster.Extensions.CommandLineUtils;
 
 namespace XRepo.CommandLine.Infrastructure
 {
