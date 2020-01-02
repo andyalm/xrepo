@@ -10,8 +10,17 @@ namespace XRepo.CommandLine.Commands
         [Option("--output", CommandOptionType.SingleValue, Description = "Where to redirect standard output for the command")]
         public CommandOption Output { get; set; }
         
+        [Option("--no-auto-elevate", CommandOptionType.NoValue, Description = "If you are not detected to be running in an elevated prompt, do not automatically try to elevate")]
+        public CommandOption NoAutoElevate { get; set; }
+
+        public override bool RequiresBootstrappedSdk => 
+            !NoAutoElevate.HasValue() && !RuntimeContext.IsAdministrator;
+
         public override void Execute()
         {
+            if(RequiresBootstrappedSdk)
+                return; //it already ran
+            
             var bootstrapper = new Bootstrapper();
             IDisposable disposable = null;
             try
@@ -20,6 +29,7 @@ namespace XRepo.CommandLine.Commands
                 {
                     disposable = bootstrapper.RedirectOutput(Output.Value());
                 }
+                
                 bootstrapper.Install();
             }
             finally

@@ -7,6 +7,7 @@ using McMaster.Extensions.CommandLineUtils;
 using XRepo.CommandLine.Commands;
 using XRepo.CommandLine.Infrastructure.Bootstrapping;
 using XRepo.Core;
+using BootstrapStatus=XRepo.CommandLine.Infrastructure.Bootstrapping.BootstrapStatus;
 using DebugHelper=XRepo.CommandLine.Infrastructure.Bootrapping.DebugHelper;
 
 namespace XRepo.CommandLine.Infrastructure
@@ -102,8 +103,8 @@ namespace XRepo.CommandLine.Infrastructure
                 .Each(property =>
                 {
                     var argument = property.GetCustomAttribute<ArgumentAttribute>();
-                    var name = argument.Name ?? property.Name.ToSnakeCase();
-                    var description = argument.Description;
+                    var name = argument?.Name ?? property.Name.ToSnakeCase();
+                    var description = argument?.Description;
                     var arg = app.Argument(name, description);
 
                     property.SetValue(command, arg);

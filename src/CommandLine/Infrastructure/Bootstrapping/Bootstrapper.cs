@@ -33,13 +33,15 @@ namespace XRepo.CommandLine.Infrastructure.Bootstrapping
             }
 
             DoInstall();
+            var bootstrappedVersionDirectory = Path.GetDirectoryName(_bootstrappedVersionFile.Value);
+            Directory.CreateDirectory(bootstrappedVersionDirectory);
             File.WriteAllText(_bootstrappedVersionFile.Value, ExecutingVersion);
         }
 
         public BootstrapStatus GetBootstrapStatus()
         {
             var solutionHook = Path.Combine(_sdk.TargetsBasePath, "SolutionFile", "ImportAfter",
-                "XRepo.SolutionFile.ImportAfter.targets");
+                "XRepo.Build.SolutionFile.targets");
 
             var hasBeenBootstrapped = File.Exists(solutionHook) &&
                    File.Exists(_bootstrappedVersionFile.Value);
@@ -60,7 +62,7 @@ namespace XRepo.CommandLine.Infrastructure.Bootstrapping
 
         private void DoInstall()
         {
-            var buildTargetsDirectory = Path.Combine(_workingDirectory, "Targets");
+            var buildTargetsDirectory = _workingDirectory;
             var sdkPath = _sdk.TargetsBasePath;
             InstallImportAfterTargets(buildTargetsDirectory, sdkPath, $"sdk {_sdk.SdkVersion}", "XRepo.Build.targets",
                 "Microsoft.Common.targets");
@@ -87,18 +89,17 @@ namespace XRepo.CommandLine.Infrastructure.Bootstrapping
 
         private static void InstallImportAfterTargets(string buildTargetsDirectory, string sdkTargetsPath, string sdkDescription, string buildTargetsFilename, string importAfterType)
         {
-            var filename = "XRepo.ImportAfter.targets";
             var importAfterProjectDirectory = Path.Combine(sdkTargetsPath, importAfterType, "ImportAfter");
             //ensure the target directory exists
             Directory.CreateDirectory(importAfterProjectDirectory);
 
-            Console.WriteLine($"Installing the {filename} file for {sdkDescription} to {importAfterProjectDirectory}...");
-            if (!File.Exists(Path.Combine(importAfterProjectDirectory, filename)))
-                File.Copy(Path.Combine(AppContext.BaseDirectory, filename),
-                    Path.Combine(importAfterProjectDirectory, filename));
-
-            var extensionImport = Path.Combine(buildTargetsDirectory, buildTargetsFilename);
-            new MsBuildProject(Path.Combine(importAfterProjectDirectory, filename)).AddExtensionImport(extensionImport);
+            var importPath = Path.Combine(buildTargetsDirectory, buildTargetsFilename);
+            Console.WriteLine($"Installing the {buildTargetsFilename} file for {sdkDescription} to {importAfterProjectDirectory}...");
+            var fileContent = $@"<Project>
+  <Import Project=""{importPath}"" Condition=""Exists('{importPath}')"" />
+</Project>";
+            var destinationFullPath = Path.Combine(importAfterProjectDirectory, buildTargetsFilename);
+            File.WriteAllText(destinationFullPath, string.Format(fileContent, importPath));
         }
         
         private IEnumerable<string> VisualStudioMsbuildPaths()
@@ -107,9 +108,10 @@ namespace XRepo.CommandLine.Infrastructure.Bootstrapping
             var vsVersions = new[] {"2017", "2019"};
             foreach (var vsVersion in vsVersions)
             {
+                var msBuildSubDir = vsVersion == "2017" ? "15.0" : "Current";
                 foreach (var vsEdition in vsEditions)
                 {
-                    yield return Path.Combine("Microsoft Visual Studio", vsVersion, vsEdition, "MSBuild");
+                    yield return Path.Combine("Microsoft Visual Studio", vsVersion, vsEdition, "MSBuild", msBuildSubDir);
                 }
             }
         }

@@ -1,1 +1,0 @@
-dotnet msbuild /t:deploy /p:DisableGlobalXRepo=true

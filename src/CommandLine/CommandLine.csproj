@@ -4,7 +4,7 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <AssemblyName>xrepo</AssemblyName>
     <PackageId>xrepo</PackageId>
-    <PackageVersion>2.0.0-preview-001</PackageVersion>
+    <PackageVersion>2.0$(DotPatchVersion)</PackageVersion>
     <RootNamespace>XRepo.CommandLine</RootNamespace>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackAsTool>true</PackAsTool>
@@ -25,8 +25,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Build\Targets\*.targets">
-      <Link>Targets\%(Filename)%(Extension)</Link>
+      <Link>%(Filename)%(Extension)</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <InProject>false</InProject>
     </None>
   </ItemGroup>
   <Target Name="_ComputeInformationalVersion" BeforeTargets="GetAssemblyVersion">
