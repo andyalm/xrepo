@@ -21,10 +21,18 @@ namespace XRepo.CommandLine.Commands
         public string Name => this.GetType().GetTypeInfo().GetCustomAttribute<CommandNameAttribute>().Name;
         public string Description => this.GetType().GetTypeInfo().GetCustomAttribute<CommandNameAttribute>().Description;
 
+        public virtual bool RequiresBootstrappedSdk => false;
+
         public IEnumerable<PropertyInfo> GetArgumentProperties()
         {
             return GetType().GetProperties()
                 .Where(t => t.PropertyType == typeof(CommandArgument));
+        }
+
+        public IEnumerable<PropertyInfo> GetOptionProperties()
+        {
+            return GetType().GetProperties()
+                .Where(t => t.PropertyType == typeof(CommandOption));
         }
     }
 
@@ -42,28 +50,28 @@ namespace XRepo.CommandLine.Commands
     }
 
     [AttributeUsage(AttributeTargets.Property)]
-    public class DescriptionAttribute : Attribute
+    public class RequiredAttribute : Attribute, IArgumentValidator, IOptionValidator
     {
-        public DescriptionAttribute(string value)
-        {
-            Value = value;
-        }
-
-        public string Value { get; }
-    }
-
-    [AttributeUsage(AttributeTargets.Property)]
-    public class RequiredAttribute : ArgumentValidatorAttribute
-    {
-        public override void Validate(CommandLineApplication app, CommandArgument argument)
+        public void Validate(CommandLineApplication app, CommandArgument argument)
         {
             if(string.IsNullOrWhiteSpace(argument.Value))
                 throw new CommandSyntaxException(app, $"The argument '{argument.Name}' is required");
         }
+
+        public void Validate(CommandLineApplication app, CommandOption option)
+        {
+            if(!option.HasValue())
+                throw new CommandSyntaxException(app, $"The option '{option.LongName}' is required");
+        }
     }
 
-    public abstract class ArgumentValidatorAttribute : Attribute
+    public interface IArgumentValidator
     {
-        public abstract void Validate(CommandLineApplication app, CommandArgument argument);
+        void Validate(CommandLineApplication app, CommandArgument argument);
+    }
+
+    public interface IOptionValidator
+    {
+        void Validate(CommandLineApplication app, CommandOption option);
     }
 }

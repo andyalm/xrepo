@@ -8,8 +8,10 @@ namespace XRepo.CommandLine.Commands
     public class ResolveAssemblyCommand : Command
     {
         [Required]
-        [Description("The name of the assembly or package")]
+        [Argument(0, Description = "The name of the assembly or package")]
         public CommandArgument AssemblyName { get; set; }
+        
+        public override bool RequiresBootstrappedSdk => true;
 
         public override void Execute()
         {

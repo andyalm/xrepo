@@ -10,8 +10,10 @@ namespace XRepo.CommandLine.Commands
     public class WhereCommand : Command
     {
         [Required]
-        [Description("The name of an assembly or package")]
-        public CommandArgument Name { get; set; }
+        [Argument(0, Description = "The name of an assembly or package")]
+        public new CommandArgument Name { get; set; }
+        
+        public override bool RequiresBootstrappedSdk => true;
 
         public override void Execute()
         {

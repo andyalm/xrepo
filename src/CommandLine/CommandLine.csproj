@@ -19,15 +19,15 @@
     <ProjectReference Include="..\Core\Core.csproj" />
     <ProjectReference Include="..\Build\Build.csproj">
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-      <OutputItemType>Content</OutputItemType>
+      <OutputItemType>None</OutputItemType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="..\Build\Targets\*.targets">
+    <None Include="..\Build\Targets\*.targets">
       <Link>Targets\%(Filename)%(Extension)</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    </None>
   </ItemGroup>
   <Target Name="_ComputeInformationalVersion" BeforeTargets="GetAssemblyVersion">
     <ComputeHashForDirectory Directory="..\Build\Targets">

@@ -108,13 +108,11 @@ namespace XRepo.Core
 
         public bool IsAssemblyPinned(string assemblyName)
         {
-            PinnedProject notUsed;
-            return PinRegistry.IsAssemblyPinned(assemblyName) || IsAssemblyInPinnedRepo(assemblyName, out notUsed);
+            return PinRegistry.IsAssemblyPinned(assemblyName) || IsAssemblyInPinnedRepo(assemblyName, out _);
         }
 
         public bool IsPackagePinned(PackageIdentifier packageId)
         {
-            PinnedProject notUsed;
             return PinRegistry.IsPackagePinned(packageId.Version); //TODO: Support repos
         }
 

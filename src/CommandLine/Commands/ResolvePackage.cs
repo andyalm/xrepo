@@ -10,8 +10,10 @@ namespace XRepo.CommandLine.Commands
     public class ResolvePackageCommand : Command
     {
         [Required]
-        [Description("The id of the package")]
+        [Argument(0, Description = "The id of the package")]
         public CommandArgument Id { get; set; }
+        
+        public override bool RequiresBootstrappedSdk => true;
 
         //TODO: Add support for constrained resolving based on version
         //[Required]

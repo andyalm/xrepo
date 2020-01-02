@@ -5,7 +5,7 @@ namespace XRepo.Core
 {
     public static class StringExtensions
     {
-        public static string ToSnakeCase(this string pascalCase)
+        public static string ToSnakeCase(this string pascalCase, string seperator = "_")
         {
             var builder = new StringBuilder();
             builder.Append(Char.ToLowerInvariant(pascalCase[0]));
@@ -13,7 +13,7 @@ namespace XRepo.Core
             {
                 var ch = pascalCase[i];
                 if (Char.IsUpper(ch))
-                    builder.Append("_");
+                    builder.Append(seperator);
                 builder.Append(Char.ToLowerInvariant(ch));
             }
             return builder.ToString();

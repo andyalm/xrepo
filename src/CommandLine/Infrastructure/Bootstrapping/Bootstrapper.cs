@@ -4,10 +4,11 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using XRepo.CommandLine.Commands;
 
 namespace XRepo.CommandLine.Infrastructure.Bootstrapping
 {
-    public class Bootstrapper : IDisposable
+    public class Bootstrapper
     {
         private readonly string _workingDirectory;
         private readonly MSBuildSdk _sdk;
@@ -15,36 +16,24 @@ namespace XRepo.CommandLine.Infrastructure.Bootstrapping
         private TextWriter Output { get; set; } = Console.Out;
         private TextWriter ErrorOutput { get; set; } = Console.Error;
 
-        public Bootstrapper(string workingDirectory)
+        public Bootstrapper()
         {
-            _workingDirectory = workingDirectory;
+            _workingDirectory = AppContext.BaseDirectory;
             _sdk = new MSBuildSdk(_workingDirectory);
             _bootstrappedVersionFile = new Lazy<string>(() => Path.Combine(_sdk.SdkPath, "XRepo", "xrepo.version"));
         }
 
         public string CurrentSdkVersion => _sdk.SdkVersion;
 
-        public int Run(string[] args)
+        public void Install()
         {
             if (!RuntimeContext.IsAdministrator)
             {
-                ErrorOutput.WriteLine("'--bootstrap' requires elevated privileges");
-                return 10;
+                throw new CommandFailureException(10, "'bootstrap' requires elevated privileges");
             }
 
-            try
-            {
-                Install();
-            
-                File.WriteAllText(_bootstrappedVersionFile.Value, ExecutingVersion);
-            }
-            catch (Exception ex)
-            {
-                ErrorOutput.WriteLine(ex);
-                return 1;
-            }
-
-            return 0;
+            DoInstall();
+            File.WriteAllText(_bootstrappedVersionFile.Value, ExecutingVersion);
         }
 
         public BootstrapStatus GetBootstrapStatus()
@@ -69,7 +58,7 @@ namespace XRepo.CommandLine.Infrastructure.Bootstrapping
             .Cast<AssemblyInformationalVersionAttribute>()
             .Single().InformationalVersion;
 
-        public void Install()
+        private void DoInstall()
         {
             var buildTargetsDirectory = Path.Combine(_workingDirectory, "Targets");
             var sdkPath = _sdk.TargetsBasePath;
@@ -125,16 +114,12 @@ namespace XRepo.CommandLine.Infrastructure.Bootstrapping
             }
         }
 
-        public void RedirectOutput(string outputPath)
+        public IDisposable RedirectOutput(string outputPath)
         {
             Output = new StreamWriter(outputPath);
             ErrorOutput = Output;
-        }
 
-        public void Dispose()
-        {
-            Output.Dispose();
-            ErrorOutput.Dispose();
+            return Output;
         }
     }
 

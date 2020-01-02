@@ -10,7 +10,7 @@ namespace XRepo.CommandLine.Commands
     public class ConfigCommand : Command
     {
         [Description("The name of the setting you are setting")]
-        public CommandArgument Name { get; set; }
+        public new CommandArgument Name { get; set; }
 
         [Description("The value of the setting you are setting")]
         public CommandArgument Value { get; set; }
