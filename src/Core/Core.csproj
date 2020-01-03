@@ -6,6 +6,6 @@
     <PackageId>XRepo.Core</PackageId>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="System.Text.Json" Version="4.7.0" />
   </ItemGroup>
 </Project>

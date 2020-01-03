@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
+using XRepo.Core.Json;
 
 namespace XRepo.Core
 {
@@ -52,10 +52,10 @@ namespace XRepo.Core
         }
     }
 
-    [JsonObject(MemberSerialization.OptIn)]
+    [JsonConverter(typeof(ExplicitJsonConverter<AssemblyRegistration>))]
     public class AssemblyRegistration
     {
-        [JsonProperty(PropertyName = "Projects")]
+        [ExplicitJsonProperty("Projects")]
         private readonly List<RegisteredAssemblyProject> _projects = new List<RegisteredAssemblyProject>();
         
         public IEnumerable<RegisteredAssemblyProject> Projects
@@ -63,7 +63,7 @@ namespace XRepo.Core
             get { return _projects; }
         }
 
-        [JsonProperty(PropertyName = "Name")]
+        [ExplicitJsonProperty("Name")]
         public string Name { get; set; }
 
         private AssemblyRegistration() {}
@@ -97,25 +97,24 @@ namespace XRepo.Core
             return item.Name;
         }
     }
-
-    [JsonObject(MemberSerialization.OptIn)]
+    
     public abstract class RegisteredProject
     {
-        [JsonProperty("ProjectPath")]
+        [ExplicitJsonProperty("ProjectPath")]
         public string ProjectPath { get; set; }
 
         public string ProjectDirectory => Path.GetDirectoryName(ProjectPath);
         
-        [JsonProperty("Timestamp")]
+        [ExplicitJsonProperty("Timestamp")]
         public DateTime Timestamp { get; set; }
 
         public abstract string OutputPath { get; }
     }
 
-    [JsonObject(MemberSerialization.OptIn)]
+    [JsonConverter(typeof(ExplicitJsonConverter<RegisteredAssemblyProject>))]
     public class RegisteredAssemblyProject : RegisteredProject
     {
-        [JsonProperty("AssemblyPath")]
+        [ExplicitJsonProperty("AssemblyPath")]
         public string AssemblyPath { get; set; }
         
         public override string OutputPath => AssemblyPath;

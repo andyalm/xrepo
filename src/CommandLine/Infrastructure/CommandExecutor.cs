@@ -87,7 +87,7 @@ namespace XRepo.CommandLine.Infrastructure
         
         private void ValidateOptions(CommandLineApplication app, Command command)
         {
-            command.GetArgumentProperties()
+            command.GetOptionProperties()
                 .Each(property =>
                 {
                     var option = (CommandOption)property.GetValue(command);

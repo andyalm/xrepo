@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Text.Json.Serialization;
+using XRepo.Core.Json;
 
 namespace XRepo.Core
 {
@@ -139,10 +141,14 @@ namespace XRepo.Core
         }
     }
 
+    [JsonConverter(typeof(ExplicitJsonConverter<PinHolder>))]
     public class PinHolder
     {
+        [ExplicitJsonProperty("Assemblies")]
         public AssemblyPinCollection Assemblies { get; private set; }
+        [ExplicitJsonProperty("Packages")]
         public PackagePinCollection Packages { get; private set; }
+        [ExplicitJsonProperty("Repos")]
         public RepoPinCollection Repos { get; private set; }
 
         public PinHolder()
@@ -153,8 +159,11 @@ namespace XRepo.Core
         }
     }
 
+    [JsonConverter(typeof(ExplicitJsonConverter<AssemblyPin>))]
     public class AssemblyPin : Pin
     {
+        private AssemblyPin() : base(null) {}
+        
         public AssemblyPin(string name) : base(name)
         {
             
@@ -173,8 +182,10 @@ namespace XRepo.Core
         }
     }
 
+    [JsonConverter(typeof(ExplicitJsonConverter<PackagePin>))]
     public class PackagePin : Pin
     {
+        private PackagePin() : base(null) {}
         public PackagePin(string packageId) : base(packageId)
         {
             
@@ -193,8 +204,11 @@ namespace XRepo.Core
         }
     }
 
+    [JsonConverter(typeof(ExplicitJsonConverter<RepoPin>))]
     public class RepoPin : Pin
     {
+        private RepoPin() : base(null) {}
+        
         public RepoPin(string name) : base(name)
         {
             

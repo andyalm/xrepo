@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
-using Newtonsoft.Json;
-
 namespace XRepo.Core
 {
     public class RepoRegistry : JsonRegistry<RepoRegistrationCollection>

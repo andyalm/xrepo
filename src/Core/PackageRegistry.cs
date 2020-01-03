@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
+using XRepo.Core.Json;
 
 namespace XRepo.Core
 {
@@ -87,10 +87,10 @@ namespace XRepo.Core
         }
     }
 
-    [JsonObject(MemberSerialization.OptIn)]
+    [JsonConverter(typeof(ExplicitJsonConverter<PackageRegistration>))]
     public class PackageRegistration
     {
-        [JsonProperty(PropertyName = "Projects")]
+        [ExplicitJsonProperty("Projects")]
         private readonly List<RegisteredPackageProject> _projects = new List<RegisteredPackageProject>();
         
         public IEnumerable<RegisteredPackageProject> Projects
@@ -98,7 +98,7 @@ namespace XRepo.Core
             get { return _projects; }
         }
 
-        [JsonProperty(PropertyName = "PackageId")]
+        [ExplicitJsonProperty("PackageId")]
         public string PackageId { get; set; }
 
         public RegisteredPackageProject LatestProject => Projects.FirstOrDefault();
@@ -137,16 +137,16 @@ namespace XRepo.Core
         }
     }
 
-    [JsonObject(MemberSerialization.OptIn)]
+    [JsonConverter(typeof(ExplicitJsonConverter<RegisteredPackageProject>))]
     public class RegisteredPackageProject : RegisteredProject
     {
-        [JsonProperty("PackageId")]
+        [ExplicitJsonProperty("PackageId")]
         public string PackageId { get; set; }
         
-        [JsonProperty("PackageVersion")]
+        [ExplicitJsonProperty("PackageVersion")]
         public string PackageVersion { get; set; }
 
-        [JsonProperty("PackagePath")]
+        [ExplicitJsonProperty("PackagePath")]
         public string PackagePath { get; set; }
 
         public override string OutputPath => PackagePath;

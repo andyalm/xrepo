@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Newtonsoft.Json;
+using System.Text.Json;
 
 namespace XRepo.Core
 {
@@ -30,10 +30,10 @@ namespace XRepo.Core
             Directory.CreateDirectory(_directoryPath);
             var key = _keyComputer(item);
             var registryFile = FilenameFor(key);
-            using (var writer = new StreamWriter(File.OpenWrite(registryFile)))
+            using (var stream = File.OpenWrite(registryFile))
             {
-                var serializer = new JsonSerializer { Formatting = Formatting.Indented };
-                serializer.Serialize(writer, item);
+                var options = new JsonSerializerOptions { WriteIndented = true };
+                JsonSerializer.SerializeAsync(stream, item, item.GetType(), options).GetAwaiter().GetResult();
             }
         }
 
@@ -60,10 +60,9 @@ namespace XRepo.Core
 
         private T DeserializeFile(string filePath)
         {
-            using (var reader = new StreamReader(File.OpenRead(filePath)))
+            using (var stream = File.OpenRead(filePath))
             {
-                var serializer = new JsonSerializer();
-                return serializer.Deserialize<T>(new JsonTextReader(reader));
+                return JsonSerializer.DeserializeAsync<T>(stream).GetAwaiter().GetResult();
             }
         }
     }

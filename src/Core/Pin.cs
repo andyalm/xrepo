@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using XRepo.Core.Json;
 
 namespace XRepo.Core
 {
@@ -13,8 +14,14 @@ namespace XRepo.Core
         }
 
         public abstract string Description { get; }
+        
+        [ExplicitJsonProperty("Name")]
         public string Name { get; private set; }
-        public HashSet<string> OverriddenDirectories { get; }
-        public HashSet<string> OverriddenFiles { get; }
+        
+        [ExplicitJsonProperty("OverriddenDirectories")]
+        public HashSet<string> OverriddenDirectories { get; private set; }
+        
+        [ExplicitJsonProperty("OverriddenFiles")]
+        public HashSet<string> OverriddenFiles { get; private set; }
     }
 }
