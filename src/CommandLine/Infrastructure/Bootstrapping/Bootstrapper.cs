@@ -6,30 +6,31 @@ using System.Xml.Linq;
 
 namespace XRepo.Installer
 {
-    public class SdkTargets : IInstallable
+    public class Bootstrapper
     {
+        private readonly string _sdkPath;
+
+        public Bootstrapper(string sdkPath)
+        {
+            _sdkPath = sdkPath;
+            if (!Directory.Exists(_sdkPath))
+            {
+                throw new ArgumentException($"No dotnet sdk exists at '{_sdkPath}'");
+            }
+        }
+
         public void Install(string buildTargetsDirectory)
         {
-            var sdkBasePath = SdkBasePath();
-            foreach(var sdk in Sdks())
+            var sdk = Path.GetFileName(_sdkPath);
+            InstallImportAfterTargets(_sdkPath, $"sdk {sdk}", "Microsoft.Common.targets", new []
             {
-                var sdkPath = Path.Combine(sdkBasePath, sdk);
-                if(Directory.Exists(sdkPath))
-                {
-                    InstallImportAfterTargets(sdkPath, $"sdk {sdk}", "Microsoft.Common.targets", new []
-                    {
-                        Path.Combine(buildTargetsDirectory, "netstandard", "XRepo.Build.targets")
-                    });
-                    InstallImportAfterTargets(sdkPath, $"sdk {sdk}", "SolutionFile", new []
-                    {
-                        Path.Combine(buildTargetsDirectory, "netstandard", "XRepo.Build.SolutionFile.targets")
-                    });
-                }
-                else
-                {
-                    Console.WriteLine($"The sdk {sdk} was not detected. Skipping...");
-                }
-            }
+                Path.Combine(buildTargetsDirectory, "netstandard", "XRepo.Build.targets")
+            });
+            InstallImportAfterTargets(_sdkPath, $"sdk {sdk}", "SolutionFile", new []
+            {
+                Path.Combine(buildTargetsDirectory, "netstandard", "XRepo.Build.SolutionFile.targets")
+            });
+                
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 foreach (var visualStudioPath in VisualStudioMsbuildPaths())
@@ -57,7 +58,7 @@ namespace XRepo.Installer
 
         private static void InstallImportAfterTargets(string sdkPath, string sdkDescription, string importAfterType, IEnumerable<string> buildTargetsFilenames)
         {
-            var importAfterProjectDirectory = Path.Combine(sdkPath, "15.0", importAfterType, "ImportAfter");
+            var importAfterProjectDirectory = Path.Combine(sdkPath, "Current", importAfterType, "ImportAfter");
             var importAfterFilename = $"XRepo.ImportAfter.targets";
             //ensure the target directory exists
             Directory.CreateDirectory(importAfterProjectDirectory);
@@ -82,37 +83,20 @@ namespace XRepo.Installer
 
         public void Uninstall()
         {
-            var sdkBasePath = SdkBasePath();
-            foreach(var sdk in Sdks())
+            var projectTargets = Path.Combine(_sdkPath, "Current", "Microsoft.Common.targets", "ImportAfter",
+                "XRepo.ImportAfter.targets");
+            if (File.Exists(projectTargets))
             {
-                var sdkPath = Path.Combine(sdkBasePath, sdk);
-
-                var projectTargets = Path.Combine(sdkPath, "15.0", "Microsoft.Common.targets", "ImportAfter", "XRepo.ImportAfter.targets");
-                if(File.Exists(projectTargets))
-                {
-                    Console.WriteLine($"Deleting the global xrepo targets file '{projectTargets}'...");
-                    File.Delete(projectTargets);
-                }
-                
-                var slnTargets = Path.Combine(sdkPath, "15.0", "SolutionFile", "ImportAfter", "XRepo.ImportAfter.targets");
-                if(File.Exists(slnTargets))
-                {
-                    Console.WriteLine($"Deleting the global xrepo targets file '{slnTargets}'...");
-                    File.Delete(slnTargets);
-                }
+                Console.WriteLine($"Deleting the global xrepo targets file '{projectTargets}'...");
+                File.Delete(projectTargets);
             }
-        }
 
-        private IEnumerable<string> Sdks()
-        {
-            yield return "1.0.0";
-            yield return "1.0.1";
-            yield return "1.0.2";
-            yield return "1.0.3";
-            yield return "1.0.4";
-            yield return "2.0.0";
-            yield return "2.0.1";
-            yield return "2.0.2";
+            var slnTargets = Path.Combine(_sdkPath, "Current", "SolutionFile", "ImportAfter", "XRepo.ImportAfter.targets");
+            if (File.Exists(slnTargets))
+            {
+                Console.WriteLine($"Deleting the global xrepo targets file '{slnTargets}'...");
+                File.Delete(slnTargets);
+            }
         }
 
         private IEnumerable<string> VisualStudioMsbuildPaths()
@@ -120,22 +104,6 @@ namespace XRepo.Installer
             yield return Path.Combine("Microsoft Visual Studio", "2017", "Community", "MSBuild");
             yield return Path.Combine("Microsoft Visual Studio", "2017", "Professional", "MSBuild");
             yield return Path.Combine("Microsoft Visual Studio", "2017", "Enterprise", "MSBuild");
-        }
-
-        private string SdkBasePath()
-        {
-            if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                return Path.Combine(Environment.GetEnvironmentVariable("ProgramFiles"), "dotnet", "sdk");
-            }
-            else if(RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-            {
-                return "/usr/local/share/dotnet/sdk";
-            }
-            else
-            {
-                throw new PlatformNotSupportedException("The xrepo installer does not yet support linux");
-            }
         }
     }
 }

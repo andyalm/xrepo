@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace XRepo.CommandLine.Infrastructure
@@ -12,16 +13,24 @@ namespace XRepo.CommandLine.Infrastructure
             _workingDirectory = workingDirectory;
         }
 
-        public void Exec(string processName, params string[] args)
+        public IEnumerable<string> Exec(string processName, params string[] args)
         {
             var processStartInfo = new ProcessStartInfo(processName, string.Join(" ", args))
             {
-                WorkingDirectory = _workingDirectory
+                WorkingDirectory = _workingDirectory,
+                RedirectStandardOutput = true
             };
             var process = Process.Start(processStartInfo);
             process.WaitForExit();
             if(process.ExitCode != 0)
                 throw new ProcessErrorException(process);
+
+            var line = process.StandardOutput.ReadLine();
+            while (line != null)
+            {
+                yield return line;
+                line = process.StandardOutput.ReadLine();
+            }
         }
     }
 
