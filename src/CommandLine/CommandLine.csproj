@@ -10,7 +10,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Core\Core.csproj" />
     <PackageReference Include="Microsoft.Extensions.CommandLineUtils" Version="1.1.1" />
-    <PackageReference Include="System.Collections.Specialized" Version="4.3.*" />
-    <PackageReference Include="Microsoft.Build" Version="17.3.2" />
+    <PackageReference Include="Microsoft.VisualStudio.SolutionPersistence" Version="1.0.52" />
   </ItemGroup>
 </Project>

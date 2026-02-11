@@ -11,11 +11,15 @@ namespace XRepo.CommandLine.Infrastructure
             if (!string.IsNullOrWhiteSpace(specifiedPath))
                 return Path.GetFullPath(specifiedPath);
 
-            var solutions = Directory.GetFiles(Directory.GetCurrentDirectory(), "*.sln");
+            var currentDir = Directory.GetCurrentDirectory();
+            var solutions = Directory.GetFiles(currentDir, "*.sln")
+                .Concat(Directory.GetFiles(currentDir, "*.slnx"))
+                .ToArray();
+
             if (solutions.Length == 0)
-                throw new XRepoException("No solution was specified and no .sln file found in the current directory");
+                throw new XRepoException("No solution was specified and no .sln or .slnx file found in the current directory");
             if (solutions.Length > 1)
-                throw new XRepoException("No solution was specified and multiple .sln files found. Please specify which solution to use with --solution");
+                throw new XRepoException("No solution was specified and multiple solution files found. Please specify which solution to use with --solution");
 
             return solutions.Single();
         }

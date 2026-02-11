@@ -2,7 +2,6 @@ using System;
 using System.IO;
 using System.Linq;
 using XRepo.CommandLine.Infrastructure;
-using XRepo.CommandLine.Infrastructure.SlnModel;
 
 namespace XRepo.CommandLine.Commands
 {
@@ -21,7 +20,7 @@ namespace XRepo.CommandLine.Commands
         public override void Execute()
         {
             var solutionPath = SolutionHelper.ResolveSolutionPath(SolutionPath);
-            var solutionFile = SlnFile.Read(solutionPath);
+            var solutionFile = SolutionFile.Read(solutionPath);
             var allConsumingProjects = solutionFile.ConsumingProjects().ToArray();
             int linkedCount = 0;
 
@@ -48,7 +47,7 @@ namespace XRepo.CommandLine.Commands
             }
         }
 
-        private int LinkRepo(string repoName, SlnFile solutionFile, ConsumingProject[] allConsumingProjects)
+        private int LinkRepo(string repoName, SolutionFile solutionFile, ConsumingProject[] allConsumingProjects)
         {
             var packages = Environment.FindPackagesFromRepo(repoName).ToArray();
             if (packages.Length == 0)
@@ -67,7 +66,7 @@ namespace XRepo.CommandLine.Commands
             return linkedCount;
         }
 
-        private int LinkProject(string projectPath, SlnFile solutionFile, ConsumingProject[] allConsumingProjects)
+        private int LinkProject(string projectPath, SolutionFile solutionFile, ConsumingProject[] allConsumingProjects)
         {
             var packages = Environment.FindPackagesFromProject(projectPath).ToArray();
             if (packages.Length == 0)
@@ -88,7 +87,7 @@ namespace XRepo.CommandLine.Commands
             return linkedCount;
         }
 
-        private int LinkPackage(string packageId, string projectPath, SlnFile solutionFile, ConsumingProject[] allConsumingProjects)
+        private int LinkPackage(string packageId, string projectPath, SolutionFile solutionFile, ConsumingProject[] allConsumingProjects)
         {
             var consumingProjects = allConsumingProjects
                 .Where(p => p.ReferencesPackage(packageId)).ToArray();

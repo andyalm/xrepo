@@ -1,6 +1,5 @@
 using System.Linq;
 using XRepo.CommandLine.Infrastructure;
-using XRepo.CommandLine.Infrastructure.SlnModel;
 
 namespace XRepo.CommandLine.Commands
 {
@@ -18,7 +17,7 @@ namespace XRepo.CommandLine.Commands
         public override void Execute()
         {
             var solutionPath = SolutionHelper.ResolveSolutionPath(SolutionPath);
-            var solutionFile = SlnFile.Read(solutionPath);
+            var solutionFile = SolutionFile.Read(solutionPath);
             var allConsumingProjects = solutionFile.ConsumingProjects().ToArray();
 
             foreach (var project in allConsumingProjects)
@@ -27,8 +26,7 @@ namespace XRepo.CommandLine.Commands
                     project.Save();
             }
 
-            var solutionFolderProject = solutionFile.GetOrCreateSolutionFolder(SolutionFolderPath);
-            solutionFile.RemoveSolutionFolderRecursive(solutionFolderProject);
+            solutionFile.RemoveSolutionFolder(SolutionFolderPath);
             solutionFile.Write();
 
             App.Out.WriteLine("All xrepo project references have been removed. Running dotnet restore...");
