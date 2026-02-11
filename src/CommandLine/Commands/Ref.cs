@@ -6,8 +6,8 @@ using XRepo.CommandLine.Infrastructure.SlnModel;
 
 namespace XRepo.CommandLine.Commands
 {
-    [CommandName("link", "Links a repo's packages into a solution by adding ProjectReferences")]
-    public class LinkCommand : Command
+    [CommandName("ref", "Adds project references for a repo's packages into a solution")]
+    public class RefCommand : Command
     {
         private const string SolutionFolderPath = "xrepo";
 

@@ -5,7 +5,7 @@ _xrepo()
     cur="${COMP_WORDS[COMP_CWORD]}"
     prev="${COMP_WORDS[COMP_CWORD-1]}"
 
-    opts="assemblies config link packages repo repos unlink which where"
+    opts="assemblies config packages ref repo repos unref which where"
 
     case "${prev}" in
       assemblies)
@@ -15,7 +15,7 @@ _xrepo()
         COMPREPLY=()
         return 0
         ;;
-      link)
+      ref)
         local repos=$(xrepo repos | grep ".* - .*" | awk -F " - " '{print $1}')
         COMPREPLY=($(compgen -W "${repos}" ${cur}))
         return 0
@@ -31,7 +31,7 @@ _xrepo()
       repos)
         return 0
         ;;
-      unlink)
+      unref)
         local repos=$(xrepo repos | grep ".* - .*" | awk -F " - " '{print $1}')
         COMPREPLY=($(compgen -W "${repos}" ${cur}))
         return 0

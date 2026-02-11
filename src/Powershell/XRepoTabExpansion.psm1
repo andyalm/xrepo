@@ -67,7 +67,7 @@ function Get-Assemblies {
 
 function Get-XRepoCommands {
 	
-	@('assemblies', 'config', 'link', 'packages', 'repo', 'repos', 'unlink', 'which', 'where')
+	@('assemblies', 'config', 'packages', 'ref', 'repo', 'repos', 'unref', 'which', 'where')
 }
 
 function Write-Expansions($lastWord) {
@@ -84,11 +84,11 @@ function XRepoTabExpansion($line, $lastWord) {
 		return Get-XRepoCommands | Write-Expansions $lastWord
 	}
 	switch($parts[1]) {
-		'link' {
+		'ref' {
 			$repos = @($xrepo.RepoRegistry.GetRepos() | % { $_.Name })
 			$repos | Write-Expansions $lastWord
 		}
-		'unlink' {
+		'unref' {
 			$repos = @($xrepo.RepoRegistry.GetRepos() | % { $_.Name })
 			$repos | Write-Expansions $lastWord
 		}

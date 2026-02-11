@@ -15,16 +15,16 @@ Quickstart
     dotnet build
     xrepo repo register MySharedLib
 
-3) In the repo that consumes the shared library, link it:
+3) In the repo that consumes the shared library, ref it:
 
     cd ~/src/MyApp
-    xrepo link MySharedLib
+    xrepo ref MySharedLib
 
 This will find all NuGet packages from MySharedLib that your solution references and add local `ProjectReference` entries so your IDE can navigate into the source, set breakpoints, and get full IntelliSense.
 
-4) When you're done working on the shared library, unlink it:
+4) When you're done working on the shared library, unref it:
 
-    xrepo unlink
+    xrepo unref
 
 Commands
 --------
@@ -38,8 +38,8 @@ Commands
 | `assemblies` | List all registered assemblies |
 | `which <name>` | Show the most recently registered location for a package or assembly |
 | `where <name>` | Show all registered locations for a package or assembly |
-| `link <name> [-s\|--solution]` | Link a repo's packages into a solution by adding ProjectReferences |
-| `unlink [name] [-s\|--solution]` | Remove linked ProjectReferences from a solution |
+| `ref <name> [-s\|--solution]` | Add project references for a repo's packages into a solution |
+| `unref [name] [-s\|--solution]` | Remove project references that were added by xrepo ref |
 | `config [name] [value]` | View or update configuration settings |
 | `bootstrap` | Install global MSBuild hooks for package registration |
 
@@ -50,4 +50,4 @@ XRepo has two phases:
 
 **Discovery**: XRepo installs MSBuild build hooks that automatically register where your packages are built. When you run `dotnet build` or `dotnet pack` in a project, XRepo records the package ID, version, and project path.
 
-**Linking**: When you run `xrepo link <RepoName>`, XRepo looks up the repo's path, finds all registered packages built from that repo, and checks which projects in your solution reference those packages. For each match, it adds a `ProjectReference` to the consuming project and adds the source project to your solution file under an "xrepo" folder. Running `xrepo unlink` reverses the process.
+**Referencing**: When you run `xrepo ref <RepoName>`, XRepo looks up the repo's path, finds all registered packages built from that repo, and checks which projects in your solution reference those packages. For each match, it adds a `ProjectReference` to the consuming project and adds the source project to your solution file under an "xrepo" folder. Running `xrepo unref` reverses the process.

@@ -4,12 +4,12 @@ using XRepo.CommandLine.Infrastructure.SlnModel;
 
 namespace XRepo.CommandLine.Commands
 {
-    [CommandName("unlink", "Removes linked ProjectReferences from a solution")]
-    public class UnlinkCommand : Command
+    [CommandName("unref", "Removes project references that were added by xrepo ref")]
+    public class UnrefCommand : Command
     {
         private const string SolutionFolderPath = "xrepo";
 
-        [CommandArgument("The name of the repo to unlink (omit to unlink all)")]
+        [CommandArgument("The name of the repo to unref (omit to unref all)")]
         public string Name { get; set; }
 
         [CommandOption("-s|--solution", "The path to the solution file. Auto-detected if not specified.")]
@@ -31,7 +31,7 @@ namespace XRepo.CommandLine.Commands
             solutionFile.RemoveSolutionFolderRecursive(solutionFolderProject);
             solutionFile.Write();
 
-            App.Out.WriteLine("All xrepo links have been removed. Running dotnet restore...");
+            App.Out.WriteLine("All xrepo project references have been removed. Running dotnet restore...");
             SolutionHelper.DotnetRestore(solutionPath);
         }
     }
