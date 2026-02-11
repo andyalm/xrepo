@@ -16,8 +16,6 @@ namespace XRepo.Build.Tasks
             get { return _environment ?? (_environment = XRepoEnvironment.ForDirectory(CustomConfigDir)); }
         }
 
-        public ConfigSettings Settings => Environment.ConfigRegistry.Settings;
-
         public void LogDebug(string message)
         {
             var importance = XRepoDebug ? MessageImportance.High : MessageImportance.Normal;

@@ -51,11 +51,6 @@ namespace XRepo.Scenarios.TestSupport
             get { return _xRepoEnvironment.AssemblyRegistry; } 
         }
 
-        public PinRegistry PinRegistry
-        {
-            get { return _xRepoEnvironment.PinRegistry; }
-        }
-
         public RepoRegistry RepoRegistry
         {
             get { return _xRepoEnvironment.RepoRegistry; }

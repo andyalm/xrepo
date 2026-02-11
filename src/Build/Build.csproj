@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net6.0</TargetFrameworks>
+    <TargetFramework>net10.0</TargetFramework>
     <AssemblyName>XRepo.Build</AssemblyName>
     <RootNamespace>XRepo.Build</RootNamespace>
     <IsPackable>false</IsPackable>

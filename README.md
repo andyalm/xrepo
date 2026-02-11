@@ -1,34 +1,53 @@
 XRepo - Cross repository development finally made easy
 ======================================================
 
+XRepo makes it easy to work on shared libraries across repositories by letting you temporarily replace NuGet package references with local project references that your IDE (Rider, Visual Studio) natively understands.
+
 Quickstart
 ----------
-1) Install xrepo via chocolatey
+1) Install xrepo as a .NET global tool
 
-    chocolatey install xrepo
+    dotnet tool install -g xrepo
 
-2) Navigate to the repo where your shared library is built, build it, and register it. For example:
+2) Navigate to the repo where your shared library is built, build it, and register it:
 
-    cd c:\src\frameworks\AspNetMvc
-    build.cmd
-    xrepo repo register AspNetMvc
+    cd ~/src/MySharedLib
+    dotnet build
+    xrepo repo register MySharedLib
 
-3) Pin the repo
-    
-    xrepo pin AspNetMvc
+3) In the repo that consumes the shared library, link it:
 
-4) Go build a project that references your shared library via an assembly reference. When you build it, all references to assemblies in your pinned repo will be automatically resolved to locally built copies of the assembly. When you are ready for assembly resolution to go back to normal, simply unpin the repo. For example:
+    cd ~/src/MyApp
+    xrepo link MySharedLib
 
-    xrepo unpin AspNetMvc
+This will find all NuGet packages from MySharedLib that your solution references and add local `ProjectReference` entries so your IDE can navigate into the source, set breakpoints, and get full IntelliSense.
 
-Configuration options
----------------------
-Configuration options can be set via the 'xrepo config' command.
+4) When you're done working on the shared library, unlink it:
 
-### copy_pins
+    xrepo unlink
 
-Determines whether pinned assemblies will be copied to the HintPath location of the assembly reference they are overriding. If you use an real-time code analysis tool like ReSharper, you will want to enable this option.
+Commands
+--------
 
-### pin_warnings
+| Command | Description |
+|---------|-------------|
+| `repo register <name> [-p\|--path]` | Register a repo at the current or specified path |
+| `repo unregister <name>` | Unregister a repo |
+| `repos` | List all registered repos |
+| `packages` | List all registered packages |
+| `assemblies` | List all registered assemblies |
+| `which <name>` | Show the most recently registered location for a package or assembly |
+| `where <name>` | Show all registered locations for a package or assembly |
+| `link <name> [-s\|--solution]` | Link a repo's packages into a solution by adding ProjectReferences |
+| `unlink [name] [-s\|--solution]` | Remove linked ProjectReferences from a solution |
+| `config [name] [value]` | View or update configuration settings |
+| `bootstrap` | Install global MSBuild hooks for package registration |
 
-Determines whether a build warning will be generated when a project is built referencing a pinned assembly. This can be a useful reminder when you have something pinned.
+How it works
+------------
+
+XRepo has two phases:
+
+**Discovery**: XRepo installs MSBuild build hooks that automatically register where your packages are built. When you run `dotnet build` or `dotnet pack` in a project, XRepo records the package ID, version, and project path.
+
+**Linking**: When you run `xrepo link <RepoName>`, XRepo looks up the repo's path, finds all registered packages built from that repo, and checks which projects in your solution reference those packages. For each match, it adds a `ProjectReference` to the consuming project and adds the source project to your solution file under an "xrepo" folder. Running `xrepo unlink` reverses the process.

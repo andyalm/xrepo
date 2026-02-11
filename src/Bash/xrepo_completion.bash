@@ -5,23 +5,22 @@ _xrepo()
     cur="${COMP_WORDS[COMP_CWORD]}"
     prev="${COMP_WORDS[COMP_CWORD-1]}"
 
-    opts="assemblies config pin pins repo repos unpin which where"
+    opts="assemblies config link packages repo repos unlink which where"
 
     case "${prev}" in
       assemblies)
         return 0
         ;;
       config)
-        local config_options="copy_pins pin_warnings auto_build_pins"
-        COMPREPLY=($(compgen -W "${config_options}" ${cur}))
+        COMPREPLY=()
         return 0
         ;;
-      pin)
+      link)
         local repos=$(xrepo repos | grep ".* - .*" | awk -F " - " '{print $1}')
         COMPREPLY=($(compgen -W "${repos}" ${cur}))
         return 0
         ;;
-      pins)
+      packages)
         return 0
         ;;
       repo)
@@ -32,23 +31,23 @@ _xrepo()
       repos)
         return 0
         ;;
-      unpin)
-        local pinned_repos=$(xrepo pins | grep -v "pinned *" | grep -v "^\-" | grep -v -e '^$')
-        COMPREPLY=($(compgen -W "${pinned_repos}" ${cur}))
-        return 0
-		;;
-      which)
-        local pinned_repos=$(xrepo assemblies)
-        COMPREPLY=($(compgen -W "${pinned_repos}" ${cur}))
+      unlink)
+        local repos=$(xrepo repos | grep ".* - .*" | awk -F " - " '{print $1}')
+        COMPREPLY=($(compgen -W "${repos}" ${cur}))
         return 0
         ;;
-	  where)
-        local pinned_repos=$(xrepo assemblies)
-        COMPREPLY=($(compgen -W "${pinned_repos}" ${cur}))
+      which)
+        local names=$(xrepo assemblies)
+        COMPREPLY=($(compgen -W "${names}" ${cur}))
+        return 0
+        ;;
+      where)
+        local names=$(xrepo assemblies)
+        COMPREPLY=($(compgen -W "${names}" ${cur}))
         return 0
         ;;
       *)
-        COMPREPLY=($(compgen -W "${opts}" ${cur}))  
+        COMPREPLY=($(compgen -W "${opts}" ${cur}))
         return 0
         ;;
     esac

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Linq;
 using System.Xml;
@@ -8,6 +8,9 @@ namespace XRepo.CommandLine.Infrastructure
 {
     public class ConsumingProject
     {
+        private const string LinkedReferencesLabel = "XRepoLinkedReferences";
+        private const string LegacyPinReferencesLabel = "XRepoPinReferences";
+
         public static ConsumingProject Load(string filePath)
         {
             using (var stream = File.OpenRead(filePath))
@@ -27,19 +30,27 @@ namespace XRepo.CommandLine.Infrastructure
 
         public void AddProjectReference(string projectPath)
         {
+            var ns = _doc.Root.Name.Namespace;
             var xrepoReferences = _doc.Root.Elements()
                 .SingleOrDefault(e => e.Name.LocalName == "ItemGroup" &&
-                                      (string)e.Attribute("Label") == "XRepoReferences");
+                                      ((string)e.Attribute("Label") == LinkedReferencesLabel ||
+                                       (string)e.Attribute("Label") == LegacyPinReferencesLabel));
             if (xrepoReferences == null)
             {
-                xrepoReferences = new XElement(_doc.Root.Name.Namespace + "ItemGroup");
-                xrepoReferences.Add(new XAttribute("Label", "XRepoPinReferences"));
+                xrepoReferences = new XElement(ns + "ItemGroup");
+                xrepoReferences.Add(new XAttribute("Label", LinkedReferencesLabel));
                 _doc.Root.Add(xrepoReferences);
             }
 
-            var projectReference = new XElement(_doc.Root.Name.Namespace + "ProjectReference");
-            projectReference.Add(new XAttribute("Include", projectPath));
-            xrepoReferences.Add(projectReference);
+            var alreadyReferenced = xrepoReferences.Elements(ns + "ProjectReference")
+                .Any(e => string.Equals((string)e.Attribute("Include"), projectPath,
+                    StringComparison.OrdinalIgnoreCase));
+            if (!alreadyReferenced)
+            {
+                var projectReference = new XElement(ns + "ProjectReference");
+                projectReference.Add(new XAttribute("Include", projectPath));
+                xrepoReferences.Add(projectReference);
+            }
         }
 
         public void Save()
@@ -62,14 +73,19 @@ namespace XRepo.CommandLine.Infrastructure
                 .Any(e => packageId.Equals((string) e.Attribute("Include"), StringComparison.OrdinalIgnoreCase));
         }
 
-        public bool RemovePinProjectReferences()
+        public bool RemoveLinkedProjectReferences()
         {
-            var pinReferences = _doc.Root.Elements(_doc.Root.Name.Namespace + "ItemGroup")
-                .SingleOrDefault(e => (string) e.Attribute("Label") == "XRepoPinReferences");
+            var linkedReferences = _doc.Root.Elements(_doc.Root.Name.Namespace + "ItemGroup")
+                .Where(e =>
+                {
+                    var label = (string) e.Attribute("Label");
+                    return label == LinkedReferencesLabel || label == LegacyPinReferencesLabel;
+                }).ToArray();
 
-            if(pinReferences != null)
+            if (linkedReferences.Length > 0)
             {
-                pinReferences.Remove();
+                foreach (var el in linkedReferences)
+                    el.Remove();
                 return true;
             }
 

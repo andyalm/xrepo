@@ -67,7 +67,7 @@ function Get-Assemblies {
 
 function Get-XRepoCommands {
 	
-	@('assemblies', 'config', 'pin', 'unpin', 'pins', 'repos', 'which', 'where')
+	@('assemblies', 'config', 'link', 'packages', 'repo', 'repos', 'unlink', 'which', 'where')
 }
 
 function Write-Expansions($lastWord) {
@@ -84,17 +84,16 @@ function XRepoTabExpansion($line, $lastWord) {
 		return Get-XRepoCommands | Write-Expansions $lastWord
 	}
 	switch($parts[1]) {
-		'pin' {
-			Get-AssembliesAndRepos | Write-Expansions $lastWord
+		'link' {
+			$repos = @($xrepo.RepoRegistry.GetRepos() | % { $_.Name })
+			$repos | Write-Expansions $lastWord
 		}
-		'unpin' {
-			('all' + @(Get-AssembliesAndRepos)) | Write-Expansions $lastWord
+		'unlink' {
+			$repos = @($xrepo.RepoRegistry.GetRepos() | % { $_.Name })
+			$repos | Write-Expansions $lastWord
 		}
 		'repo' {
 			@('register', 'unregister') | Write-Expansions $lastWord
-		}
-		'config' {
-			@('copy_pins', 'pin_warnings', 'auto_build_pins') | Write-Expansions $lastWord
 		}
 		'which' {
 			Get-Assemblies | Write-Expansions $lastWord

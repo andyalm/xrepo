@@ -1,11 +1,5 @@
-﻿<Project ToolsVersion="15.0">
-  <UsingTask TaskName="XRepo.Build.Tasks.ResolvePackageReferences"
-			   AssemblyFile="$(MSBuildThisFileDirectory)\XRepo.Build.dll"/>
+<Project ToolsVersion="15.0">
   <UsingTask TaskName="XRepo.Build.Tasks.RegisterPackage"
-			   AssemblyFile="$(MSBuildThisFileDirectory)\XRepo.Build.dll"/>
-  <UsingTask TaskName="XRepo.Build.Tasks.ResolvePackageSources"
-             AssemblyFile="$(MSBuildThisFileDirectory)\XRepo.Build.dll"/>
-  <UsingTask TaskName="XRepo.Build.Tasks.OverridePinnedDependencyLocations"
              AssemblyFile="$(MSBuildThisFileDirectory)\XRepo.Build.dll"/>
 
   <Target Name="_XRepoRegisterPackageOnPack" AfterTargets="Pack">
@@ -15,7 +9,7 @@
   <Target Name="_XRepoRegisterPackageOnBuild" AfterTargets="Build">
     <CallTarget Condition="$(GeneratePackageOnBuild.ToLower())=='true'" Targets="_XRepoRegisterPackage" />
   </Target>
-  
+
   <Target Name="_XRepoRegisterPackage">
     <XRepo.Build.Tasks.RegisterPackage
       PackageOutputPath="$(PackageOutputPath)"
@@ -28,18 +22,4 @@
       DebugTask="false"/>
   </Target>
 
-  <Target Name="_XRepoOverrideReferenceLocations" AfterTargets="_ComputeLockFileReferences">
-    <XRepo.Build.Tasks.OverridePinnedDependencyLocations
-      CompileFileDefinitions="@(ResolvedCompileFileDefinitions)"
-      XRepoDebug="$(XRepoDebug)">
-      <Output TaskParameter="OverriddenDefinitions" ItemName="OverriddenCompileFileDefinitions" />
-      <Output TaskParameter="PinnedDefinitions" ItemName="PinnedCompileFileDefinitions" />
-    </XRepo.Build.Tasks.OverridePinnedDependencyLocations>
-    
-    <ItemGroup>
-      <ResolvedCompileFileDefinitions Remove="@(OverriddenCompileFileDefinitions)" />
-      <ResolvedCompileFileDefinitions Include="@(PinnedCompileFileDefinitions)" />
-    </ItemGroup>
-  </Target>
-  
 </Project>
