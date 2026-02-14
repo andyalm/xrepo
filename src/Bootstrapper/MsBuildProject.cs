@@ -4,7 +4,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System;
 
-namespace XRepo.Installer
+namespace XRepo.Bootstrapper
 {
     class MsBuildProject
     {
@@ -34,7 +34,7 @@ namespace XRepo.Installer
             import.SetAttributeValue("Project", importPath);
             import.SetAttributeValue("Condition", $"Exists('{importPath}') and $(DisableGlobalXRepo)!='true'");
             project.Root.Add(import);
-            
+
             Save(project);
         }
 
@@ -45,7 +45,7 @@ namespace XRepo.Installer
 
             var importElement = project.Root.Elements(xmlns + "Import")
                 .FirstOrDefault(e => ((string)e.Attribute("Project")).Equals(projectPath, StringComparison.OrdinalIgnoreCase));
-            
+
             importElement.Remove();
 
             Save(project);
@@ -58,7 +58,7 @@ namespace XRepo.Installer
 
             var importsToRemove = project.Root.Elements(xmlns + "Import")
                 .Where(e => ((string)e.Attribute("Project")).ToLowerInvariant().Contains(projectPathSubstring.ToLowerInvariant()));
-            
+
             foreach(var importToRemove in importsToRemove)
             {
                 importToRemove.Remove();

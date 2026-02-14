@@ -2,9 +2,8 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using XRepo.CommandLine.Infrastructure;
 
-namespace XRepo.Installer;
+namespace XRepo.Bootstrapper;
 
 public class MsBuildSdk
 {
@@ -36,7 +35,7 @@ public class MsBuildSdk
 
         return sdkVersion;
     }
-    
+
     private string CurrentSdkPath()
     {
         var sdkLine = _executor.Exec("dotnet", "--list-sdks")
@@ -55,7 +54,7 @@ public class MsBuildSdk
 
         return Path.Combine(sdkDirectory, _sdkVersion.Value);
     }
-    
+
     private string GetTargetsBasePath()
     {
         if(Directory.Exists(Path.Combine(SdkPath, "Current")))

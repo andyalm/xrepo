@@ -4,7 +4,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Xml.Linq;
 
-namespace XRepo.Installer
+namespace XRepo.Bootstrapper
 {
     public class Bootstrapper
     {
@@ -30,7 +30,7 @@ namespace XRepo.Installer
             {
                 Path.Combine(buildTargetsDirectory, "netstandard", "XRepo.Build.SolutionFile.targets")
             });
-                
+
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 foreach (var visualStudioPath in VisualStudioMsbuildPaths())
