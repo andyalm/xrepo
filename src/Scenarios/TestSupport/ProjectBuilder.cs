@@ -71,6 +71,38 @@ namespace XRepo.Scenarios.TestSupport
             return process.StandardOutput.ReadToEnd() + process.StandardError.ReadToEnd();
         }
 
+        public string Pack()
+        {
+            var project = Project;
+            var buildProperties = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
+                {"XRepoConfigDir", _environment.XRepoConfigDir},
+                {"XRepoSkipUnchangedFiles", "false"},
+                {"DisableGlobalXRepo", "true"}
+            };
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = "dotnet",
+                Arguments = "restore",
+                WorkingDirectory = Path.GetDirectoryName(FullPath),
+                CreateNoWindow = false,
+                RedirectStandardOutput = true
+            }).WaitForExit();
+            var process = Process.Start(new ProcessStartInfo
+                {
+                    FileName = "dotnet",
+                    Arguments = $"pack -v n {SerializeProperties(buildProperties)}",
+                    WorkingDirectory = Path.GetDirectoryName(FullPath),
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    CreateNoWindow = false
+                }
+            );
+            Console.WriteLine($"dotnet {process.StartInfo.Arguments}");
+
+            return process.StandardOutput.ReadToEnd() + process.StandardError.ReadToEnd();
+        }
+
         private string SerializeProperties(IDictionary<string, string> properties)
         {
             return string.Join(" ", properties.Select(pair => $"/p:{pair.Key}=\"{pair.Value}\""));
