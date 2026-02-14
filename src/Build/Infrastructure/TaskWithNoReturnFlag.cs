@@ -20,12 +20,6 @@ namespace XRepo.Build.Infrastructure
             {
                 ExecuteOrThrow();
             }
-            catch (ChildTaskFailedException ex)
-            {
-                //an error occurred in a child task.  Assume that it logged its own error.  All we need to do is return false.
-                Log.LogMessage(MessageImportance.Low, ex.Message);
-                return false;
-            }
             catch (XRepoException ex)
             {
                 //NOTE: The idea of catching ApplicationException here is that if an ApplicationException is thrown, it was thrown by our code, and thus the error message
