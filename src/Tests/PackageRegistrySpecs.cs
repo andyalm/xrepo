@@ -68,13 +68,15 @@ namespace XRepo.Tests
         }
 
         [Fact]
-        public void RegisterPackage_TracksMultipleDistinctPackages()
+        public void RegisterPackage_TracksMultipleProjectsForSamePackage()
         {
-            _testEnvironment.RegisterPackageAt(new PackageIdentifier("PackageA", "1.0.0"), "src");
-            _testEnvironment.RegisterPackageAt(new PackageIdentifier("PackageB", "1.0.0"), "src");
+            var packageId = new PackageIdentifier("MyPackage", "1.0.0");
+            _testEnvironment.RegisterPackageAt(packageId, "src");
+            _testEnvironment.RegisterPackageAt(packageId, "other");
 
-            _testEnvironment.XRepoEnvironment.PackageRegistry.GetPackage("PackageA").Should().NotBeNull();
-            _testEnvironment.XRepoEnvironment.PackageRegistry.GetPackage("PackageB").Should().NotBeNull();
+            var package = _testEnvironment.XRepoEnvironment.PackageRegistry.GetPackage("MyPackage");
+
+            package.Projects.Should().HaveCount(2);
         }
 
         [Fact]
@@ -125,13 +127,14 @@ namespace XRepo.Tests
         public void MostRecentProject_ReturnsProjectWithLatestTimestamp()
         {
             var packageId = new PackageIdentifier("MyPackage", "1.0.0");
-            _testEnvironment.RegisterPackageAt(packageId, "src");
+            _testEnvironment.RegisterPackageAt(packageId, "first");
+            _testEnvironment.RegisterPackageAt(packageId, "second");
 
             var package = _testEnvironment.XRepoEnvironment.PackageRegistry.GetPackage("MyPackage");
 
             package.MostRecentProject.Should().NotBeNull();
-            var expectedProjectPath = _testEnvironment.GetLocalProjectPath("MyPackage", "src");
-            package.MostRecentProject.ProjectPath.Should().Be(expectedProjectPath);
+            var secondProjectPath = _testEnvironment.GetLocalProjectPath("MyPackage", "second");
+            package.MostRecentProject.ProjectPath.Should().Be(secondProjectPath);
         }
 
         [Fact]

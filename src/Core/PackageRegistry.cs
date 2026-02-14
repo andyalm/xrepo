@@ -32,7 +32,7 @@ namespace XRepo.Core
 
         public void RegisterPackage(PackageIdentifier packageId, string packagePath, string projectPath)
         {
-            var packageRegistration = GetPackage(packageId.Version);
+            var packageRegistration = GetPackage(packageId.Id);
             if(packageRegistration == null)
             {
                 packageRegistration = new PackageRegistration(packageId.Id);
