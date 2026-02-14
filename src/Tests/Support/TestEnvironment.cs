@@ -50,11 +50,6 @@ namespace XRepo.Tests.Support
             get { return _root; }
         }
 
-        public AssemblyRegistry AssemblyRegistry
-        {
-            get { return _xRepoEnvironment.AssemblyRegistry; }
-        }
-
         public RepoRegistry RepoRegistry
         {
             get { return _xRepoEnvironment.RepoRegistry; }
@@ -85,16 +80,6 @@ namespace XRepo.Tests.Support
             return ResolvePath(Path.Combine(projectDirectory, projectName, projectName + ".csproj"));
         }
 
-        public string RegisterAssemblyAt(string assemblyName, string directory)
-        {
-            var projectLocation = GetLocalProjectPath(assemblyName, directory);
-            var projectDirectory = Path.GetDirectoryName(projectLocation);
-            var assemblyLocation = Path.Combine(projectDirectory, "bin", "Debug", assemblyName + ".dll");
-
-            XRepoEnvironment.AssemblyRegistry.RegisterAssembly(assemblyName, assemblyLocation, projectLocation);
-            return assemblyLocation;
-        }
-
         public string RegisterPackageAt(PackageIdentifier packageIdentifier, string directory)
         {
             var projectLocation = GetLocalProjectPath(packageIdentifier.Id, directory);
@@ -104,11 +89,6 @@ namespace XRepo.Tests.Support
             XRepoEnvironment.PackageRegistry.RegisterPackage(packageIdentifier, packageLocation, projectLocation);
 
             return packageLocation;
-        }
-
-        public string RegisterAssembly(string assemblyName)
-        {
-            return RegisterAssemblyAt(assemblyName, "src");
         }
 
         public string RegisterRepo(string name, string directory)

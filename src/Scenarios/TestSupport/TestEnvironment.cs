@@ -46,11 +46,6 @@ namespace XRepo.Scenarios.TestSupport
             get { return _root; }
         }
 
-        public AssemblyRegistry AssemblyRegistry
-        {
-            get { return _xRepoEnvironment.AssemblyRegistry; } 
-        }
-
         public RepoRegistry RepoRegistry
         {
             get { return _xRepoEnvironment.RepoRegistry; }
@@ -69,11 +64,6 @@ namespace XRepo.Scenarios.TestSupport
         public XRepoEnvironment XRepoEnvironment
         {
             get { return _xRepoEnvironment; }
-        }
-
-        public string GetLocalAssemblyPath(string assemblyName)
-        {
-            return ResolveProjectPath(Path.Combine(assemblyName, "bin", "Debug", assemblyName + ".dll"));
         }
 
         public string GetLocalProjectPath(string assemblyName)

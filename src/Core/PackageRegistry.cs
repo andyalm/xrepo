@@ -140,6 +140,20 @@ namespace XRepo.Core
     }
 
     [JsonObject(MemberSerialization.OptIn)]
+    public abstract class RegisteredProject
+    {
+        [JsonProperty("ProjectPath")]
+        public string ProjectPath { get; set; }
+
+        public string ProjectDirectory => Path.GetDirectoryName(ProjectPath);
+
+        [JsonProperty("Timestamp")]
+        public DateTime Timestamp { get; set; }
+
+        public abstract string OutputPath { get; }
+    }
+
+    [JsonObject(MemberSerialization.OptIn)]
     public class RegisteredPackageProject : RegisteredProject
     {
         [JsonProperty("PackageId")]

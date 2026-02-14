@@ -25,9 +25,6 @@ namespace XRepo.Core
             _directory = directory ?? DefaultConfigDir;
         }
 
-        private AssemblyRegistry _assemblyRegistry;
-        public AssemblyRegistry AssemblyRegistry => _assemblyRegistry ?? (_assemblyRegistry = AssemblyRegistry.ForDirectory(_directory));
-
         private PackageRegistry _packageRegistry;
         public PackageRegistry PackageRegistry => _packageRegistry ?? (_packageRegistry = PackageRegistry.ForDirectory(_directory));
 
