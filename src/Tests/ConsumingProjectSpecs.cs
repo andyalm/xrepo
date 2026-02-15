@@ -1,7 +1,7 @@
 using System.Linq;
 using System.Xml.Linq;
 using FluentAssertions;
-using XRepo.CommandLine.Infrastructure;
+using XRepo.Core;
 using Xunit;
 
 namespace XRepo.Tests

@@ -1,5 +1,6 @@
 using System.Linq;
 using XRepo.CommandLine.Infrastructure;
+using XRepo.Core;
 
 namespace XRepo.CommandLine.Commands
 {

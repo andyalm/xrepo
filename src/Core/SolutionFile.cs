@@ -6,13 +6,11 @@ using System.Threading;
 using Microsoft.VisualStudio.SolutionPersistence;
 using Microsoft.VisualStudio.SolutionPersistence.Model;
 using Microsoft.VisualStudio.SolutionPersistence.Serializer;
-using XRepo.Core;
-
-namespace XRepo.CommandLine.Infrastructure
+namespace XRepo.Core
 {
     public class SolutionFile
     {
-        internal const string XRepoSolutionFolder = "xrepo";
+        public const string XRepoSolutionFolder = "xrepo";
 
         private readonly SolutionModel _model;
         private readonly string _filePath;
