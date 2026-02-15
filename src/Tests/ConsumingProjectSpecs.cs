@@ -81,22 +81,6 @@ namespace XRepo.Tests
         }
 
         [Fact]
-        public void RemoveLinkedProjectReferences_RemovesLegacyLabel()
-        {
-            var extraContent = @"<ItemGroup Label=""XRepoPinReferences"">
-    <ProjectReference Include=""..\MyLib\MyLib.csproj"" />
-  </ItemGroup>";
-            var doc = CreateMinimalCsproj(extraContent);
-            var project = new ConsumingProject(doc, "test.csproj");
-
-            var removed = project.RemoveLinkedProjectReferences();
-
-            removed.Should().BeTrue();
-            doc.Root.Elements("ItemGroup")
-                .Should().NotContain(e => (string)e.Attribute("Label") == "XRepoPinReferences");
-        }
-
-        [Fact]
         public void RemoveLinkedProjectReferences_ReturnsFalseWhenNoLinkedReferences()
         {
             var doc = CreateMinimalCsproj();

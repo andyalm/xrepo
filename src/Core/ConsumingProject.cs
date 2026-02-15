@@ -9,7 +9,6 @@ namespace XRepo.Core
     public class ConsumingProject
     {
         private const string LinkedReferencesLabel = "XRepoLinkedReferences";
-        private const string LegacyPinReferencesLabel = "XRepoPinReferences";
 
         public static ConsumingProject Load(string filePath)
         {
@@ -33,8 +32,7 @@ namespace XRepo.Core
             var ns = _doc.Root.Name.Namespace;
             var xrepoReferences = _doc.Root.Elements()
                 .SingleOrDefault(e => e.Name.LocalName == "ItemGroup" &&
-                                      ((string)e.Attribute("Label") == LinkedReferencesLabel ||
-                                       (string)e.Attribute("Label") == LegacyPinReferencesLabel));
+                                      (string)e.Attribute("Label") == LinkedReferencesLabel);
             if (xrepoReferences == null)
             {
                 xrepoReferences = new XElement(ns + "ItemGroup");
@@ -76,11 +74,7 @@ namespace XRepo.Core
         public bool RemoveLinkedProjectReferences()
         {
             var linkedReferences = _doc.Root.Elements(_doc.Root.Name.Namespace + "ItemGroup")
-                .Where(e =>
-                {
-                    var label = (string) e.Attribute("Label");
-                    return label == LinkedReferencesLabel || label == LegacyPinReferencesLabel;
-                }).ToArray();
+                .Where(e => (string)e.Attribute("Label") == LinkedReferencesLabel).ToArray();
 
             if (linkedReferences.Length > 0)
             {
