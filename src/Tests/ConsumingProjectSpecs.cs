@@ -45,7 +45,7 @@ namespace XRepo.Tests
             project.AddProjectReference(@"..\MyLib\MyLib.csproj");
 
             var itemGroup = doc.Root.Elements("ItemGroup")
-                .Should().Contain(e => (string)e.Attribute("Label") == "XRepoLinkedReferences")
+                .Should().Contain(e => (string)e.Attribute("Label") == "XRepoReference")
                 .Which;
             itemGroup.Elements("ProjectReference")
                 .Should().ContainSingle(e => (string)e.Attribute("Include") == @"..\MyLib\MyLib.csproj");
@@ -61,32 +61,32 @@ namespace XRepo.Tests
             project.AddProjectReference(@"..\MyLib\MyLib.csproj");
 
             var itemGroup = doc.Root.Elements("ItemGroup")
-                .Should().Contain(e => (string)e.Attribute("Label") == "XRepoLinkedReferences")
+                .Should().Contain(e => (string)e.Attribute("Label") == "XRepoReference")
                 .Which;
             itemGroup.Elements("ProjectReference").Should().HaveCount(1);
         }
 
         [Fact]
-        public void RemoveLinkedProjectReferences_RemovesNewLabel()
+        public void RemoveXRepoProjectReferences_RemovesNewLabel()
         {
             var doc = CreateMinimalCsproj();
             var project = new ConsumingProject(doc, "test.csproj");
             project.AddProjectReference(@"..\MyLib\MyLib.csproj");
 
-            var removed = project.RemoveLinkedProjectReferences();
+            var removed = project.RemoveXRepoProjectReferences();
 
             removed.Should().BeTrue();
             doc.Root.Elements("ItemGroup")
-                .Should().NotContain(e => (string)e.Attribute("Label") == "XRepoLinkedReferences");
+                .Should().NotContain(e => (string)e.Attribute("Label") == "XRepoReference");
         }
 
         [Fact]
-        public void RemoveLinkedProjectReferences_ReturnsFalseWhenNoLinkedReferences()
+        public void RemoveXRepoProjectReferences_ReturnsFalseWhenNoExistingReferences()
         {
             var doc = CreateMinimalCsproj();
             var project = new ConsumingProject(doc, "test.csproj");
 
-            var removed = project.RemoveLinkedProjectReferences();
+            var removed = project.RemoveXRepoProjectReferences();
 
             removed.Should().BeFalse();
         }
@@ -112,7 +112,7 @@ namespace XRepo.Tests
         }
 
         [Fact]
-        public void LinkRepoFlow_OnlyAddsReferencesForPackagesConsumedBySolution()
+        public void RefoRepoFlow_OnlyAddsReferencesForPackagesConsumedBySolution()
         {
             // Repo produces PkgA and PkgB, but only PkgA is referenced by a consuming project
             var docA = CreateCsprojReferencing("PkgA");
@@ -133,18 +133,18 @@ namespace XRepo.Tests
 
             // ConsumerA should have a project reference to PkgA
             docA.Root.Elements("ItemGroup")
-                .Where(e => (string)e.Attribute("Label") == "XRepoLinkedReferences")
+                .Where(e => (string)e.Attribute("Label") == "XRepoReference")
                 .SelectMany(e => e.Elements("ProjectReference"))
                 .Should().ContainSingle(e => (string)e.Attribute("Include") == @"..\PkgA\PkgA.csproj");
 
             // ConsumerB should NOT have any linked project references (it doesn't reference PkgA or PkgB)
             docB.Root.Elements("ItemGroup")
-                .Where(e => (string)e.Attribute("Label") == "XRepoLinkedReferences")
+                .Where(e => (string)e.Attribute("Label") == "XRepoReference")
                 .Should().BeEmpty();
         }
 
         [Fact]
-        public void LinkRepoFlow_SkipsPackageNotReferencedByAnyConsumingProject()
+        public void RefRepoFlow_SkipsPackageNotReferencedByAnyConsumingProject()
         {
             // Single consuming project references PkgA only; repo has PkgA and PkgB
             var doc = CreateCsprojReferencing("PkgA");
@@ -167,7 +167,7 @@ namespace XRepo.Tests
             // Only PkgA should be linked
             linkedCount.Should().Be(1);
             var linkedRefs = doc.Root.Elements("ItemGroup")
-                .Where(e => (string)e.Attribute("Label") == "XRepoLinkedReferences")
+                .Where(e => (string)e.Attribute("Label") == "XRepoReference")
                 .SelectMany(e => e.Elements("ProjectReference"))
                 .Select(e => (string)e.Attribute("Include"))
                 .ToList();
@@ -175,7 +175,7 @@ namespace XRepo.Tests
         }
 
         [Fact]
-        public void LinkRepoFlow_LinksMultiplePackagesWhenMultipleAreReferenced()
+        public void RefRepoFlow_ReferencesMultiplePackagesWhenMultipleAreReferenced()
         {
             // Consuming project references both PkgA and PkgB; repo has PkgA, PkgB, PkgC
             var doc = CreateCsprojReferencing("PkgA", "PkgB");
@@ -198,7 +198,7 @@ namespace XRepo.Tests
             // PkgA and PkgB linked, PkgC skipped
             linkedCount.Should().Be(2);
             var linkedRefs = doc.Root.Elements("ItemGroup")
-                .Where(e => (string)e.Attribute("Label") == "XRepoLinkedReferences")
+                .Where(e => (string)e.Attribute("Label") == "XRepoReference")
                 .SelectMany(e => e.Elements("ProjectReference"))
                 .Select(e => (string)e.Attribute("Include"))
                 .ToList();
@@ -209,7 +209,7 @@ namespace XRepo.Tests
         }
 
         [Fact]
-        public void LinkRepoFlow_NoReferencesAdded_WhenNoConsumingProjectReferencesAnyPackage()
+        public void RefRepoFlow_NoReferencesAdded_WhenNoConsumingProjectReferencesAnyPackage()
         {
             // Consuming project references only Unrelated; repo has PkgA and PkgB
             var doc = CreateCsprojReferencing("Unrelated");
@@ -231,7 +231,7 @@ namespace XRepo.Tests
 
             linkedCount.Should().Be(0);
             doc.Root.Elements("ItemGroup")
-                .Where(e => (string)e.Attribute("Label") == "XRepoLinkedReferences")
+                .Where(e => (string)e.Attribute("Label") == "XRepoReference")
                 .Should().BeEmpty();
         }
     }

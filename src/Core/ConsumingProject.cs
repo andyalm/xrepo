@@ -8,7 +8,7 @@ namespace XRepo.Core
 {
     public class ConsumingProject
     {
-        private const string LinkedReferencesLabel = "XRepoLinkedReferences";
+        private const string XRepoReferenceLabel = "XRepoReference";
 
         public static ConsumingProject Load(string filePath)
         {
@@ -32,11 +32,11 @@ namespace XRepo.Core
             var ns = _doc.Root.Name.Namespace;
             var xrepoReferences = _doc.Root.Elements()
                 .SingleOrDefault(e => e.Name.LocalName == "ItemGroup" &&
-                                      (string)e.Attribute("Label") == LinkedReferencesLabel);
+                                      (string)e.Attribute("Label") == XRepoReferenceLabel);
             if (xrepoReferences == null)
             {
                 xrepoReferences = new XElement(ns + "ItemGroup");
-                xrepoReferences.Add(new XAttribute("Label", LinkedReferencesLabel));
+                xrepoReferences.Add(new XAttribute("Label", XRepoReferenceLabel));
                 _doc.Root.Add(xrepoReferences);
             }
 
@@ -71,10 +71,10 @@ namespace XRepo.Core
                 .Any(e => packageId.Equals((string) e.Attribute("Include"), StringComparison.OrdinalIgnoreCase));
         }
 
-        public bool RemoveLinkedProjectReferences()
+        public bool RemoveXRepoProjectReferences()
         {
             var linkedReferences = _doc.Root.Elements(_doc.Root.Name.Namespace + "ItemGroup")
-                .Where(e => (string)e.Attribute("Label") == LinkedReferencesLabel).ToArray();
+                .Where(e => (string)e.Attribute("Label") == XRepoReferenceLabel).ToArray();
 
             if (linkedReferences.Length > 0)
             {

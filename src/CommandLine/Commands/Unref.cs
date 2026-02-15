@@ -23,7 +23,7 @@ namespace XRepo.CommandLine.Commands
 
             foreach (var project in allConsumingProjects)
             {
-                if (project.RemoveLinkedProjectReferences())
+                if (project.RemoveXRepoProjectReferences())
                     project.Save();
             }
 
