@@ -9,8 +9,6 @@ namespace XRepo.CommandLine.Commands
     [CommandName("ref", "Adds project references for a repo's packages into a solution")]
     public class RefCommand : Command
     {
-        private const string SolutionFolderPath = "xrepo";
-
         [Required]
         [CommandArgument("The name of a registered repo, a package ID, or a path to a .csproj")]
         public string Name { get; set; }
@@ -72,23 +70,7 @@ namespace XRepo.CommandLine.Commands
                     $"No packages are registered from repo '{repoName}'. Have you built it?");
             }
 
-            int referencedCount = 0;
-            foreach (var package in packages)
-            {
-                var projectPath = SelectProjectForRepo(package, repo.Path);
-                referencedCount += ReferencePackage(package.PackageId, projectPath,
-                    solutionFile, allConsumingProjects);
-            }
-
-            return referencedCount;
-        }
-
-        internal static string SelectProjectForRepo(PackageRegistration package, string repoPath)
-        {
-            var projectInRepo = package.Projects
-                .FirstOrDefault(p => p.ProjectPath.StartsWith(repoPath, StringComparison.OrdinalIgnoreCase));
-
-            return projectInRepo?.ProjectPath ?? package.MostRecentProject.ProjectPath;
+            return solutionFile.ReferenceRepo(repo, packages, allConsumingProjects);
         }
 
         private int ReferenceProject(string projectPath, SolutionFile solutionFile, ConsumingProject[] allConsumingProjects)
@@ -99,17 +81,11 @@ namespace XRepo.CommandLine.Commands
                 App.Out.WriteLine($"Warning: No registered packages found for project '{projectPath}'.");
                 App.Out.WriteLine("The project will be added to the solution but no PackageReference->ProjectReference conversions can be made.");
 
-                solutionFile.EnsureProject(projectPath, SolutionFolderPath);
+                solutionFile.EnsureProject(projectPath, SolutionFile.XRepoSolutionFolder);
                 return 0;
             }
 
-            int referencedCount = 0;
-            foreach (var package in packages)
-            {
-                referencedCount += ReferencePackage(package.PackageId, projectPath, solutionFile, allConsumingProjects);
-            }
-
-            return referencedCount;
+            return solutionFile.ReferenceProject(projectPath, packages, allConsumingProjects);
         }
 
         private int ReferencePackageById(string packageId, SolutionFile solutionFile, ConsumingProject[] allConsumingProjects)
@@ -138,7 +114,7 @@ namespace XRepo.CommandLine.Commands
                 projectPath = PromptForProjectSelection(packageId, projects);
             }
 
-            return ReferencePackage(packageId, projectPath, solutionFile, allConsumingProjects);
+            return solutionFile.ReferencePackage(packageId, projectPath, allConsumingProjects);
         }
 
         internal static string PromptForProjectSelection(string packageId, RegisteredPackageProject[] projects)
@@ -164,25 +140,6 @@ namespace XRepo.CommandLine.Commands
 
             throw new CommandFailureException(17,
                 $"Invalid selection '{input}'. Expected a number between 1 and {projects.Length}.");
-        }
-
-        private int ReferencePackage(string packageId, string projectPath, SolutionFile solutionFile, ConsumingProject[] allConsumingProjects)
-        {
-            var consumingProjects = allConsumingProjects
-                .Where(p => p.ReferencesPackage(packageId)).ToArray();
-
-            if (consumingProjects.Length == 0)
-                return 0;
-
-            solutionFile.EnsureProject(projectPath, SolutionFolderPath);
-
-            foreach (var consumingProject in consumingProjects)
-            {
-                consumingProject.AddProjectReference(projectPath);
-                consumingProject.Save();
-            }
-
-            return consumingProjects.Length;
         }
     }
 }

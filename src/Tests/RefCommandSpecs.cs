@@ -30,7 +30,7 @@ namespace XRepo.Tests
             var package = _testEnvironment.XRepoEnvironment.PackageRegistry.GetPackage("SharedPkg");
             var repoAPath = _testEnvironment.ResolvePath("repoA");
 
-            var selected = RefCommand.SelectProjectForRepo(package, repoAPath);
+            var selected = SolutionFile.SelectProjectForRepo(package, repoAPath);
 
             selected.Should().StartWith(repoAPath);
         }
@@ -46,7 +46,7 @@ namespace XRepo.Tests
             var package = _testEnvironment.XRepoEnvironment.PackageRegistry.GetPackage("SharedPkg");
             var repoBPath = _testEnvironment.ResolvePath("repoB");
 
-            var selected = RefCommand.SelectProjectForRepo(package, repoBPath);
+            var selected = SolutionFile.SelectProjectForRepo(package, repoBPath);
 
             selected.Should().StartWith(repoBPath);
         }
@@ -60,7 +60,7 @@ namespace XRepo.Tests
             var package = _testEnvironment.XRepoEnvironment.PackageRegistry.GetPackage("MyPkg");
             var unrelatedPath = _testEnvironment.ResolvePath("nonexistent");
 
-            var selected = RefCommand.SelectProjectForRepo(package, unrelatedPath);
+            var selected = SolutionFile.SelectProjectForRepo(package, unrelatedPath);
 
             selected.Should().Be(package.MostRecentProject.ProjectPath);
         }

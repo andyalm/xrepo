@@ -6,11 +6,14 @@ using System.Threading;
 using Microsoft.VisualStudio.SolutionPersistence;
 using Microsoft.VisualStudio.SolutionPersistence.Model;
 using Microsoft.VisualStudio.SolutionPersistence.Serializer;
+using XRepo.Core;
 
 namespace XRepo.CommandLine.Infrastructure
 {
     public class SolutionFile
     {
+        internal const string XRepoSolutionFolder = "xrepo";
+
         private readonly SolutionModel _model;
         private readonly string _filePath;
         private readonly ISolutionSerializer _serializer;
@@ -64,6 +67,56 @@ namespace XRepo.CommandLine.Infrastructure
             var folder = _model.FindFolder("/" + solutionFolderPath + "/");
             if (folder != null)
                 _model.RemoveFolder(folder);
+        }
+
+        public int ReferencePackage(string packageId, string projectPath, ConsumingProject[] consumingProjects)
+        {
+            var matchingProjects = consumingProjects
+                .Where(p => p.ReferencesPackage(packageId)).ToArray();
+
+            if (matchingProjects.Length == 0)
+                return 0;
+
+            EnsureProject(projectPath, XRepoSolutionFolder);
+
+            foreach (var consumingProject in matchingProjects)
+            {
+                consumingProject.AddProjectReference(projectPath);
+                consumingProject.Save();
+            }
+
+            return matchingProjects.Length;
+        }
+
+        public int ReferenceRepo(RepoRegistration repo, PackageRegistration[] packages, ConsumingProject[] consumingProjects)
+        {
+            int referencedCount = 0;
+            foreach (var package in packages)
+            {
+                var projectPath = SelectProjectForRepo(package, repo.Path);
+                referencedCount += ReferencePackage(package.PackageId, projectPath, consumingProjects);
+            }
+
+            return referencedCount;
+        }
+
+        public int ReferenceProject(string projectPath, PackageRegistration[] packages, ConsumingProject[] consumingProjects)
+        {
+            int referencedCount = 0;
+            foreach (var package in packages)
+            {
+                referencedCount += ReferencePackage(package.PackageId, projectPath, consumingProjects);
+            }
+
+            return referencedCount;
+        }
+
+        internal static string SelectProjectForRepo(PackageRegistration package, string repoPath)
+        {
+            var projectInRepo = package.Projects
+                .FirstOrDefault(p => p.ProjectPath.StartsWith(repoPath, StringComparison.OrdinalIgnoreCase));
+
+            return projectInRepo?.ProjectPath ?? package.MostRecentProject.ProjectPath;
         }
 
         public void Write()
