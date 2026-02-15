@@ -72,14 +72,14 @@ namespace XRepo.Core
             return ReferencePackage(packageId, projectPath, ConsumingProjects().ToArray());
         }
 
-        public int ReferenceRepo(RepoRegistration repo, PackageRegistration[] packages)
+        public int ReferenceRepo(RepoRegistration repo, PackageRegistration[] repoPackages)
         {
             var consumingProjects = ConsumingProjects().ToArray();
             int referencedCount = 0;
-            foreach (var package in packages)
+            foreach (var repoPackage in repoPackages)
             {
-                var projectPath = SelectProjectForRepo(package, repo.Path);
-                referencedCount += ReferencePackage(package.PackageId, projectPath, consumingProjects);
+                var projectPath = SelectProjectForRepo(repoPackage, repo.Path);
+                referencedCount += ReferencePackage(repoPackage.PackageId, projectPath, consumingProjects);
             }
 
             return referencedCount;
