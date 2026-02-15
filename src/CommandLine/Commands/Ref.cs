@@ -83,7 +83,7 @@ namespace XRepo.CommandLine.Commands
             return linkedCount;
         }
 
-        private string SelectProjectForRepo(PackageRegistration package, string repoPath)
+        internal static string SelectProjectForRepo(PackageRegistration package, string repoPath)
         {
             var projectInRepo = package.Projects
                 .FirstOrDefault(p => p.ProjectPath.StartsWith(repoPath, StringComparison.OrdinalIgnoreCase));
@@ -141,7 +141,7 @@ namespace XRepo.CommandLine.Commands
             return LinkPackage(packageId, projectPath, solutionFile, allConsumingProjects);
         }
 
-        private string PromptForProjectSelection(string packageId, RegisteredPackageProject[] projects)
+        internal static string PromptForProjectSelection(string packageId, RegisteredPackageProject[] projects)
         {
             Console.WriteLine($"Package '{packageId}' has multiple registered projects:");
             Console.WriteLine();

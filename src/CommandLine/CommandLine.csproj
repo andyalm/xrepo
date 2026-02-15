@@ -8,6 +8,9 @@
     <ToolCommandName>xrepo</ToolCommandName>
   </PropertyGroup>
   <ItemGroup>
+    <InternalsVisibleTo Include="XRepo.Tests" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\Core\Core.csproj" />
     <ProjectReference Include="..\Bootstrapper\XRepo.Bootstrapper.csproj" />
     <PackageReference Include="Microsoft.Extensions.CommandLineUtils" Version="1.1.1" />

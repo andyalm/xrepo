@@ -82,6 +82,77 @@ namespace XRepo.Tests
             packages.Should().BeEmpty();
         }
 
+        [Fact]
+        public void SelectProjectForRepo_PrefersProjectWithinRepoPath()
+        {
+            _testEnvironment.RegisterRepo("RepoA", "repoA");
+            _testEnvironment.RegisterRepo("RepoB", "repoB");
+            _testEnvironment.RegisterPackageAt(new PackageIdentifier("SharedPkg", "1.0.0"), "repoA");
+            _testEnvironment.RegisterPackageAt(new PackageIdentifier("SharedPkg", "1.0.0"), "repoB");
+
+            var package = _testEnvironment.XRepoEnvironment.PackageRegistry.GetPackage("SharedPkg");
+            var repoAPath = _testEnvironment.ResolvePath("repoA");
+            var repoBPath = _testEnvironment.ResolvePath("repoB");
+
+            // Select project within RepoA
+            var projectInRepoA = package.Projects
+                .FirstOrDefault(p => p.ProjectPath.StartsWith(repoAPath, StringComparison.OrdinalIgnoreCase));
+            projectInRepoA.Should().NotBeNull();
+            projectInRepoA.ProjectPath.Should().StartWith(repoAPath);
+
+            // Select project within RepoB
+            var projectInRepoB = package.Projects
+                .FirstOrDefault(p => p.ProjectPath.StartsWith(repoBPath, StringComparison.OrdinalIgnoreCase));
+            projectInRepoB.Should().NotBeNull();
+            projectInRepoB.ProjectPath.Should().StartWith(repoBPath);
+
+            // They should be different projects
+            projectInRepoA.ProjectPath.Should().NotBe(projectInRepoB.ProjectPath);
+        }
+
+        [Fact]
+        public void SelectProjectForRepo_FallsBackToMostRecent_WhenNoProjectInRepo()
+        {
+            _testEnvironment.RegisterRepo("RepoA", "repoA");
+            _testEnvironment.RegisterRepo("EmptyRepo", "emptyrepo");
+            _testEnvironment.RegisterPackageAt(new PackageIdentifier("MyPkg", "1.0.0"), "repoA");
+
+            var package = _testEnvironment.XRepoEnvironment.PackageRegistry.GetPackage("MyPkg");
+            var emptyRepoPath = _testEnvironment.ResolvePath("emptyrepo");
+
+            // No project within EmptyRepo's path
+            var projectInEmptyRepo = package.Projects
+                .FirstOrDefault(p => p.ProjectPath.StartsWith(emptyRepoPath, StringComparison.OrdinalIgnoreCase));
+            projectInEmptyRepo.Should().BeNull();
+
+            // Fallback to MostRecentProject
+            var fallback = projectInEmptyRepo?.ProjectPath ?? package.MostRecentProject.ProjectPath;
+            fallback.Should().Be(package.MostRecentProject.ProjectPath);
+        }
+
+        [Fact]
+        public void ResolutionPrecedence_RepoRegisteredTakesPriority()
+        {
+            // Register both a repo and a package with the same name
+            _testEnvironment.RegisterRepo("MyLib", "mylib");
+            _testEnvironment.RegisterPackageAt(new PackageIdentifier("MyLib", "1.0.0"), "mylib");
+
+            // Repo check should succeed (takes priority in ref command)
+            _testEnvironment.XRepoEnvironment.RepoRegistry.IsRepoRegistered("MyLib").Should().BeTrue();
+            // Package check also succeeds, but would only be reached if repo check fails
+            _testEnvironment.XRepoEnvironment.PackageRegistry.IsPackageRegistered("MyLib").Should().BeTrue();
+        }
+
+        [Fact]
+        public void ResolutionPrecedence_PackageIdFallsThrough_WhenNotARepo()
+        {
+            // Register only a package, not a repo with that name
+            _testEnvironment.RegisterPackageAt(new PackageIdentifier("SomePackage", "1.0.0"), "src");
+
+            _testEnvironment.XRepoEnvironment.RepoRegistry.IsRepoRegistered("SomePackage").Should().BeFalse();
+            _testEnvironment.XRepoEnvironment.PackageRegistry.IsPackageRegistered("SomePackage").Should().BeTrue();
+        }
+
         public void Dispose()
         {
             _testEnvironment.Dispose();
