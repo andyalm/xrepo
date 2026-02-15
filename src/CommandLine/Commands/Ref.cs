@@ -23,19 +23,19 @@ namespace XRepo.CommandLine.Commands
             var solutionPath = SolutionHelper.ResolveSolutionPath(SolutionPath);
             var solutionFile = SolutionFile.Read(solutionPath);
             var allConsumingProjects = solutionFile.ConsumingProjects().ToArray();
-            int linkedCount = 0;
+            int referencedCount = 0;
 
             if (Environment.RepoRegistry.IsRepoRegistered(Name))
             {
-                linkedCount = LinkRepo(Name, solutionFile, allConsumingProjects);
+                referencedCount = ReferenceRepo(Name, solutionFile, allConsumingProjects);
             }
             else if (Environment.PackageRegistry.IsPackageRegistered(Name))
             {
-                linkedCount = LinkPackageById(Name, solutionFile, allConsumingProjects);
+                referencedCount = ReferencePackageById(Name, solutionFile, allConsumingProjects);
             }
             else if (Name.EndsWith(".csproj", StringComparison.OrdinalIgnoreCase) && File.Exists(Name))
             {
-                linkedCount = LinkProject(Path.GetFullPath(Name), solutionFile, allConsumingProjects);
+                referencedCount = ReferenceProject(Path.GetFullPath(Name), solutionFile, allConsumingProjects);
             }
             else
             {
@@ -45,19 +45,19 @@ namespace XRepo.CommandLine.Commands
 
             solutionFile.Write();
 
-            if (linkedCount > 0)
+            if (referencedCount > 0)
             {
-                App.Out.WriteLine($"Linked {linkedCount} project reference(s). Running dotnet restore...");
+                App.Out.WriteLine($"Referenced {referencedCount} project(s). Running dotnet restore...");
                 SolutionHelper.DotnetRestore(solutionPath);
             }
             else
             {
                 App.Out.WriteLine("No consuming projects found that reference packages from this source.");
-                App.Out.WriteLine("Note: If the repo produces packages that weren't linked, make sure you've built the repo first so xrepo can discover them.");
+                App.Out.WriteLine("Note: If the repo produces packages that weren't referenced, make sure you've built the repo first so xrepo can discover them.");
             }
         }
 
-        private int LinkRepo(string repoName, SolutionFile solutionFile, ConsumingProject[] allConsumingProjects)
+        private int ReferenceRepo(string repoName, SolutionFile solutionFile, ConsumingProject[] allConsumingProjects)
         {
             if (!Environment.RepoRegistry.IsRepoRegistered(repoName, out var repo))
             {
@@ -72,15 +72,15 @@ namespace XRepo.CommandLine.Commands
                     $"No packages are registered from repo '{repoName}'. Have you built it?");
             }
 
-            int linkedCount = 0;
+            int referencedCount = 0;
             foreach (var package in packages)
             {
                 var projectPath = SelectProjectForRepo(package, repo.Path);
-                linkedCount += LinkPackage(package.PackageId, projectPath,
+                referencedCount += ReferencePackage(package.PackageId, projectPath,
                     solutionFile, allConsumingProjects);
             }
 
-            return linkedCount;
+            return referencedCount;
         }
 
         internal static string SelectProjectForRepo(PackageRegistration package, string repoPath)
@@ -91,7 +91,7 @@ namespace XRepo.CommandLine.Commands
             return projectInRepo?.ProjectPath ?? package.MostRecentProject.ProjectPath;
         }
 
-        private int LinkProject(string projectPath, SolutionFile solutionFile, ConsumingProject[] allConsumingProjects)
+        private int ReferenceProject(string projectPath, SolutionFile solutionFile, ConsumingProject[] allConsumingProjects)
         {
             var packages = Environment.FindPackagesFromProject(projectPath).ToArray();
             if (packages.Length == 0)
@@ -103,16 +103,16 @@ namespace XRepo.CommandLine.Commands
                 return 0;
             }
 
-            int linkedCount = 0;
+            int referencedCount = 0;
             foreach (var package in packages)
             {
-                linkedCount += LinkPackage(package.PackageId, projectPath, solutionFile, allConsumingProjects);
+                referencedCount += ReferencePackage(package.PackageId, projectPath, solutionFile, allConsumingProjects);
             }
 
-            return linkedCount;
+            return referencedCount;
         }
 
-        private int LinkPackageById(string packageId, SolutionFile solutionFile, ConsumingProject[] allConsumingProjects)
+        private int ReferencePackageById(string packageId, SolutionFile solutionFile, ConsumingProject[] allConsumingProjects)
         {
             var package = Environment.PackageRegistry.GetPackage(packageId);
             if (package == null)
@@ -138,7 +138,7 @@ namespace XRepo.CommandLine.Commands
                 projectPath = PromptForProjectSelection(packageId, projects);
             }
 
-            return LinkPackage(packageId, projectPath, solutionFile, allConsumingProjects);
+            return ReferencePackage(packageId, projectPath, solutionFile, allConsumingProjects);
         }
 
         internal static string PromptForProjectSelection(string packageId, RegisteredPackageProject[] projects)
@@ -166,7 +166,7 @@ namespace XRepo.CommandLine.Commands
                 $"Invalid selection '{input}'. Expected a number between 1 and {projects.Length}.");
         }
 
-        private int LinkPackage(string packageId, string projectPath, SolutionFile solutionFile, ConsumingProject[] allConsumingProjects)
+        private int ReferencePackage(string packageId, string projectPath, SolutionFile solutionFile, ConsumingProject[] allConsumingProjects)
         {
             var consumingProjects = allConsumingProjects
                 .Where(p => p.ReferencesPackage(packageId)).ToArray();
