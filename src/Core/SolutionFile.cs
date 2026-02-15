@@ -97,23 +97,23 @@ namespace XRepo.Core
             return referencedCount;
         }
 
-        private int ReferencePackage(string packageId, string projectPath, ConsumingProject[] consumingProjects)
+        private int ReferencePackage(string packageId, string projectPath, ConsumingProject[] allConsumingProjects)
         {
-            var matchingProjects = consumingProjects
+            var projectsReferencingPackage = allConsumingProjects
                 .Where(p => p.ReferencesPackage(packageId)).ToArray();
 
-            if (matchingProjects.Length == 0)
+            if (projectsReferencingPackage.Length == 0)
                 return 0;
 
             EnsureProject(projectPath, XRepoSolutionFolder);
 
-            foreach (var consumingProject in matchingProjects)
+            foreach (var consumingProject in projectsReferencingPackage)
             {
                 consumingProject.AddProjectReference(projectPath);
                 consumingProject.Save();
             }
 
-            return matchingProjects.Length;
+            return projectsReferencingPackage.Length;
         }
 
         internal static string SelectProjectForRepo(PackageRegistration package, string repoPath)
