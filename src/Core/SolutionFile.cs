@@ -67,7 +67,37 @@ namespace XRepo.Core
                 _model.RemoveFolder(folder);
         }
 
-        public int ReferencePackage(string packageId, string projectPath, ConsumingProject[] consumingProjects)
+        public int ReferencePackage(string packageId, string projectPath)
+        {
+            return ReferencePackage(packageId, projectPath, ConsumingProjects().ToArray());
+        }
+
+        public int ReferenceRepo(RepoRegistration repo, PackageRegistration[] packages)
+        {
+            var consumingProjects = ConsumingProjects().ToArray();
+            int referencedCount = 0;
+            foreach (var package in packages)
+            {
+                var projectPath = SelectProjectForRepo(package, repo.Path);
+                referencedCount += ReferencePackage(package.PackageId, projectPath, consumingProjects);
+            }
+
+            return referencedCount;
+        }
+
+        public int ReferenceProject(string projectPath, PackageRegistration[] packages)
+        {
+            var consumingProjects = ConsumingProjects().ToArray();
+            int referencedCount = 0;
+            foreach (var package in packages)
+            {
+                referencedCount += ReferencePackage(package.PackageId, projectPath, consumingProjects);
+            }
+
+            return referencedCount;
+        }
+
+        private int ReferencePackage(string packageId, string projectPath, ConsumingProject[] consumingProjects)
         {
             var matchingProjects = consumingProjects
                 .Where(p => p.ReferencesPackage(packageId)).ToArray();
@@ -84,29 +114,6 @@ namespace XRepo.Core
             }
 
             return matchingProjects.Length;
-        }
-
-        public int ReferenceRepo(RepoRegistration repo, PackageRegistration[] packages, ConsumingProject[] consumingProjects)
-        {
-            int referencedCount = 0;
-            foreach (var package in packages)
-            {
-                var projectPath = SelectProjectForRepo(package, repo.Path);
-                referencedCount += ReferencePackage(package.PackageId, projectPath, consumingProjects);
-            }
-
-            return referencedCount;
-        }
-
-        public int ReferenceProject(string projectPath, PackageRegistration[] packages, ConsumingProject[] consumingProjects)
-        {
-            int referencedCount = 0;
-            foreach (var package in packages)
-            {
-                referencedCount += ReferencePackage(package.PackageId, projectPath, consumingProjects);
-            }
-
-            return referencedCount;
         }
 
         internal static string SelectProjectForRepo(PackageRegistration package, string repoPath)

@@ -20,20 +20,19 @@ namespace XRepo.CommandLine.Commands
         {
             var solutionPath = SolutionHelper.ResolveSolutionPath(SolutionPath);
             var solutionFile = SolutionFile.Read(solutionPath);
-            var allConsumingProjects = solutionFile.ConsumingProjects().ToArray();
             int referencedCount = 0;
 
             if (Environment.RepoRegistry.IsRepoRegistered(Name))
             {
-                referencedCount = ReferenceRepo(Name, solutionFile, allConsumingProjects);
+                referencedCount = ReferenceRepo(Name, solutionFile);
             }
             else if (Environment.PackageRegistry.IsPackageRegistered(Name))
             {
-                referencedCount = ReferencePackageById(Name, solutionFile, allConsumingProjects);
+                referencedCount = ReferencePackageById(Name, solutionFile);
             }
             else if (Name.EndsWith(".csproj", StringComparison.OrdinalIgnoreCase) && File.Exists(Name))
             {
-                referencedCount = ReferenceProject(Path.GetFullPath(Name), solutionFile, allConsumingProjects);
+                referencedCount = ReferenceProject(Path.GetFullPath(Name), solutionFile);
             }
             else
             {
@@ -55,7 +54,7 @@ namespace XRepo.CommandLine.Commands
             }
         }
 
-        private int ReferenceRepo(string repoName, SolutionFile solutionFile, ConsumingProject[] allConsumingProjects)
+        private int ReferenceRepo(string repoName, SolutionFile solutionFile)
         {
             if (!Environment.RepoRegistry.IsRepoRegistered(repoName, out var repo))
             {
@@ -70,10 +69,10 @@ namespace XRepo.CommandLine.Commands
                     $"No packages are registered from repo '{repoName}'. Have you built it?");
             }
 
-            return solutionFile.ReferenceRepo(repo, packages, allConsumingProjects);
+            return solutionFile.ReferenceRepo(repo, packages);
         }
 
-        private int ReferenceProject(string projectPath, SolutionFile solutionFile, ConsumingProject[] allConsumingProjects)
+        private int ReferenceProject(string projectPath, SolutionFile solutionFile)
         {
             var packages = Environment.FindPackagesFromProject(projectPath).ToArray();
             if (packages.Length == 0)
@@ -85,10 +84,10 @@ namespace XRepo.CommandLine.Commands
                 return 0;
             }
 
-            return solutionFile.ReferenceProject(projectPath, packages, allConsumingProjects);
+            return solutionFile.ReferenceProject(projectPath, packages);
         }
 
-        private int ReferencePackageById(string packageId, SolutionFile solutionFile, ConsumingProject[] allConsumingProjects)
+        private int ReferencePackageById(string packageId, SolutionFile solutionFile)
         {
             var package = Environment.PackageRegistry.GetPackage(packageId);
             if (package == null)
@@ -114,7 +113,7 @@ namespace XRepo.CommandLine.Commands
                 projectPath = PromptForProjectSelection(packageId, projects);
             }
 
-            return solutionFile.ReferencePackage(packageId, projectPath, allConsumingProjects);
+            return solutionFile.ReferencePackage(packageId, projectPath);
         }
 
         internal static string PromptForProjectSelection(string packageId, RegisteredPackageProject[] projects)
