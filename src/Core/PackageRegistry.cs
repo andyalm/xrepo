@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace XRepo.Core
 {
@@ -52,7 +51,7 @@ namespace XRepo.Core
         }
     }
 
-    public struct PackageIdentifier
+    public record struct PackageIdentifier
     {
         public string Id { get; }
         public string Version { get; }
@@ -66,43 +65,27 @@ namespace XRepo.Core
             Id = id;
             Version = NuGetVersion.Normalize(version);
         }
-
-        public bool Equals(PackageIdentifier other)
-        {
-            return string.Equals(Id, other.Id) && string.Equals(Version, other.Version);
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(null, obj)) return false;
-            return obj is PackageIdentifier && Equals((PackageIdentifier) obj);
-        }
-
-        public override int GetHashCode()
-        {
-            unchecked
-            {
-                return (Id.GetHashCode() * 397) ^ Version.GetHashCode();
-            }
-        }
     }
-
-    [JsonObject(MemberSerialization.OptIn)]
+    
     public class PackageRegistration
     {
-        [JsonProperty(PropertyName = "Projects")]
-        private readonly List<RegisteredPackageProject> _projects = new List<RegisteredPackageProject>();
-        
+        [JsonPropertyName("Projects")]
+        [JsonInclude]
+        private List<RegisteredPackageProject> _projects = new();
+
+        [JsonIgnore]
         public IEnumerable<RegisteredPackageProject> Projects
         {
             get { return _projects; }
         }
 
+        [JsonIgnore]
         public RegisteredPackageProject MostRecentProject => Projects.OrderByDescending(p => p.Timestamp).FirstOrDefault();
 
-        [JsonProperty(PropertyName = "PackageId")]
+        [JsonPropertyName("PackageId")]
         public string PackageId { get; set; }
 
+        [JsonIgnore]
         public RegisteredPackageProject LatestProject => Projects.FirstOrDefault();
 
         private PackageRegistration() {}
@@ -129,44 +112,39 @@ namespace XRepo.Core
         }
     }
 
-    public class PackageRegistrationCollection : KeyedCollection<string,PackageRegistration>
+    public class PackageRegistrationCollection()
+        : KeyedCollection<string, PackageRegistration>(StringComparer.OrdinalIgnoreCase)
     {
-        public PackageRegistrationCollection() : base(StringComparer.OrdinalIgnoreCase) {}
-        
         protected override string GetKeyForItem(PackageRegistration item)
         {
             return item.PackageId;
         }
     }
 
-    [JsonObject(MemberSerialization.OptIn)]
-    public abstract class RegisteredProject
+    public class RegisteredPackageProject
     {
-        [JsonProperty("ProjectPath")]
-        public string ProjectPath { get; set; }
-
-        public string ProjectDirectory => Path.GetDirectoryName(ProjectPath);
-
-        [JsonProperty("Timestamp")]
-        public DateTime Timestamp { get; set; }
-
-        public abstract string OutputPath { get; }
-    }
-
-    [JsonObject(MemberSerialization.OptIn)]
-    public class RegisteredPackageProject : RegisteredProject
-    {
-        [JsonProperty("PackageId")]
+        [JsonPropertyName("PackageId")]
         public string PackageId { get; set; }
-        
-        [JsonProperty("PackageVersion")]
+
+        [JsonPropertyName("PackageVersion")]
         public string PackageVersion { get; set; }
 
-        [JsonProperty("PackagePath")]
+        [JsonPropertyName("PackagePath")]
         public string PackagePath { get; set; }
 
-        public override string OutputPath => PackagePath;
+        [JsonIgnore]
+        public string OutputPath => PackagePath;
+        
+        [JsonPropertyName("ProjectPath")]
+        public string ProjectPath { get; set; }
 
+        [JsonIgnore]
+        public string ProjectDirectory => Path.GetDirectoryName(ProjectPath);
+
+        [JsonPropertyName("Timestamp")]
+        public DateTime Timestamp { get; set; }
+
+        [JsonIgnore]
         public string PackageDirectory => Path.GetDirectoryName(PackagePath);
     }
 }

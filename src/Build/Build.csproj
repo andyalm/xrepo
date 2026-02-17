@@ -6,9 +6,6 @@
     <IsPackable>false</IsPackable>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-  </ItemGroup>
-  <ItemGroup>
     <PackageReference Include="Microsoft.Build.Tasks.Core" Version="18.3.3" />
     <PackageReference Include="Microsoft.Build.Utilities.Core" Version="18.3.3" />
   </ItemGroup>
@@ -20,10 +17,4 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-  <Target Name="_Debug" AfterTargets="Build">
-    <PropertyGroup>
-      <NewtonsoftPath Condition="$([System.String]::new('%(Reference.Identity)').Contains('Newtonsoft.Json'))">%(Reference.Identity)</NewtonsoftPath>
-    </PropertyGroup>
-    <Copy SourceFiles="$(NewtonsoftPath)" DestinationFolder="$(OutputPath)" />
-  </Target>
 </Project>

@@ -1,7 +1,7 @@
 using System;
 using System.IO;
+using System.Text.Json;
 using System.Threading;
-using Newtonsoft.Json;
 
 namespace XRepo.Core
 {
@@ -30,8 +30,8 @@ namespace XRepo.Core
                 using (var stream = new FileStream(registryFile, FileMode.Open, FileAccess.Read, FileShare.None))
                 using (var reader = new StreamReader(stream))
                 {
-                    var serializer = new JsonSerializer();
-                    registry._data = serializer.Deserialize<T>(new JsonTextReader(reader));
+                    var json = reader.ReadToEnd();
+                    registry._data = JsonSerializer.Deserialize<T>(json);
                 }
 
                 return registry;
@@ -75,8 +75,11 @@ namespace XRepo.Core
                 using (var stream = new FileStream(registryFile, FileMode.Create, FileAccess.Write, FileShare.None))
                 using (var writer = new StreamWriter(stream))
                 {
-                    var serializer = new JsonSerializer { Formatting = Formatting.Indented };
-                    serializer.Serialize(writer, Data);
+                    var json = JsonSerializer.Serialize(Data, new JsonSerializerOptions
+                    {
+                        WriteIndented = true
+                    });
+                    writer.Write(json);
                 }
             }
             finally
