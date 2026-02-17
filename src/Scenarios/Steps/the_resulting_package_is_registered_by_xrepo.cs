@@ -11,7 +11,7 @@ namespace XRepo.Scenarios.Steps
             Context.Environment.Reload();
             var package = Context.Environment.XRepoEnvironment.PackageRegistry.GetPackage(Context.ProjectBuilder.AssemblyName);
             package.Should().NotBeNull("The package {0} was not registered", Context.ProjectBuilder.AssemblyName);
-            package.Projects.Should().HaveCount(1);
+            package!.Projects.Should().HaveCount(1);
             package.Projects.Should().Contain(p => p.ProjectPath == Context.ProjectBuilder.FullPath);
         }
     }

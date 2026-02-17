@@ -57,7 +57,7 @@ namespace XRepo.CommandLine.Infrastructure
         public MultiValuedBinder(PropertyInfo propertyInfo)
         {
             _propertyInfo = propertyInfo;
-            _itemType = _propertyInfo.PropertyType.GetElementType();
+            _itemType = _propertyInfo.PropertyType.GetElementType()!;
         }
 
         public CommandOptionType OptionType => CommandOptionType.MultipleValue;

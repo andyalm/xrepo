@@ -21,10 +21,10 @@ namespace XRepo.Core
         public void UpdateSetting(string name, string value)
         {
             var canonicalName = name.Replace("_", "").ToLowerInvariant();
-            PropertyInfo configProperty;
+            PropertyInfo? configProperty;
             if(!Data.TryGetProperty(canonicalName, out configProperty))
                 throw new XRepoException("The config setting '" + name + "' is unrecognized by xrepo");
-            object typedValue;
+            object? typedValue;
             if(!value.TryChangeType(configProperty.PropertyType, out typedValue))
                 throw new XRepoException("The config value '" + value + "' could not be converted to type '" + configProperty.PropertyType + "'");
             configProperty.SetValue(Data, typedValue); 
@@ -35,7 +35,7 @@ namespace XRepo.Core
             get { return Data; }
         }
 
-        private List<ConfigSetting> _settingDescriptors; 
+        private List<ConfigSetting>? _settingDescriptors;
         public IEnumerable<ConfigSetting> SettingDescriptors
         {
             get
@@ -67,7 +67,7 @@ namespace XRepo.Core
 
         public string Value
         {
-            get { return _settingProperty.GetValue(_settingsObject).ToString().ToLowerInvariant(); }
+            get { return _settingProperty.GetValue(_settingsObject)?.ToString()?.ToLowerInvariant() ?? ""; }
         }
 
         public string ConvertNameToCommandLineFriendlyName()
@@ -82,14 +82,14 @@ namespace XRepo.Core
 
     internal static class ConfigExtensions
     {
-        public static bool TryGetProperty(this object obj, string propertyName, out PropertyInfo propertyInfo)
+        public static bool TryGetProperty(this object obj, string propertyName, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out PropertyInfo? propertyInfo)
         {
             propertyInfo = obj.GetType().GetTypeInfo().DeclaredProperties.Where(p => p.Name.Equals(propertyName, StringComparison.OrdinalIgnoreCase)).SingleOrDefault();
-            
+
             return propertyInfo != null;
         }
 
-        public static bool TryChangeType(this object obj, Type targetType, out object typedValue)
+        public static bool TryChangeType(this object obj, Type targetType, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out object? typedValue)
         {
             try
             {
@@ -103,7 +103,7 @@ namespace XRepo.Core
             }
         }
 
-        public static object GetValue(this PropertyInfo propertyInfo, object target)
+        public static object? GetValue(this PropertyInfo propertyInfo, object target)
         {
             return propertyInfo.GetValue(target, null);
         }

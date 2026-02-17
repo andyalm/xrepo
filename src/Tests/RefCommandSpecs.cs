@@ -30,7 +30,7 @@ namespace XRepo.Tests
             var package = _testEnvironment.XRepoEnvironment.PackageRegistry.GetPackage("SharedPkg");
             var repoAPath = _testEnvironment.ResolvePath("repoA");
 
-            var selected = SolutionFile.SelectProjectForRepo(package, repoAPath);
+            var selected = SolutionFile.SelectProjectForRepo(package!, repoAPath);
 
             selected.Should().StartWith(repoAPath);
         }
@@ -46,7 +46,7 @@ namespace XRepo.Tests
             var package = _testEnvironment.XRepoEnvironment.PackageRegistry.GetPackage("SharedPkg");
             var repoBPath = _testEnvironment.ResolvePath("repoB");
 
-            var selected = SolutionFile.SelectProjectForRepo(package, repoBPath);
+            var selected = SolutionFile.SelectProjectForRepo(package!, repoBPath);
 
             selected.Should().StartWith(repoBPath);
         }
@@ -60,9 +60,9 @@ namespace XRepo.Tests
             var package = _testEnvironment.XRepoEnvironment.PackageRegistry.GetPackage("MyPkg");
             var unrelatedPath = _testEnvironment.ResolvePath("nonexistent");
 
-            var selected = SolutionFile.SelectProjectForRepo(package, unrelatedPath);
+            var selected = SolutionFile.SelectProjectForRepo(package!, unrelatedPath);
 
-            selected.Should().Be(package.MostRecentProject.ProjectPath);
+            selected.Should().Be(package!.MostRecentProject!.ProjectPath);
         }
 
         [Fact]
@@ -72,7 +72,7 @@ namespace XRepo.Tests
             _testEnvironment.RegisterPackageAt(new PackageIdentifier("MyPkg", "1.0.0"), "src2");
 
             var package = _testEnvironment.XRepoEnvironment.PackageRegistry.GetPackage("MyPkg");
-            var projects = package.Projects.ToArray();
+            var projects = package!.Projects.ToArray();
 
             using (var reader = new StringReader("2"))
             {
@@ -89,7 +89,7 @@ namespace XRepo.Tests
             _testEnvironment.RegisterPackageAt(new PackageIdentifier("MyPkg", "1.0.0"), "src2");
 
             var package = _testEnvironment.XRepoEnvironment.PackageRegistry.GetPackage("MyPkg");
-            var projects = package.Projects.ToArray();
+            var projects = package!.Projects.ToArray();
 
             using (var reader = new StringReader(""))
             {
@@ -106,7 +106,7 @@ namespace XRepo.Tests
             _testEnvironment.RegisterPackageAt(new PackageIdentifier("MyPkg", "1.0.0"), "src2");
 
             var package = _testEnvironment.XRepoEnvironment.PackageRegistry.GetPackage("MyPkg");
-            var projects = package.Projects.ToArray();
+            var projects = package!.Projects.ToArray();
 
             using (var reader = new StringReader("99"))
             {
@@ -124,7 +124,7 @@ namespace XRepo.Tests
             _testEnvironment.RegisterPackageAt(new PackageIdentifier("MyPkg", "1.0.0"), "src2");
 
             var package = _testEnvironment.XRepoEnvironment.PackageRegistry.GetPackage("MyPkg");
-            var projects = package.Projects.ToArray();
+            var projects = package!.Projects.ToArray();
 
             using (var reader = new StringReader("abc"))
             {
@@ -142,7 +142,7 @@ namespace XRepo.Tests
             _testEnvironment.RegisterPackageAt(new PackageIdentifier("MyPkg", "1.0.0"), "src2");
 
             var package = _testEnvironment.XRepoEnvironment.PackageRegistry.GetPackage("MyPkg");
-            var projects = package.Projects.ToArray();
+            var projects = package!.Projects.ToArray();
 
             using (var reader = new StringReader("1"))
             {

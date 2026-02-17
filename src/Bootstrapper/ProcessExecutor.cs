@@ -61,7 +61,7 @@ internal static class StreamExtensions
     {
         while (!reader.EndOfStream)
         {
-            yield return reader.ReadLine();
+            yield return reader.ReadLine()!;
         }
     }
 

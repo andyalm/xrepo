@@ -68,9 +68,9 @@ namespace XRepo.CommandLine.Commands
 
     public class RepoInput
     {
-        public CommandArgument Name { get; set; }
-        
-        public CommandOption Path { get; set; }
+        public CommandArgument Name { get; set; } = null!;
+
+        public CommandOption Path { get; set; } = null!;
 
         public string GetFullPath()
         {

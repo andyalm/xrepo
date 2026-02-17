@@ -11,10 +11,10 @@ namespace XRepo.CommandLine.Commands
     {
         [Required]
         [CommandArgument("The name of a registered repo, a package ID, or a path to a .csproj")]
-        public string Name { get; set; }
+        public string Name { get; set; } = null!;
 
         [CommandOption("-s|--solution", "The path to the solution file. Auto-detected if not specified.")]
-        public string SolutionPath { get; set; }
+        public string? SolutionPath { get; set; }
 
         public override void Execute()
         {

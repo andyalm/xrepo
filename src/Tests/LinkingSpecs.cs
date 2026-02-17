@@ -95,16 +95,16 @@ namespace XRepo.Tests
             var repoBPath = _testEnvironment.ResolvePath("repoB");
 
             // Select project within RepoA
-            var projectInRepoA = package.Projects
+            var projectInRepoA = package!.Projects
                 .FirstOrDefault(p => p.ProjectPath.StartsWith(repoAPath, StringComparison.OrdinalIgnoreCase));
             projectInRepoA.Should().NotBeNull();
-            projectInRepoA.ProjectPath.Should().StartWith(repoAPath);
+            projectInRepoA!.ProjectPath.Should().StartWith(repoAPath);
 
             // Select project within RepoB
             var projectInRepoB = package.Projects
                 .FirstOrDefault(p => p.ProjectPath.StartsWith(repoBPath, StringComparison.OrdinalIgnoreCase));
             projectInRepoB.Should().NotBeNull();
-            projectInRepoB.ProjectPath.Should().StartWith(repoBPath);
+            projectInRepoB!.ProjectPath.Should().StartWith(repoBPath);
 
             // They should be different projects
             projectInRepoA.ProjectPath.Should().NotBe(projectInRepoB.ProjectPath);
@@ -121,13 +121,13 @@ namespace XRepo.Tests
             var emptyRepoPath = _testEnvironment.ResolvePath("emptyrepo");
 
             // No project within EmptyRepo's path
-            var projectInEmptyRepo = package.Projects
+            var projectInEmptyRepo = package!.Projects
                 .FirstOrDefault(p => p.ProjectPath.StartsWith(emptyRepoPath, StringComparison.OrdinalIgnoreCase));
             projectInEmptyRepo.Should().BeNull();
 
             // Fallback to MostRecentProject
-            var fallback = projectInEmptyRepo?.ProjectPath ?? package.MostRecentProject.ProjectPath;
-            fallback.Should().Be(package.MostRecentProject.ProjectPath);
+            var fallback = projectInEmptyRepo?.ProjectPath ?? package.MostRecentProject!.ProjectPath;
+            fallback.Should().Be(package.MostRecentProject!.ProjectPath);
         }
 
         [Fact]

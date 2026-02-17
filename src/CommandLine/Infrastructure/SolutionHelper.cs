@@ -6,7 +6,7 @@ namespace XRepo.CommandLine.Infrastructure
 {
     public static class SolutionHelper
     {
-        public static string ResolveSolutionPath(string specifiedPath)
+        public static string ResolveSolutionPath(string? specifiedPath)
         {
             if (!string.IsNullOrWhiteSpace(specifiedPath))
                 return Path.GetFullPath(specifiedPath);
@@ -26,7 +26,7 @@ namespace XRepo.CommandLine.Infrastructure
 
         public static void DotnetRestore(string solutionPath)
         {
-            var executor = new ProcessExecutor(Path.GetDirectoryName(solutionPath));
+            var executor = new ProcessExecutor(Path.GetDirectoryName(solutionPath)!);
             executor.Exec("dotnet", "restore").ToList();
         }
     }

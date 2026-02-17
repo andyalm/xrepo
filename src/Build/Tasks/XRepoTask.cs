@@ -7,13 +7,13 @@ namespace XRepo.Build.Tasks
     public abstract class XRepoTask : TaskWithNoReturnFlag
     {
         public bool XRepoDebug { get; set; }
-        
-        public string CustomConfigDir { get; set; }
 
-        private XRepoEnvironment _environment;
+        public string? CustomConfigDir { get; set; }
+
+        private XRepoEnvironment? _environment;
         public XRepoEnvironment Environment
         {
-            get { return _environment ?? (_environment = XRepoEnvironment.ForDirectory(CustomConfigDir)); }
+            get { return _environment ??= XRepoEnvironment.ForDirectory(CustomConfigDir); }
         }
 
         public void LogDebug(string message)

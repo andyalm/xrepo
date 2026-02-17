@@ -21,7 +21,7 @@ namespace XRepo.Core
             return new PackageRegistry(directoryPath);
         }
 
-        public PackageRegistration GetPackage(string packageId)
+        public PackageRegistration? GetPackage(string packageId)
         {
             if (IsPackageRegistered(packageId))
                 return _packages.GetItem(packageId);
@@ -80,13 +80,13 @@ namespace XRepo.Core
         }
 
         [JsonIgnore]
-        public RegisteredPackageProject MostRecentProject => Projects.OrderByDescending(p => p.Timestamp).FirstOrDefault();
+        public RegisteredPackageProject? MostRecentProject => Projects.OrderByDescending(p => p.Timestamp).FirstOrDefault();
 
         [JsonPropertyName("PackageId")]
-        public string PackageId { get; set; }
+        public string PackageId { get; set; } = "";
 
         [JsonIgnore]
-        public RegisteredPackageProject LatestProject => Projects.FirstOrDefault();
+        public RegisteredPackageProject? LatestProject => Projects.FirstOrDefault();
 
         private PackageRegistration() {}
 
@@ -124,27 +124,27 @@ namespace XRepo.Core
     public class RegisteredPackageProject
     {
         [JsonPropertyName("PackageId")]
-        public string PackageId { get; set; }
+        public string PackageId { get; set; } = "";
 
         [JsonPropertyName("PackageVersion")]
-        public string PackageVersion { get; set; }
+        public string PackageVersion { get; set; } = "";
 
         [JsonPropertyName("PackagePath")]
-        public string PackagePath { get; set; }
+        public string PackagePath { get; set; } = "";
 
         [JsonIgnore]
         public string OutputPath => PackagePath;
-        
+
         [JsonPropertyName("ProjectPath")]
-        public string ProjectPath { get; set; }
+        public string ProjectPath { get; set; } = "";
 
         [JsonIgnore]
-        public string ProjectDirectory => Path.GetDirectoryName(ProjectPath);
+        public string? ProjectDirectory => Path.GetDirectoryName(ProjectPath);
 
         [JsonPropertyName("Timestamp")]
         public DateTime Timestamp { get; set; }
 
         [JsonIgnore]
-        public string PackageDirectory => Path.GetDirectoryName(PackagePath);
+        public string? PackageDirectory => Path.GetDirectoryName(PackagePath);
     }
 }

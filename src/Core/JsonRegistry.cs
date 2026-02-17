@@ -31,7 +31,7 @@ namespace XRepo.Core
                 using (var reader = new StreamReader(stream))
                 {
                     var json = reader.ReadToEnd();
-                    registry._data = JsonSerializer.Deserialize<T>(json);
+                    registry._data = JsonSerializer.Deserialize<T>(json)!;
                 }
 
                 return registry;
@@ -42,7 +42,7 @@ namespace XRepo.Core
             }
         }
 
-        protected string DirectoryPath { get; set; }
+        protected string DirectoryPath { get; set; } = "";
 
         protected abstract string Filename { get; }
 
@@ -51,10 +51,10 @@ namespace XRepo.Core
             return new T();
         }
 
-        private T _data;
+        private T? _data;
         protected T Data
         {
-            get { return _data ?? (_data = CreateDefaultData()); }
+            get { return _data ??= CreateDefaultData(); }
         }
 
         public void SaveTo(string directoryPath)

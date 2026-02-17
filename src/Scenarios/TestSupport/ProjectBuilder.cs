@@ -21,7 +21,7 @@ namespace XRepo.Scenarios.TestSupport
         {
             _assemblyName = assemblyName;
             _environment = environment;
-            using(var reader = new StreamReader(this.GetType().GetTypeInfo().Assembly.GetManifestResourceStream("XRepo.Scenarios.TestSupport.ClassLibrary.csproj.template")))
+            using(var reader = new StreamReader(this.GetType().GetTypeInfo().Assembly.GetManifestResourceStream("XRepo.Scenarios.TestSupport.ClassLibrary.csproj.template")!))
             {
                 _serializedProject = reader.ReadToEnd();
                 _serializedProject = _serializedProject.Replace("$AssemblyName$", assemblyName);
@@ -52,22 +52,22 @@ namespace XRepo.Scenarios.TestSupport
             {
                 FileName = "dotnet",
                 Arguments = "restore",
-                WorkingDirectory = Path.GetDirectoryName(FullPath),
+                WorkingDirectory = Path.GetDirectoryName(FullPath)!,
                 CreateNoWindow = false,
                 RedirectStandardOutput = true
-            }).WaitForExit();
+            })!.WaitForExit();
             var process = Process.Start(new ProcessStartInfo
                 {
                     FileName = "dotnet",
                     Arguments = $"build -v n {SerializeProperties(buildProperties)}",
-                    WorkingDirectory = Path.GetDirectoryName(FullPath),
+                    WorkingDirectory = Path.GetDirectoryName(FullPath)!,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     CreateNoWindow = false
                 }
-            );
+            )!;
             Console.WriteLine($"dotnet {process.StartInfo.Arguments}");
-            
+
             return process.StandardOutput.ReadToEnd() + process.StandardError.ReadToEnd();
         }
 
@@ -84,20 +84,20 @@ namespace XRepo.Scenarios.TestSupport
             {
                 FileName = "dotnet",
                 Arguments = "restore",
-                WorkingDirectory = Path.GetDirectoryName(FullPath),
+                WorkingDirectory = Path.GetDirectoryName(FullPath)!,
                 CreateNoWindow = false,
                 RedirectStandardOutput = true
-            }).WaitForExit();
+            })!.WaitForExit();
             var process = Process.Start(new ProcessStartInfo
                 {
                     FileName = "dotnet",
                     Arguments = $"pack -v n {SerializeProperties(buildProperties)}",
-                    WorkingDirectory = Path.GetDirectoryName(FullPath),
+                    WorkingDirectory = Path.GetDirectoryName(FullPath)!,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     CreateNoWindow = false
                 }
-            );
+            )!;
             Console.WriteLine($"dotnet {process.StartInfo.Arguments}");
 
             return process.StandardOutput.ReadToEnd() + process.StandardError.ReadToEnd();
@@ -115,11 +115,11 @@ namespace XRepo.Scenarios.TestSupport
             reference.Add(new XAttribute("Include", assemblyName));
             reference.Add(new XElement("HintPath", hintPath));
             itemGroup.Add(reference);
-            Project.Root.Add(itemGroup);
+            Project.Root!.Add(itemGroup);
             SaveProject();
         }
 
-        private XDocument _project;
+        private XDocument? _project;
         private XDocument Project
         {
             get
@@ -127,13 +127,13 @@ namespace XRepo.Scenarios.TestSupport
                 if(_project == null)
                 {
                     _environment.EnsureDirectoryExists(_environment.XRepoConfigDir);
-                    
 
-                    var projectDirectory = Path.GetDirectoryName(FullPath);
+
+                    var projectDirectory = Path.GetDirectoryName(FullPath)!;
                     _environment.EnsureDirectoryExists(projectDirectory);
 
                     var project = XDocument.Parse(_serializedProject);
-                    project.Root.Add();
+                    project.Root!.Add();
                     var xRepoImportPath = Path.Combine(_environment.Root, "XRepo.Build.targets");
                     var import = new XElement("Import");
                     import.Add(new XAttribute("Project", xRepoImportPath));
@@ -147,7 +147,7 @@ namespace XRepo.Scenarios.TestSupport
             }
         }
 
-        private void SaveProject(XDocument project = null)
+        private void SaveProject(XDocument? project = null)
         {
             if (project == null)
                 project = Project;

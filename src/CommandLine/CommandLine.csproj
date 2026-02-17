@@ -6,6 +6,7 @@
     <RootNamespace>XRepo.CommandLine</RootNamespace>
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>xrepo</ToolCommandName>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="XRepo.Tests" />

@@ -8,7 +8,7 @@ namespace XRepo.CommandLine.Commands
     {
         [Required]
         [CommandArgument("The name of the package")]
-        public string Name { get; set; }
+        public string Name { get; set; } = null!;
 
         public override void Execute()
         {
@@ -16,7 +16,7 @@ namespace XRepo.CommandLine.Commands
 
             if (package != null)
             {
-                App.Out.WriteLine(package.MostRecentProject.ProjectPath);
+                App.Out.WriteLine(package.MostRecentProject!.ProjectPath);
             }
             else
             {

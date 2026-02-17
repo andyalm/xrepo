@@ -20,7 +20,7 @@ namespace XRepo.CommandLine.Infrastructure
                 WorkingDirectory = _workingDirectory,
                 RedirectStandardOutput = true
             };
-            var process = Process.Start(processStartInfo);
+            var process = Process.Start(processStartInfo)!;
             process.WaitForExit();
             if(process.ExitCode != 0)
                 throw new ProcessErrorException(process);

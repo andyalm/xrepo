@@ -36,19 +36,19 @@ namespace XRepo.Build.Infrastructure
             return new[] { item };
         }
 
-        public static string FullDirectoryPath(this ITaskItem item)
+        public static string? FullDirectoryPath(this ITaskItem item)
         {
             return Path.GetDirectoryName(item.FullPath());
         }
 
-        public static string FullPath(this ITaskItem item)
+        public static string? FullPath(this ITaskItem? item)
         {
             if (item == null)
                 return null;
             return item.GetMetadata("FullPath");
         }
 
-        public static string FullPath(this string path)
+        public static string? FullPath(this string? path)
         {
             if (path == null)
                 return null;
@@ -67,7 +67,7 @@ namespace XRepo.Build.Infrastructure
 
         public static string CombineWith(this ITaskItem item, string relativePath)
         {
-            return Path.Combine(item.FullPath(), relativePath);
+            return Path.Combine(item.FullPath()!, relativePath);
         }
 
         public static string CombineWith(this string path, string relativePath)
@@ -77,7 +77,7 @@ namespace XRepo.Build.Infrastructure
 
         public static string RelativeTo(this ITaskItem item, string baseDirectory)
         {
-            return item.FullPath().RelativeTo(baseDirectory);
+            return item.FullPath()!.RelativeTo(baseDirectory);
         }
 
         public static string RelativeTo(this string path, string baseDirectory)

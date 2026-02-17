@@ -9,7 +9,7 @@ namespace XRepo.CommandLine.Commands
     {
         [Required]
         [CommandArgument("The name of a package")]
-        public string Name { get; set; }
+        public string Name { get; set; } = null!;
 
         public override void Execute()
         {

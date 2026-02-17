@@ -17,7 +17,7 @@ namespace XRepo.Core
             _keyComputer = keyComputer;
         }
 
-        public T GetItem(string key)
+        public T? GetItem(string key)
         {
             var registryFile = FilenameFor(key);
             if (!File.Exists(registryFile))
@@ -61,7 +61,7 @@ namespace XRepo.Core
         private T DeserializeFile(string filePath)
         {
             var json = File.ReadAllText(filePath);
-            return JsonSerializer.Deserialize<T>(json);
+            return JsonSerializer.Deserialize<T>(json)!;
         }
     }
 }

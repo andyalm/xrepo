@@ -29,10 +29,10 @@ namespace XRepo.Core
 
         public void AddProjectReference(string projectPath)
         {
-            var ns = _doc.Root.Name.Namespace;
+            var ns = _doc.Root!.Name.Namespace;
             var xrepoReferences = _doc.Root.Elements()
                 .SingleOrDefault(e => e.Name.LocalName == "ItemGroup" &&
-                                      (string)e.Attribute("Label") == XRepoReferenceLabel);
+                                      (string?)e.Attribute("Label") == XRepoReferenceLabel);
             if (xrepoReferences == null)
             {
                 xrepoReferences = new XElement(ns + "ItemGroup");
@@ -41,7 +41,7 @@ namespace XRepo.Core
             }
 
             var alreadyReferenced = xrepoReferences.Elements(ns + "ProjectReference")
-                .Any(e => string.Equals((string)e.Attribute("Include"), projectPath,
+                .Any(e => string.Equals((string?)e.Attribute("Include"), projectPath,
                     StringComparison.OrdinalIgnoreCase));
             if (!alreadyReferenced)
             {
@@ -67,14 +67,14 @@ namespace XRepo.Core
 
         public bool ReferencesPackage(string packageId)
         {
-            return _doc.Root.Descendants(_doc.Root.Name.Namespace + "PackageReference")
-                .Any(e => packageId.Equals((string) e.Attribute("Include"), StringComparison.OrdinalIgnoreCase));
+            return _doc.Root!.Descendants(_doc.Root.Name.Namespace + "PackageReference")
+                .Any(e => packageId.Equals((string?)e.Attribute("Include"), StringComparison.OrdinalIgnoreCase));
         }
 
         public bool RemoveXRepoProjectReferences()
         {
-            var linkedReferences = _doc.Root.Elements(_doc.Root.Name.Namespace + "ItemGroup")
-                .Where(e => (string)e.Attribute("Label") == XRepoReferenceLabel).ToArray();
+            var linkedReferences = _doc.Root!.Elements(_doc.Root.Name.Namespace + "ItemGroup")
+                .Where(e => (string?)e.Attribute("Label") == XRepoReferenceLabel).ToArray();
 
             if (linkedReferences.Length > 0)
             {

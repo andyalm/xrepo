@@ -12,7 +12,7 @@ public class Bootstrap : Command
     public override void Execute()
     {
         var bootstrapperDll = Path.Combine(
-            Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
+            Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!,
             "xrepo-bootstrap.dll");
 
         if (!File.Exists(bootstrapperDll))
@@ -44,7 +44,7 @@ public class Bootstrap : Command
             Verb = "runas"
         };
 
-        var process = Process.Start(psi);
+        var process = Process.Start(psi)!;
         process.WaitForExit();
         return process.ExitCode;
     }
@@ -57,7 +57,7 @@ public class Bootstrap : Command
             Arguments = $"dotnet \"{bootstrapperDll}\""
         };
 
-        var process = Process.Start(psi);
+        var process = Process.Start(psi)!;
         process.WaitForExit();
         return process.ExitCode;
     }

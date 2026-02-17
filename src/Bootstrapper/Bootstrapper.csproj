@@ -4,6 +4,7 @@
     <TargetFramework>net10.0</TargetFramework>
     <AssemblyName>xrepo-bootstrap</AssemblyName>
     <RootNamespace>XRepo.Bootstrapper</RootNamespace>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Build\Build.csproj" />

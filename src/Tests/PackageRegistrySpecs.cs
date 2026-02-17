@@ -25,7 +25,7 @@ namespace XRepo.Tests
             var package = _testEnvironment.XRepoEnvironment.PackageRegistry.GetPackage("MyPackage");
 
             package.Should().NotBeNull();
-            package.PackageId.Should().Be("MyPackage");
+            package!.PackageId.Should().Be("MyPackage");
             package.Projects.Should().HaveCount(1);
         }
 
@@ -36,7 +36,7 @@ namespace XRepo.Tests
             _testEnvironment.RegisterPackageAt(packageId, "src");
 
             var package = _testEnvironment.XRepoEnvironment.PackageRegistry.GetPackage("MyPackage");
-            var project = package.Projects.First();
+            var project = package!.Projects.First();
 
             var expectedProjectPath = _testEnvironment.GetLocalProjectPath("MyPackage", "src");
             project.ProjectPath.Should().Be(expectedProjectPath);
@@ -49,7 +49,7 @@ namespace XRepo.Tests
             var packageLocation = _testEnvironment.RegisterPackageAt(packageId, "src");
 
             var package = _testEnvironment.XRepoEnvironment.PackageRegistry.GetPackage("MyPackage");
-            var project = package.Projects.First();
+            var project = package!.Projects.First();
 
             project.PackagePath.Should().Be(packageLocation);
             project.OutputPath.Should().Be(packageLocation);
@@ -64,7 +64,7 @@ namespace XRepo.Tests
 
             var package = _testEnvironment.XRepoEnvironment.PackageRegistry.GetPackage("MyPackage");
 
-            package.Projects.Should().HaveCount(1, "re-registering from the same project should update, not duplicate");
+            package!.Projects.Should().HaveCount(1, "re-registering from the same project should update, not duplicate");
         }
 
         [Fact]
@@ -76,7 +76,7 @@ namespace XRepo.Tests
 
             var package = _testEnvironment.XRepoEnvironment.PackageRegistry.GetPackage("MyPackage");
 
-            package.Projects.Should().HaveCount(2);
+            package!.Projects.Should().HaveCount(2);
         }
 
         [Fact]
@@ -132,9 +132,9 @@ namespace XRepo.Tests
 
             var package = _testEnvironment.XRepoEnvironment.PackageRegistry.GetPackage("MyPackage");
 
-            package.MostRecentProject.Should().NotBeNull();
+            package!.MostRecentProject.Should().NotBeNull();
             var secondProjectPath = _testEnvironment.GetLocalProjectPath("MyPackage", "second");
-            package.MostRecentProject.ProjectPath.Should().Be(secondProjectPath);
+            package.MostRecentProject!.ProjectPath.Should().Be(secondProjectPath);
         }
 
         [Fact]
@@ -147,7 +147,7 @@ namespace XRepo.Tests
 
             var package = _testEnvironment.XRepoEnvironment.PackageRegistry.GetPackage("MyPackage");
             package.Should().NotBeNull();
-            package.PackageId.Should().Be("MyPackage");
+            package!.PackageId.Should().Be("MyPackage");
             package.Projects.Should().HaveCount(1);
         }
 

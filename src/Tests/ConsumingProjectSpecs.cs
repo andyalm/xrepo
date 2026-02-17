@@ -44,11 +44,11 @@ namespace XRepo.Tests
 
             project.AddProjectReference(@"..\MyLib\MyLib.csproj");
 
-            var itemGroup = doc.Root.Elements("ItemGroup")
-                .Should().Contain(e => (string)e.Attribute("Label") == "XRepoReference")
+            var itemGroup = doc.Root!.Elements("ItemGroup")
+                .Should().Contain(e => (string?)e.Attribute("Label") == "XRepoReference")
                 .Which;
             itemGroup.Elements("ProjectReference")
-                .Should().ContainSingle(e => (string)e.Attribute("Include") == @"..\MyLib\MyLib.csproj");
+                .Should().ContainSingle(e => (string?)e.Attribute("Include") == @"..\MyLib\MyLib.csproj");
         }
 
         [Fact]
@@ -60,8 +60,8 @@ namespace XRepo.Tests
             project.AddProjectReference(@"..\MyLib\MyLib.csproj");
             project.AddProjectReference(@"..\MyLib\MyLib.csproj");
 
-            var itemGroup = doc.Root.Elements("ItemGroup")
-                .Should().Contain(e => (string)e.Attribute("Label") == "XRepoReference")
+            var itemGroup = doc.Root!.Elements("ItemGroup")
+                .Should().Contain(e => (string?)e.Attribute("Label") == "XRepoReference")
                 .Which;
             itemGroup.Elements("ProjectReference").Should().HaveCount(1);
         }
@@ -76,8 +76,8 @@ namespace XRepo.Tests
             var removed = project.RemoveXRepoProjectReferences();
 
             removed.Should().BeTrue();
-            doc.Root.Elements("ItemGroup")
-                .Should().NotContain(e => (string)e.Attribute("Label") == "XRepoReference");
+            doc.Root!.Elements("ItemGroup")
+                .Should().NotContain(e => (string?)e.Attribute("Label") == "XRepoReference");
         }
 
         [Fact]
@@ -132,14 +132,14 @@ namespace XRepo.Tests
             }
 
             // ConsumerA should have a project reference to PkgA
-            docA.Root.Elements("ItemGroup")
-                .Where(e => (string)e.Attribute("Label") == "XRepoReference")
+            docA.Root!.Elements("ItemGroup")
+                .Where(e => (string?)e.Attribute("Label") == "XRepoReference")
                 .SelectMany(e => e.Elements("ProjectReference"))
-                .Should().ContainSingle(e => (string)e.Attribute("Include") == @"..\PkgA\PkgA.csproj");
+                .Should().ContainSingle(e => (string?)e.Attribute("Include") == @"..\PkgA\PkgA.csproj");
 
             // ConsumerB should NOT have any linked project references (it doesn't reference PkgA or PkgB)
-            docB.Root.Elements("ItemGroup")
-                .Where(e => (string)e.Attribute("Label") == "XRepoReference")
+            docB.Root!.Elements("ItemGroup")
+                .Where(e => (string?)e.Attribute("Label") == "XRepoReference")
                 .Should().BeEmpty();
         }
 
@@ -166,10 +166,10 @@ namespace XRepo.Tests
 
             // Only PkgA should be linked
             linkedCount.Should().Be(1);
-            var linkedRefs = doc.Root.Elements("ItemGroup")
-                .Where(e => (string)e.Attribute("Label") == "XRepoReference")
+            var linkedRefs = doc.Root!.Elements("ItemGroup")
+                .Where(e => (string?)e.Attribute("Label") == "XRepoReference")
                 .SelectMany(e => e.Elements("ProjectReference"))
-                .Select(e => (string)e.Attribute("Include"))
+                .Select(e => (string?)e.Attribute("Include"))
                 .ToList();
             linkedRefs.Should().ContainSingle().Which.Should().Be(@"..\PkgA\PkgA.csproj");
         }
@@ -197,10 +197,10 @@ namespace XRepo.Tests
 
             // PkgA and PkgB linked, PkgC skipped
             linkedCount.Should().Be(2);
-            var linkedRefs = doc.Root.Elements("ItemGroup")
-                .Where(e => (string)e.Attribute("Label") == "XRepoReference")
+            var linkedRefs = doc.Root!.Elements("ItemGroup")
+                .Where(e => (string?)e.Attribute("Label") == "XRepoReference")
                 .SelectMany(e => e.Elements("ProjectReference"))
-                .Select(e => (string)e.Attribute("Include"))
+                .Select(e => (string?)e.Attribute("Include"))
                 .ToList();
             linkedRefs.Should().HaveCount(2);
             linkedRefs.Should().Contain(@"..\PkgA\PkgA.csproj");
@@ -230,8 +230,8 @@ namespace XRepo.Tests
             }
 
             linkedCount.Should().Be(0);
-            doc.Root.Elements("ItemGroup")
-                .Where(e => (string)e.Attribute("Label") == "XRepoReference")
+            doc.Root!.Elements("ItemGroup")
+                .Where(e => (string?)e.Attribute("Label") == "XRepoReference")
                 .Should().BeEmpty();
         }
     }

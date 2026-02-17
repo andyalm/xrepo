@@ -41,7 +41,7 @@ namespace XRepo.Core
             return Data.Contains(repoName);
         }
 
-        public bool IsRepoRegistered(string repoName, out RepoRegistration repo)
+        public bool IsRepoRegistered(string repoName, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out RepoRegistration? repo)
         {
             if (IsRepoRegistered(repoName))
             {

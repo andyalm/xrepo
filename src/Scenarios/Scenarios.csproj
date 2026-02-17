@@ -4,6 +4,7 @@
     <AssemblyName>XRepo.Scenarios</AssemblyName>
     <RootNamespace>XRepo.Scenarios</RootNamespace>
     <IsPackable>false</IsPackable>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="FluentAssertions" Version="6.8.0" />

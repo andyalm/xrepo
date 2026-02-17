@@ -8,27 +8,27 @@ namespace XRepo.Build.Tasks
     public class RegisterPackage : XRepoTask
     {
         [Required]
-        public ITaskItem PackageOutputPath { get; set; }
+        public ITaskItem PackageOutputPath { get; set; } = null!;
 
         [Required]
-        public string PackageId { get; set; }
+        public string PackageId { get; set; } = null!;
 
         [Required]
-        public string PackageVersion { get; set; }
+        public string PackageVersion { get; set; } = null!;
 
         [Required]
-        public ITaskItem ProjectPath { get; set; }
+        public ITaskItem ProjectPath { get; set; } = null!;
 
         public override void ExecuteOrThrow()
         {
             var packageIdentifier = new PackageIdentifier(PackageId, PackageVersion);
 
-            var packagePath = Path.Combine(PackageOutputPath.FullPath(),
+            var packagePath = Path.Combine(PackageOutputPath.FullPath()!,
                 $"{packageIdentifier.Id}.{packageIdentifier.Version}.nupkg");
 
             LogDebug($"Registering the package '{packageIdentifier.Id}' (version '{packageIdentifier.Version}') at '{packagePath}'");
             
-            Environment.PackageRegistry.RegisterPackage(packageIdentifier, packagePath, ProjectPath.FullPath());
+            Environment.PackageRegistry.RegisterPackage(packageIdentifier, packagePath, ProjectPath.FullPath()!);
         }
     }
 }

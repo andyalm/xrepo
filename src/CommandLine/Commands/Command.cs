@@ -11,28 +11,28 @@ namespace XRepo.CommandLine.Commands
 {
     public abstract class Command
     {
-        public XRepoEnvironment Environment { get; set; }
-        public CommandLineApplication App { get; set; }
+        public XRepoEnvironment Environment { get; set; } = null!;
+        public CommandLineApplication App { get; set; } = null!;
 
         public abstract void Execute();
 
         public virtual void Setup() { }
 
-        public string Name => this.GetType().GetTypeInfo().GetCustomAttribute<CommandNameAttribute>().Name;
-        public string Description => this.GetType().GetTypeInfo().GetCustomAttribute<CommandNameAttribute>().Description;
+        public string Name => this.GetType().GetTypeInfo().GetCustomAttribute<CommandNameAttribute>()!.Name;
+        public string Description => this.GetType().GetTypeInfo().GetCustomAttribute<CommandNameAttribute>()!.Description;
 
         internal IEnumerable<ArgumentProperty> GetArgumentProperties()
         {
             return GetType().GetProperties()
                 .Where(t => t.HasAttribute<CommandArgumentAttribute>())
-                .Select(p => new ArgumentProperty(p, p.GetCustomAttribute<CommandArgumentAttribute>()));
+                .Select(p => new ArgumentProperty(p, p.GetCustomAttribute<CommandArgumentAttribute>()!));
         }
 
         internal IEnumerable<OptionProperty> GetOptionProperties()
         {
             return GetType().GetProperties()
                 .Where(t => t.HasAttribute<CommandOptionAttribute>())
-                .Select(t => new OptionProperty(t, t.GetCustomAttribute<CommandOptionAttribute>()));
+                .Select(t => new OptionProperty(t, t.GetCustomAttribute<CommandOptionAttribute>()!));
         }
     }
 

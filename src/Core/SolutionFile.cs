@@ -31,7 +31,7 @@ namespace XRepo.Core
             return new SolutionFile(model, filePath, serializer);
         }
 
-        public string BaseDirectory => Path.GetDirectoryName(_filePath);
+        public string BaseDirectory => Path.GetDirectoryName(_filePath)!;
 
         public IEnumerable<ConsumingProject> ConsumingProjects()
         {
@@ -51,7 +51,7 @@ namespace XRepo.Core
             if (_model.FindProject(relativePath) != null)
                 return;
 
-            SolutionFolderModel folder = null;
+            SolutionFolderModel? folder = null;
             if (!string.IsNullOrEmpty(solutionFolderPath))
             {
                 folder = _model.AddFolder("/" + solutionFolderPath + "/");
@@ -121,7 +121,7 @@ namespace XRepo.Core
             var projectInRepo = package.Projects
                 .FirstOrDefault(p => p.ProjectPath.StartsWith(repoPath, StringComparison.OrdinalIgnoreCase));
 
-            return projectInRepo?.ProjectPath ?? package.MostRecentProject.ProjectPath;
+            return projectInRepo?.ProjectPath ?? package.MostRecentProject!.ProjectPath;
         }
 
         public void Write()

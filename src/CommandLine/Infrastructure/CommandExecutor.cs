@@ -28,7 +28,7 @@ namespace XRepo.CommandLine.Infrastructure
                 .Where(t => typeof(Command).IsAssignableFrom(t) && !t.GetTypeInfo().IsAbstract)
                 .Each(commandType =>
                 {
-                    var command = (Command)Activator.CreateInstance(commandType);
+                    var command = (Command)Activator.CreateInstance(commandType)!;
                     command.Environment = _environment;
                     _app.Command(command.Name, app =>
                     {

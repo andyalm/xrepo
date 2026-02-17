@@ -13,26 +13,26 @@ namespace XRepo.Core
             return ForDirectory(null);
         }
 
-        public static XRepoEnvironment ForDirectory(string directoryPath)
+        public static XRepoEnvironment ForDirectory(string? directoryPath)
         {
             return new XRepoEnvironment(directoryPath);
         }
 
         private readonly string _directory;
 
-        private XRepoEnvironment(string directory)
+        private XRepoEnvironment(string? directory)
         {
             _directory = directory ?? DefaultConfigDir;
         }
 
-        private PackageRegistry _packageRegistry;
-        public PackageRegistry PackageRegistry => _packageRegistry ?? (_packageRegistry = PackageRegistry.ForDirectory(_directory));
+        private PackageRegistry? _packageRegistry;
+        public PackageRegistry PackageRegistry => _packageRegistry ??= PackageRegistry.ForDirectory(_directory);
 
-        private RepoRegistry _repoRegistry;
-        public RepoRegistry RepoRegistry => _repoRegistry ?? (_repoRegistry = RepoRegistry.ForDirectory(_directory));
+        private RepoRegistry? _repoRegistry;
+        public RepoRegistry RepoRegistry => _repoRegistry ??= RepoRegistry.ForDirectory(_directory);
 
-        private ConfigRegistry _configRegistry;
-        public ConfigRegistry ConfigRegistry => _configRegistry ?? (_configRegistry = ConfigRegistry.ForDirectory(_directory));
+        private ConfigRegistry? _configRegistry;
+        public ConfigRegistry ConfigRegistry => _configRegistry ??= ConfigRegistry.ForDirectory(_directory);
 
         public IEnumerable<PackageRegistration> FindPackagesFromRepo(string repoName)
         {
@@ -52,7 +52,7 @@ namespace XRepo.Core
                     p.ProjectPath.Equals(fullPath, StringComparison.OrdinalIgnoreCase)));
         }
 
-        private string _defaultConfigDir;
+        private string? _defaultConfigDir;
 
         private string DefaultConfigDir
         {
@@ -63,12 +63,12 @@ namespace XRepo.Core
 
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
-                    var localAppData = Environment.GetEnvironmentVariable("LOCALAPPDATA");
+                    var localAppData = Environment.GetEnvironmentVariable("LOCALAPPDATA")!;
                     _defaultConfigDir = Path.Combine(localAppData, "XRepo");
                 }
                 else
                 {
-                    var homeDir = Environment.GetEnvironmentVariable("HOME");
+                    var homeDir = Environment.GetEnvironmentVariable("HOME")!;
                     _defaultConfigDir = Path.Combine(homeDir, ".xrepo");
                 }
 

@@ -4,6 +4,7 @@
     <AssemblyName>XRepo.Build</AssemblyName>
     <RootNamespace>XRepo.Build</RootNamespace>
     <IsPackable>false</IsPackable>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.Build.Tasks.Core" Version="18.3.3" />

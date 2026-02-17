@@ -6,10 +6,10 @@ namespace XRepo.Scenarios.TestSupport
     {
         public TestEnvironment Environment { get; }
 
-        public ProjectBuilder ProjectBuilder { get; set; }
+        public ProjectBuilder ProjectBuilder { get; set; } = null!;
 
-        public string BuildOutput { get; set; }
-        public string RepoName { get; set; }
+        public string BuildOutput { get; set; } = null!;
+        public string RepoName { get; set; } = null!;
 
         public XRepoEnvironmentContext()
         {

@@ -5,7 +5,7 @@ namespace XRepo.Bootstrapper;
 
 public class Bootstrapper(MSBuildSdk sdk) : IDisposable
 {
-    private readonly string _sourceDirectory = Path.GetDirectoryName(typeof(Bootstrapper).Assembly.Location);
+    private readonly string _sourceDirectory = Path.GetDirectoryName(typeof(Bootstrapper).Assembly.Location)!;
     private static readonly string[] FilesToCopy = ["XRepo.Build.targets", "XRepo.Build.dll"];
     private TextWriter Output { get; set; } = Console.Out;
     private TextWriter ErrorOutput { get; set; } = Console.Error;

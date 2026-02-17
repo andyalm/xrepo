@@ -6,10 +6,10 @@ namespace XRepo.CommandLine.Commands
     public class ConfigCommand : Command
     {
         [CommandArgument("The name of the setting you are setting")]
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
         [CommandArgument("The value of the setting you are setting")]
-        public string Value { get; set; }
+        public string? Value { get; set; }
 
         public override void Execute()
         {
@@ -35,7 +35,7 @@ namespace XRepo.CommandLine.Commands
 
         private void UpdateSettings()
         {
-            Environment.ConfigRegistry.UpdateSetting(Name, Value);
+            Environment.ConfigRegistry.UpdateSetting(Name!, Value!);
             Environment.ConfigRegistry.Save();
             App.Out.WriteLine($"xrepo setting '{Name}' updated to '{Value}'");
         }

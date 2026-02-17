@@ -10,10 +10,10 @@ namespace XRepo.CommandLine.Commands
         private const string SolutionFolderPath = "xrepo";
 
         [CommandArgument("The name of the repo to unref (omit to unref all)")]
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
         [CommandOption("-s|--solution", "The path to the solution file. Auto-detected if not specified.")]
-        public string SolutionPath { get; set; }
+        public string? SolutionPath { get; set; }
 
         public override void Execute()
         {

@@ -4,6 +4,7 @@
     <AssemblyName>XRepo.Core</AssemblyName>
     <RootNamespace>XRepo.Core</RootNamespace>
     <PackageId>XRepo.Core</PackageId>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="XRepo.Tests" />

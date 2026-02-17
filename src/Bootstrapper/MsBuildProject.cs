@@ -18,7 +18,7 @@ namespace XRepo.Bootstrapper
         public void AddExtensionImport(string importPath)
         {
             var project = Load();
-            var xmlns = project.Root.Name.Namespace;
+            var xmlns = project.Root!.Name.Namespace;
 
             //delete existing matches
             var filename = Path.GetFileName(importPath);
@@ -41,12 +41,12 @@ namespace XRepo.Bootstrapper
         public void RemoveImport(string projectPath)
         {
             var project = Load();
-            var xmlns = project.Root.Name.Namespace;
+            var xmlns = project.Root!.Name.Namespace;
 
             var importElement = project.Root.Elements(xmlns + "Import")
-                .FirstOrDefault(e => ((string)e.Attribute("Project")).Equals(projectPath, StringComparison.OrdinalIgnoreCase));
+                .FirstOrDefault(e => ((string?)e.Attribute("Project"))?.Equals(projectPath, StringComparison.OrdinalIgnoreCase) == true);
 
-            importElement.Remove();
+            importElement?.Remove();
 
             Save(project);
         }
@@ -54,10 +54,10 @@ namespace XRepo.Bootstrapper
         public void RemoveImportsMatching(string projectPathSubstring)
         {
             var project = Load();
-            var xmlns = project.Root.Name.Namespace;
+            var xmlns = project.Root!.Name.Namespace;
 
             var importsToRemove = project.Root.Elements(xmlns + "Import")
-                .Where(e => ((string)e.Attribute("Project")).ToLowerInvariant().Contains(projectPathSubstring.ToLowerInvariant()));
+                .Where(e => ((string?)e.Attribute("Project"))?.ToLowerInvariant().Contains(projectPathSubstring.ToLowerInvariant()) == true);
 
             foreach(var importToRemove in importsToRemove)
             {
@@ -67,13 +67,13 @@ namespace XRepo.Bootstrapper
             Save(project);
         }
 
-        public IEnumerable<string> Imports
+        public IEnumerable<string?> Imports
         {
             get
             {
                 var project = Load();
-                var xmlns = project.Root.Name.Namespace;
-                return project.Root.Elements(xmlns + "Import").Select(e => (string)e.Attribute("Project"));
+                var xmlns = project.Root!.Name.Namespace;
+                return project.Root.Elements(xmlns + "Import").Select(e => (string?)e.Attribute("Project"));
             }
         }
 
