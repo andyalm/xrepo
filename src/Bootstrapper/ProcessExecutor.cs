@@ -1,48 +1,75 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 
-namespace XRepo.Bootstrapper
+namespace XRepo.Bootstrapper;
+
+public class ProcessExecutor
 {
-    public class ProcessExecutor
-    {
-        private readonly string _workingDirectory;
+    private readonly string _workingDirectory;
 
-        public ProcessExecutor(string workingDirectory)
+    public ProcessExecutor() : this(Directory.GetCurrentDirectory())
+    {
+            
+    }
+        
+    public ProcessExecutor(string workingDirectory)
+    {
+        _workingDirectory = workingDirectory;
+    }
+
+    public string ExecuteAsString(string processName, params string[] args)
+    {
+        return ExecuteAs(processName, args, p => p.StandardOutput.ReadToEnd().Trim());
+    }
+
+    public IEnumerable<string> ExecuteAsStrings(string processName, params string[] args)
+    {
+        return ExecuteAs(processName, args, p => p.StandardOutput.ReadLines());
+    }
+
+    private T ExecuteAs<T>(string processName, string[] args, Func<Process,T> mapResponse)
+    {
+        var startInfo = new ProcessStartInfo(processName)
         {
-            _workingDirectory = workingDirectory;
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+            RedirectStandardInput = true,
+            WorkingDirectory = _workingDirectory
+        };
+        foreach (var arg in args)
+        {
+            startInfo.ArgumentList.Add(arg);
         }
 
-        public IEnumerable<string> Exec(string processName, params string[] args)
+        using (var process = new Process
+               {
+                   StartInfo = startInfo
+               })
         {
-            var processStartInfo = new ProcessStartInfo(processName, string.Join(" ", args))
-            {
-                WorkingDirectory = _workingDirectory,
-                RedirectStandardOutput = true
-            };
-            var process = Process.Start(processStartInfo);
-            process.WaitForExit();
-            if(process.ExitCode != 0)
-                throw new ProcessErrorException(process);
+            process.Start();
 
-            var line = process.StandardOutput.ReadLine();
-            while (line != null)
-            {
-                yield return line;
-                line = process.StandardOutput.ReadLine();
-            }
+            return mapResponse(process);
+        }
+    }
+}
+
+internal static class StreamExtensions
+{
+    public static IEnumerable<string> ReadLines(this StreamReader reader)
+    {
+        while (!reader.EndOfStream)
+        {
+            yield return reader.ReadLine();
         }
     }
 
-    public class ProcessErrorException : Exception
+    public static void CopyAllLines(this StreamReader reader, TextWriter writer)
     {
-        public Process Process { get; }
-
-        public ProcessErrorException(Process process)
+        foreach (var line in reader.ReadLines())
         {
-            Process = process;
+            writer.WriteLine(line);
         }
-
-        public override string Message => $"Command {Process.ProcessName} {Process.StartInfo.Arguments} exited with code {Process.ExitCode}";
     }
 }

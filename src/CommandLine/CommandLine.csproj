@@ -12,7 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Core\Core.csproj" />
-    <ProjectReference Include="..\Bootstrapper\XRepo.Bootstrapper.csproj" />
+    <ProjectReference Include="..\Bootstrapper\Bootstrapper.csproj" />
     <PackageReference Include="Microsoft.Extensions.CommandLineUtils" Version="1.1.1" />
   </ItemGroup>
 </Project>

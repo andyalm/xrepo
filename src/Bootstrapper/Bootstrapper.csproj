@@ -5,4 +5,12 @@
     <AssemblyName>xrepo-bootstrap</AssemblyName>
     <RootNamespace>XRepo.Bootstrapper</RootNamespace>
   </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Build\Build.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\Build\XRepo.Build.targets">
+      <Link>XRepo.Build.targets</Link>
+    </Content>
+  </ItemGroup>
 </Project>
