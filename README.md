@@ -1,7 +1,7 @@
 XRepo - Cross repository development finally made easy
 ======================================================
 
-XRepo makes it easy to work on shared libraries across repositories by letting you temporarily replace NuGet package references with local project references that your IDE (Rider, Visual Studio) natively understands.
+XRepo makes it easier to work on shared libraries across repositories by letting you temporarily replace NuGet package references with local project references that your IDE (Rider, Visual Studio) natively understands.
 
 Quickstart
 ----------
@@ -9,20 +9,24 @@ Quickstart
 
     dotnet tool install -g xrepo
 
-2) Navigate to the repo where your shared library is built, build it, and register it:
+2) Bootstrap xrepo by installing MSBuild hooks that will watch for packages that you build locally register them with xrepo:
+
+    xrepo bootstrap
+
+3) Navigate to the repo where your shared library is built, build it, and register it:
 
     cd ~/src/MySharedLib
     dotnet build
     xrepo repo register MySharedLib
 
-3) In the repo that consumes the shared library, ref it:
+4) In the repo that consumes the shared library, ref it:
 
     cd ~/src/MyApp
     xrepo ref MySharedLib
 
 This will find all NuGet packages from MySharedLib that your solution references and add local `ProjectReference` entries so your IDE can navigate into the source, set breakpoints, and get full IntelliSense.
 
-4) When you're done working on the shared library, unref it:
+5) When you're done working on the shared library, unref it:
 
     xrepo unref
 
@@ -31,17 +35,15 @@ Commands
 
 | Command | Description |
 |---------|-------------|
+| `bootstrap` | Install global MSBuild hooks for package registration |
 | `repo register <name> [-p\|--path]` | Register a repo at the current or specified path |
 | `repo unregister <name>` | Unregister a repo |
 | `repos` | List all registered repos |
 | `packages` | List all registered packages |
-| `assemblies` | List all registered assemblies |
 | `which <name>` | Show the most recently registered location for a package or assembly |
 | `where <name>` | Show all registered locations for a package or assembly |
 | `ref <name> [-s\|--solution]` | Add project references for a repo's packages into a solution |
 | `unref [name] [-s\|--solution]` | Remove project references that were added by xrepo ref |
-| `config [name] [value]` | View or update configuration settings |
-| `bootstrap` | Install global MSBuild hooks for package registration |
 
 How it works
 ------------
