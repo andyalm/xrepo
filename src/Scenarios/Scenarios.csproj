@@ -29,4 +29,8 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+  <Target Name="_CopyXRepoBuildToSubdir" AfterTargets="Build">
+    <MakeDir Directories="$(OutputPath)XRepo" />
+    <Copy SourceFiles="$(OutputPath)XRepo.Build.dll;$(OutputPath)XRepo.Core.dll" DestinationFolder="$(OutputPath)XRepo" SkipUnchangedFiles="true" />
+  </Target>
 </Project>
