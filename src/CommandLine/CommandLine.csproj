@@ -7,6 +7,9 @@
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>xrepo</ToolCommandName>
     <Nullable>enable</Nullable>
+    <PackageId>xrepo</PackageId>
+    <PackageVersion>1.0.0-beta01</PackageVersion>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
   </PropertyGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="XRepo.Tests" />

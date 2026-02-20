@@ -1,6 +1,6 @@
 <Project ToolsVersion="15.0">
   <UsingTask TaskName="XRepo.Build.Tasks.RegisterPackage"
-             AssemblyFile="$(MSBuildThisFileDirectory)\XRepo.Build.dll"/>
+             AssemblyFile="$(MSBuildThisFileDirectory)XRepo\XRepo.Build.dll"/>
 
   <Target Name="_XRepoRegisterPackageOnPack" AfterTargets="Pack">
     <CallTarget Condition="$(IsPackable.ToLower())!='false'" Targets="_XRepoRegisterPackage" />

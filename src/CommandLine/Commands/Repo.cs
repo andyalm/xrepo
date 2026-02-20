@@ -74,7 +74,7 @@ namespace XRepo.CommandLine.Commands
 
         public string GetFullPath()
         {
-            return System.IO.Path.GetFullPath(Path.Value() ?? AppContext.BaseDirectory);
+            return System.IO.Path.GetFullPath(Path.Value() ?? Directory.GetCurrentDirectory());
         }
 
         public void Validate(CommandLineApplication app)
