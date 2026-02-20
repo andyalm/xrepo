@@ -4,11 +4,12 @@
     <TargetFramework>net10.0</TargetFramework>
     <AssemblyName>xrepo</AssemblyName>
     <RootNamespace>XRepo.CommandLine</RootNamespace>
+    <Nullable>enable</Nullable>
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>xrepo</ToolCommandName>
-    <Nullable>enable</Nullable>
     <PackageId>xrepo</PackageId>
-    <PackageVersion>1.0.0-beta01</PackageVersion>
+    <PackageVersion Condition="$(PackageReleaseTag) != ''">$(PackageReleaseTag.Substring(1))</PackageVersion>
+    <PackageVersion Condition="$(PackageVersion)==''">2.0.0-dev</PackageVersion>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
   </PropertyGroup>
   <ItemGroup>
