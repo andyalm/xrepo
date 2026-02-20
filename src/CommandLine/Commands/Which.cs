@@ -1,28 +1,35 @@
-using System.Linq;
+using System;
+using System.CommandLine;
 using XRepo.CommandLine.Infrastructure;
+using XRepo.Core;
 
-namespace XRepo.CommandLine.Commands
+namespace XRepo.CommandLine.Commands;
+
+public class WhichCommand : Command
 {
-    [CommandName("which", "Outputs the most recently registered location for a package")]
-    public class WhichCommand : Command
+    public WhichCommand(XRepoEnvironment environment)
+        : base("which", "Outputs the most recently registered location for a package")
     {
-        [Required]
-        [CommandArgument("The name of the package")]
-        public string Name { get; set; } = null!;
-
-        public override void Execute()
+        var nameArg = new Argument<string>("name")
         {
-            var package = Environment.PackageRegistry.GetPackage(Name);
+            Description = "The name of the package"
+        };
+        Arguments.Add(nameArg);
+
+        this.SetAction(parseResult =>
+        {
+            var name = parseResult.GetValue(nameArg)!;
+            var package = environment.PackageRegistry.GetPackage(name);
 
             if (package != null)
             {
-                App.Out.WriteLine(package.MostRecentProject!.ProjectPath);
+                Console.WriteLine(package.MostRecentProject!.ProjectPath);
             }
             else
             {
                 throw new CommandFailureException(14,
-                    $"'{Name}' is not a registered package. Have you built it?");
+                    $"'{name}' is not a registered package. Have you built it?");
             }
-        }
+        });
     }
 }

@@ -1,20 +1,25 @@
-﻿using System;
+using System;
+using System.CommandLine;
+using XRepo.CommandLine.Commands;
 using XRepo.CommandLine.Infrastructure;
 using XRepo.Core;
 
-var commandExecutor = new CommandExecutor();
+var environment = XRepoEnvironment.ForCurrentUser();
+
+var rootCommand = new RootCommand("xrepo - Cross-repo development tool");
+rootCommand.Subcommands.Add(new BootstrapCommand());
+rootCommand.Subcommands.Add(new ConfigCommand(environment));
+rootCommand.Subcommands.Add(new PackagesCommand(environment));
+rootCommand.Subcommands.Add(new RefCommand(environment));
+rootCommand.Subcommands.Add(new RepoCommand(environment));
+rootCommand.Subcommands.Add(new ReposCommand(environment));
+rootCommand.Subcommands.Add(new UnrefCommand(environment));
+rootCommand.Subcommands.Add(new WhereCommand(environment));
+rootCommand.Subcommands.Add(new WhichCommand(environment));
 
 try
 {
-    return commandExecutor.Execute(args);
-}
-catch (CommandSyntaxException ex)
-{
-    Console.ForegroundColor = ConsoleColor.Red;
-    Console.Write("SYNTAX ERROR: " + ex.Message);
-    Console.ResetColor();
-    Console.WriteLine(ex.App.GetHelpText());
-    return 3;
+    return rootCommand.Parse(args).Invoke();
 }
 catch (CommandFailureException ex)
 {

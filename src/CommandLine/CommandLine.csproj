@@ -17,6 +17,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Core\Core.csproj" />
     <ProjectReference Include="..\Bootstrapper\Bootstrapper.csproj" />
-    <PackageReference Include="Microsoft.Extensions.CommandLineUtils" Version="1.1.1" />
+    <PackageReference Include="System.CommandLine" Version="2.0.3" />
   </ItemGroup>
 </Project>

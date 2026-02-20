@@ -1,144 +1,152 @@
 using System;
+using System.CommandLine;
 using System.IO;
 using System.Linq;
 using XRepo.CommandLine.Infrastructure;
 using XRepo.Core;
 
-namespace XRepo.CommandLine.Commands
+namespace XRepo.CommandLine.Commands;
+
+public class RefCommand : Command
 {
-    [CommandName("ref", "Adds project references for a repo's packages into a solution")]
-    public class RefCommand : Command
+    public RefCommand(XRepoEnvironment environment)
+        : base("ref", "Adds project references for a repo's packages into a solution")
     {
-        [Required]
-        [CommandArgument("The name of a registered repo, a package ID, or a path to a .csproj")]
-        public string Name { get; set; } = null!;
-
-        [CommandOption("-s|--solution", "The path to the solution file. Auto-detected if not specified.")]
-        public string? SolutionPath { get; set; }
-
-        public override void Execute()
+        var nameArg = new Argument<string>("name")
         {
-            var solutionPath = SolutionHelper.ResolveSolutionPath(SolutionPath);
+            Description = "The name of a registered repo, a package ID, or a path to a .csproj"
+        };
+        var solutionOption = new Option<string?>("--solution", "-s")
+        {
+            Description = "The path to the solution file. Auto-detected if not specified."
+        };
+        Arguments.Add(nameArg);
+        Options.Add(solutionOption);
+
+        this.SetAction(parseResult =>
+        {
+            var name = parseResult.GetValue(nameArg)!;
+            var solutionPath = SolutionHelper.ResolveSolutionPath(parseResult.GetValue(solutionOption));
             var solutionFile = SolutionFile.Read(solutionPath);
             int referencedCount = 0;
 
-            if (Environment.RepoRegistry.IsRepoRegistered(Name))
+            if (environment.RepoRegistry.IsRepoRegistered(name))
             {
-                referencedCount = ReferenceRepo(Name, solutionFile);
+                referencedCount = ReferenceRepo(environment, name, solutionFile);
             }
-            else if (Environment.PackageRegistry.IsPackageRegistered(Name))
+            else if (environment.PackageRegistry.IsPackageRegistered(name))
             {
-                referencedCount = ReferencePackageById(Name, solutionFile);
+                referencedCount = ReferencePackageById(environment, name, solutionFile);
             }
-            else if (Name.EndsWith(".csproj", StringComparison.OrdinalIgnoreCase) && File.Exists(Name))
+            else if (name.EndsWith(".csproj", StringComparison.OrdinalIgnoreCase) && File.Exists(name))
             {
-                referencedCount = ReferenceProject(Path.GetFullPath(Name), solutionFile);
+                referencedCount = ReferenceProject(environment, Path.GetFullPath(name), solutionFile);
             }
             else
             {
                 throw new CommandFailureException(16,
-                    $"'{Name}' is not a registered repo, a registered package, or a path to an existing .csproj file.");
+                    $"'{name}' is not a registered repo, a registered package, or a path to an existing .csproj file.");
             }
 
             solutionFile.Write();
 
             if (referencedCount > 0)
             {
-                App.Out.WriteLine($"Referenced {referencedCount} project(s). Running dotnet restore...");
+                Console.WriteLine($"Referenced {referencedCount} project(s). Running dotnet restore...");
                 SolutionHelper.DotnetRestore(solutionPath);
             }
             else
             {
-                App.Out.WriteLine("No consuming projects found that reference packages from this source.");
-                App.Out.WriteLine("Note: If the repo produces packages that weren't referenced, make sure you've built the repo first so xrepo can discover them.");
+                Console.WriteLine("No consuming projects found that reference packages from this source.");
+                Console.WriteLine("Note: If the repo produces packages that weren't referenced, make sure you've built the repo first so xrepo can discover them.");
             }
-        }
+        });
+    }
 
-        private int ReferenceRepo(string repoName, SolutionFile solutionFile)
+    private static int ReferenceRepo(XRepoEnvironment environment, string repoName, SolutionFile solutionFile)
+    {
+        if (!environment.RepoRegistry.IsRepoRegistered(repoName, out var repo))
         {
-            if (!Environment.RepoRegistry.IsRepoRegistered(repoName, out var repo))
-            {
-                throw new CommandFailureException(15,
-                    $"No repo named '{repoName}' is registered.");
-            }
-
-            var packages = Environment.FindPackagesFromRepo(repoName).ToArray();
-            if (packages.Length == 0)
-            {
-                throw new CommandFailureException(15,
-                    $"No packages are registered from repo '{repoName}'. Have you built it?");
-            }
-
-            return solutionFile.ReferenceRepo(repo, packages);
+            throw new CommandFailureException(15,
+                $"No repo named '{repoName}' is registered.");
         }
 
-        private int ReferenceProject(string projectPath, SolutionFile solutionFile)
+        var packages = environment.FindPackagesFromRepo(repoName).ToArray();
+        if (packages.Length == 0)
         {
-            var packages = Environment.FindPackagesFromProject(projectPath).ToArray();
-            if (packages.Length == 0)
-            {
-                App.Out.WriteLine($"Warning: No registered packages found for project '{projectPath}'.");
-                App.Out.WriteLine("The project will be added to the solution but no PackageReference->ProjectReference conversions can be made.");
-
-                solutionFile.EnsureProject(projectPath, SolutionFile.XRepoSolutionFolder);
-                return 0;
-            }
-
-            return solutionFile.ReferenceProject(projectPath, packages);
+            throw new CommandFailureException(15,
+                $"No packages are registered from repo '{repoName}'. Have you built it?");
         }
 
-        private int ReferencePackageById(string packageId, SolutionFile solutionFile)
+        return solutionFile.ReferenceRepo(repo, packages);
+    }
+
+    private static int ReferenceProject(XRepoEnvironment environment, string projectPath, SolutionFile solutionFile)
+    {
+        var packages = environment.FindPackagesFromProject(projectPath).ToArray();
+        if (packages.Length == 0)
         {
-            var package = Environment.PackageRegistry.GetPackage(packageId);
-            if (package == null)
-            {
-                throw new CommandFailureException(16,
-                    $"'{packageId}' is not a registered package. Have you built it?");
-            }
+            Console.WriteLine($"Warning: No registered packages found for project '{projectPath}'.");
+            Console.WriteLine("The project will be added to the solution but no PackageReference->ProjectReference conversions can be made.");
 
-            var projects = package.Projects.ToArray();
-            string projectPath;
-
-            if (projects.Length == 0)
-            {
-                throw new CommandFailureException(16,
-                    $"Package '{packageId}' is registered but has no associated projects.");
-            }
-            else if (projects.Length == 1)
-            {
-                projectPath = projects[0].ProjectPath;
-            }
-            else
-            {
-                projectPath = PromptForProjectSelection(packageId, projects);
-            }
-
-            return solutionFile.ReferencePackage(packageId, projectPath);
+            solutionFile.EnsureProject(projectPath, SolutionFile.XRepoSolutionFolder);
+            return 0;
         }
 
-        internal static string PromptForProjectSelection(string packageId, RegisteredPackageProject[] projects)
+        return solutionFile.ReferenceProject(projectPath, packages);
+    }
+
+    private static int ReferencePackageById(XRepoEnvironment environment, string packageId, SolutionFile solutionFile)
+    {
+        var package = environment.PackageRegistry.GetPackage(packageId);
+        if (package == null)
         {
-            Console.WriteLine($"Package '{packageId}' has multiple registered projects:");
-            Console.WriteLine();
-            for (int i = 0; i < projects.Length; i++)
-            {
-                Console.WriteLine($"  [{i + 1}] {projects[i].ProjectPath}");
-            }
-            Console.WriteLine();
-            Console.Write("Select a project [1]: ");
-
-            var input = Console.ReadLine();
-
-            if (string.IsNullOrWhiteSpace(input))
-                return projects[0].ProjectPath;
-
-            if (int.TryParse(input, out int selection) && selection >= 1 && selection <= projects.Length)
-            {
-                return projects[selection - 1].ProjectPath;
-            }
-
-            throw new CommandFailureException(17,
-                $"Invalid selection '{input}'. Expected a number between 1 and {projects.Length}.");
+            throw new CommandFailureException(16,
+                $"'{packageId}' is not a registered package. Have you built it?");
         }
+
+        var projects = package.Projects.ToArray();
+        string projectPath;
+
+        if (projects.Length == 0)
+        {
+            throw new CommandFailureException(16,
+                $"Package '{packageId}' is registered but has no associated projects.");
+        }
+        else if (projects.Length == 1)
+        {
+            projectPath = projects[0].ProjectPath;
+        }
+        else
+        {
+            projectPath = PromptForProjectSelection(packageId, projects);
+        }
+
+        return solutionFile.ReferencePackage(packageId, projectPath);
+    }
+
+    internal static string PromptForProjectSelection(string packageId, RegisteredPackageProject[] projects)
+    {
+        Console.WriteLine($"Package '{packageId}' has multiple registered projects:");
+        Console.WriteLine();
+        for (int i = 0; i < projects.Length; i++)
+        {
+            Console.WriteLine($"  [{i + 1}] {projects[i].ProjectPath}");
+        }
+        Console.WriteLine();
+        Console.Write("Select a project [1]: ");
+
+        var input = Console.ReadLine();
+
+        if (string.IsNullOrWhiteSpace(input))
+            return projects[0].ProjectPath;
+
+        if (int.TryParse(input, out int selection) && selection >= 1 && selection <= projects.Length)
+        {
+            return projects[selection - 1].ProjectPath;
+        }
+
+        throw new CommandFailureException(17,
+            $"Invalid selection '{input}'. Expected a number between 1 and {projects.Length}.");
     }
 }

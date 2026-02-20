@@ -1,16 +1,19 @@
-﻿using System;
+using System;
+using System.CommandLine;
 using XRepo.CommandLine.Infrastructure;
+using XRepo.Core;
 
-namespace XRepo.CommandLine.Commands
+namespace XRepo.CommandLine.Commands;
+
+public class ReposCommand : Command
 {
-    [CommandName("repos", "Lists all registered repos")]
-    public class ReposCommand : Command
+    public ReposCommand(XRepoEnvironment environment)
+        : base("repos", "Lists all registered repos")
     {
-        public override void Execute()
+        this.SetAction(parseResult =>
         {
-            var repoList = Environment.RepoRegistry.GetRepos();
-
-            App.Out.WriteList("repos", repoList, r => Console.WriteLine("{0} - {1}", r.Name, r.Path));
-        }
+            var repoList = environment.RepoRegistry.GetRepos();
+            Console.Out.WriteList("repos", repoList, r => Console.WriteLine("{0} - {1}", r.Name, r.Path));
+        });
     }
 }

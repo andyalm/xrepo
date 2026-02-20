@@ -1,27 +1,34 @@
-﻿using System;
+using System;
+using System.CommandLine;
 using System.Linq;
 using XRepo.CommandLine.Infrastructure;
+using XRepo.Core;
 
-namespace XRepo.CommandLine.Commands
+namespace XRepo.CommandLine.Commands;
+
+public class WhereCommand : Command
 {
-    [CommandName("where", "Lists all locations of a registered package")]
-    public class WhereCommand : Command
+    public WhereCommand(XRepoEnvironment environment)
+        : base("where", "Lists all locations of a registered package")
     {
-        [Required]
-        [CommandArgument("The name of a package")]
-        public string Name { get; set; } = null!;
-
-        public override void Execute()
+        var nameArg = new Argument<string>("name")
         {
-            var packageRegistration = Environment.PackageRegistry.GetPackage(Name);
+            Description = "The name of a package"
+        };
+        Arguments.Add(nameArg);
+
+        this.SetAction(parseResult =>
+        {
+            var name = parseResult.GetValue(nameArg)!;
+            var packageRegistration = environment.PackageRegistry.GetPackage(name);
             if (packageRegistration != null)
             {
                 Console.Out.WriteList("packages", packageRegistration.Projects.OrderByDescending(p => p.Timestamp).Select(p => p.OutputPath));
             }
             else
             {
-                throw new CommandFailureException(12, $"No package with name '{Name}' is registered. Have you ever built it on this machine?");
+                throw new CommandFailureException(12, $"No package with name '{name}' is registered. Have you ever built it on this machine?");
             }
-        }
+        });
     }
 }

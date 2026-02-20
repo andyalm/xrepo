@@ -1,86 +1,71 @@
-﻿using System;
+using System;
+using System.CommandLine;
 using System.IO;
-
-using Microsoft.Extensions.CommandLineUtils;
 using XRepo.CommandLine.Infrastructure;
+using XRepo.Core;
 
-namespace XRepo.CommandLine.Commands
+namespace XRepo.CommandLine.Commands;
+
+public class RepoCommand : Command
 {
-    [CommandName("repo", "Registers or unregisters a repo")]
-    public class RepoCommand : Command
+    public RepoCommand(XRepoEnvironment environment)
+        : base("repo", "Registers or unregisters a repo")
     {
-        public override void Setup()
+        Subcommands.Add(new RegisterCommand(environment));
+        Subcommands.Add(new UnregisterCommand(environment));
+    }
+
+    public class RegisterCommand : Command
+    {
+        public RegisterCommand(XRepoEnvironment environment)
+            : base("register", "Registers a repo at the current or specified path")
         {
-            App.Command("register", register =>
+            var nameArg = new Argument<string>("name")
             {
-                register.Description = "Registers a repo at the current or specified path";
-                var input = register.RepoInput();
-                register.OnExecuteWithHelp(() =>
-                {
-                    input.Validate(register);
-
-                    var fullRepoPath = input.GetFullPath();
-                    if (!Directory.Exists(fullRepoPath))
-                        throw new CommandFailureException(10, "The path '" + fullRepoPath + "' does not exist");
-
-                    if (Environment.RepoRegistry.IsRepoRegistered(input.Name.Value))
-                        Environment.RepoRegistry.UnregisterRepo(input.Name.Value);
-                    Environment.RepoRegistry.RegisterRepo(input.Name.Value, fullRepoPath);
-                    Environment.RepoRegistry.Save();
-
-                    return 0;
-                });
-
-            });
-            App.Command("unregister", unregister =>
+                Description = "The name of the repo being registered"
+            };
+            var pathOption = new Option<string?>("--path", "-p")
             {
-                unregister.Description = "Unregisters a repo with the given name";
-                var input = unregister.RepoInput();
-                unregister.OnExecuteWithHelp(() =>
-                {
-                    input.Validate(unregister);
-                    if (Environment.RepoRegistry.IsRepoRegistered(input.Name.Value))
-                        Environment.RepoRegistry.UnregisterRepo(input.Name.Value);
-                    Environment.RepoRegistry.Save();
+                Description = "The optional path to the repo"
+            };
+            Arguments.Add(nameArg);
+            Options.Add(pathOption);
 
-                    return 0;
-                });
+            this.SetAction(parseResult =>
+            {
+                var name = parseResult.GetValue(nameArg)!;
+                var path = parseResult.GetValue(pathOption);
+                var fullRepoPath = Path.GetFullPath(path ?? Directory.GetCurrentDirectory());
+
+                if (!Directory.Exists(fullRepoPath))
+                    throw new CommandFailureException(10, "The path '" + fullRepoPath + "' does not exist");
+
+                if (environment.RepoRegistry.IsRepoRegistered(name))
+                    environment.RepoRegistry.UnregisterRepo(name);
+                environment.RepoRegistry.RegisterRepo(name, fullRepoPath);
+                environment.RepoRegistry.Save();
             });
-        }
-
-        public override void Execute()
-        {
-            App.Out.WriteLine(App.GetHelpText());
         }
     }
 
-    static class RepoExtensions
+    public class UnregisterCommand : Command
     {
-        public static RepoInput RepoInput(this CommandLineApplication app)
+        public UnregisterCommand(XRepoEnvironment environment)
+            : base("unregister", "Unregisters a repo with the given name")
         {
-            var input = new RepoInput();
-            input.Name = app.Argument("name", "The name of the repo being registered");
-            input.Path = app.Option("-p|--path", "The optional path to the repo", CommandOptionType.SingleValue);
+            var nameArg = new Argument<string>("name")
+            {
+                Description = "The name of the repo being unregistered"
+            };
+            Arguments.Add(nameArg);
 
-            return input;
-        }
-    }
-
-    public class RepoInput
-    {
-        public CommandArgument Name { get; set; } = null!;
-
-        public CommandOption Path { get; set; } = null!;
-
-        public string GetFullPath()
-        {
-            return System.IO.Path.GetFullPath(Path.Value() ?? Directory.GetCurrentDirectory());
-        }
-
-        public void Validate(CommandLineApplication app)
-        {
-            if(string.IsNullOrWhiteSpace(Name.Value))
-                throw new CommandSyntaxException(app, "The argument 'name' is required");
+            this.SetAction(parseResult =>
+            {
+                var name = parseResult.GetValue(nameArg)!;
+                if (environment.RepoRegistry.IsRepoRegistered(name))
+                    environment.RepoRegistry.UnregisterRepo(name);
+                environment.RepoRegistry.Save();
+            });
         }
     }
 }
