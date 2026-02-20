@@ -31,9 +31,6 @@ namespace XRepo.Core
         private RepoRegistry? _repoRegistry;
         public RepoRegistry RepoRegistry => _repoRegistry ??= RepoRegistry.ForDirectory(_directory);
 
-        private ConfigRegistry? _configRegistry;
-        public ConfigRegistry ConfigRegistry => _configRegistry ??= ConfigRegistry.ForDirectory(_directory);
-
         public IEnumerable<PackageRegistration> FindPackagesFromRepo(string repoName)
         {
             if (!RepoRegistry.IsRepoRegistered(repoName, out var repo))

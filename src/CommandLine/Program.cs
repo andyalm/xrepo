@@ -8,7 +8,6 @@ var environment = XRepoEnvironment.ForCurrentUser();
 
 var rootCommand = new RootCommand("xrepo - Cross-repo development tool");
 rootCommand.Subcommands.Add(new BootstrapCommand());
-rootCommand.Subcommands.Add(new ConfigCommand(environment));
 rootCommand.Subcommands.Add(new PackagesCommand(environment));
 rootCommand.Subcommands.Add(new RefCommand(environment));
 rootCommand.Subcommands.Add(new RepoCommand(environment));

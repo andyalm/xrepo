@@ -55,11 +55,6 @@ namespace XRepo.Tests.Support
             get { return _xRepoEnvironment.RepoRegistry; }
         }
 
-        public ConfigRegistry ConfigRegistry
-        {
-            get { return _xRepoEnvironment.ConfigRegistry; }
-        }
-
         public void Dispose()
         {
             //Directory.Delete(_tempDir, recursive:true);
