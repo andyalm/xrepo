@@ -25,6 +25,9 @@ public class UnrefCommand : Command
         {
             Description = "The path to the solution file. Auto-detected if not specified."
         };
+        solutionOption.CompletionSources.Add(ctx =>
+            FileCompletions.Get(ctx.WordToComplete, ".sln", ".slnx")
+        );
         Arguments.Add(nameArg);
         Options.Add(solutionOption);
 
