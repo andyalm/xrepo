@@ -21,7 +21,9 @@ public class RefCommand : Command
         {
             var repos = environment.RepoRegistry.GetRepos().Select(r => new CompletionItem(r.Name));
             var packages = environment.PackageRegistry.GetPackages().Select(p => new CompletionItem(p.PackageId));
-            return repos.Concat(packages);
+            var csprojFiles = Directory.EnumerateFiles(".", "*.csproj", SearchOption.AllDirectories)
+                .Select(p => new CompletionItem(p));
+            return repos.Concat(packages).Concat(csprojFiles);
         });
         var solutionOption = new Option<FileInfo?>("--solution", "-s")
         {
