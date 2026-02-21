@@ -1,6 +1,7 @@
 using System;
 using System.CommandLine;
 using System.CommandLine.Completions;
+using System.IO;
 using System.Linq;
 using XRepo.CommandLine.Infrastructure;
 using XRepo.Core;
@@ -20,7 +21,7 @@ public class UnrefCommand : Command
         nameArg.CompletionSources.Add(ctx =>
             environment.RepoRegistry.GetRepos().Select(r => new CompletionItem(r.Name))
         );
-        var solutionOption = new Option<string?>("--solution", "-s")
+        var solutionOption = new Option<FileInfo?>("--solution", "-s")
         {
             Description = "The path to the solution file. Auto-detected if not specified."
         };
@@ -29,7 +30,7 @@ public class UnrefCommand : Command
 
         this.SetAction(parseResult =>
         {
-            var solutionPath = SolutionHelper.ResolveSolutionPath(parseResult.GetValue(solutionOption));
+            var solutionPath = SolutionHelper.ResolveSolutionPath(parseResult.GetValue(solutionOption)?.FullName);
             var solutionFile = SolutionFile.Read(solutionPath);
             var allConsumingProjects = solutionFile.ConsumingProjects().ToArray();
 

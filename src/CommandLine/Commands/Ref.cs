@@ -23,7 +23,7 @@ public class RefCommand : Command
             var packages = environment.PackageRegistry.GetPackages().Select(p => new CompletionItem(p.PackageId));
             return repos.Concat(packages);
         });
-        var solutionOption = new Option<string?>("--solution", "-s")
+        var solutionOption = new Option<FileInfo?>("--solution", "-s")
         {
             Description = "The path to the solution file. Auto-detected if not specified."
         };
@@ -33,7 +33,7 @@ public class RefCommand : Command
         this.SetAction(parseResult =>
         {
             var name = parseResult.GetValue(nameArg)!;
-            var solutionPath = SolutionHelper.ResolveSolutionPath(parseResult.GetValue(solutionOption));
+            var solutionPath = SolutionHelper.ResolveSolutionPath(parseResult.GetValue(solutionOption)?.FullName);
             var solutionFile = SolutionFile.Read(solutionPath);
             int referencedCount = 0;
 
