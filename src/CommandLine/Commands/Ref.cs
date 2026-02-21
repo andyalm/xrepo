@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.CommandLine;
 using System.CommandLine.Completions;
 using System.IO;
@@ -21,8 +22,7 @@ public class RefCommand : Command
         {
             var repos = environment.RepoRegistry.GetRepos().Select(r => new CompletionItem(r.Name));
             var packages = environment.PackageRegistry.GetPackages().Select(p => new CompletionItem(p.PackageId));
-            var csprojFiles = Directory.EnumerateFiles(".", "*.csproj", SearchOption.AllDirectories)
-                .Select(p => new CompletionItem(p));
+            var csprojFiles = GetCsprojCompletions(ctx.WordToComplete);
             return repos.Concat(packages).Concat(csprojFiles);
         });
         var solutionOption = new Option<FileInfo?>("--solution", "-s")
@@ -132,6 +132,32 @@ public class RefCommand : Command
         }
 
         return solutionFile.ReferencePackage(packageId, projectPath);
+    }
+
+    internal static IEnumerable<CompletionItem> GetCsprojCompletions(string wordToComplete)
+    {
+        var directory = ".";
+        var prefix = wordToComplete;
+
+        var lastSeparator = wordToComplete.LastIndexOfAny(new[] { '/', '\\' });
+        if (lastSeparator >= 0)
+        {
+            directory = wordToComplete[..(lastSeparator + 1)];
+            prefix = wordToComplete[(lastSeparator + 1)..];
+        }
+
+        if (!Directory.Exists(directory))
+            return Enumerable.Empty<CompletionItem>();
+
+        var subdirs = Directory.EnumerateDirectories(directory)
+            .Where(d => Path.GetFileName(d).StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
+            .Select(d => new CompletionItem(d + Path.DirectorySeparatorChar));
+
+        var files = Directory.EnumerateFiles(directory, "*.csproj")
+            .Where(f => Path.GetFileName(f).StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
+            .Select(f => new CompletionItem(f));
+
+        return subdirs.Concat(files);
     }
 
     internal static string PromptForProjectSelection(string packageId, RegisteredPackageProject[] projects)
