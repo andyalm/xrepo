@@ -1,5 +1,6 @@
 using System;
 using System.CommandLine;
+using System.CommandLine.Completions;
 using System.Linq;
 using XRepo.CommandLine.Infrastructure;
 using XRepo.Core;
@@ -16,6 +17,9 @@ public class UnrefCommand : Command
             Description = "The name of the repo to unref (omit to unref all)",
             Arity = ArgumentArity.ZeroOrOne
         };
+        nameArg.CompletionSources.Add(ctx =>
+            environment.RepoRegistry.GetRepos().Select(r => new CompletionItem(r.Name))
+        );
         var solutionOption = new Option<string?>("--solution", "-s")
         {
             Description = "The path to the solution file. Auto-detected if not specified."

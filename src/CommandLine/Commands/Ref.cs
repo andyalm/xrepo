@@ -1,5 +1,6 @@
 using System;
 using System.CommandLine;
+using System.CommandLine.Completions;
 using System.IO;
 using System.Linq;
 using XRepo.CommandLine.Infrastructure;
@@ -16,6 +17,12 @@ public class RefCommand : Command
         {
             Description = "The name of a registered repo, a package ID, or a path to a .csproj"
         };
+        nameArg.CompletionSources.Add(ctx =>
+        {
+            var repos = environment.RepoRegistry.GetRepos().Select(r => new CompletionItem(r.Name));
+            var packages = environment.PackageRegistry.GetPackages().Select(p => new CompletionItem(p.PackageId));
+            return repos.Concat(packages);
+        });
         var solutionOption = new Option<string?>("--solution", "-s")
         {
             Description = "The path to the solution file. Auto-detected if not specified."
