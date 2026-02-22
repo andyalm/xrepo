@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.VisualStudio.SolutionPersistence;
 using Microsoft.VisualStudio.SolutionPersistence.Model;
 using Microsoft.VisualStudio.SolutionPersistence.Serializer;
@@ -25,11 +26,11 @@ namespace XRepo.Core
             _serializer = serializer;
         }
 
-        public static SolutionFile Read(string filePath)
+        public static async Task<SolutionFile> ReadAsync(string filePath)
         {
             var serializer = SolutionSerializers.GetSerializerByMoniker(filePath)
                 ?? throw new InvalidOperationException($"No serializer found for '{filePath}'");
-            var model = serializer.OpenAsync(filePath, CancellationToken.None).GetAwaiter().GetResult();
+            var model = await serializer.OpenAsync(filePath, CancellationToken.None);
             return new SolutionFile(model, filePath, serializer);
         }
 
@@ -174,9 +175,9 @@ namespace XRepo.Core
             return new UnreferenceResult(modifiedCount, projectPaths.Length);
         }
 
-        public void Save()
+        public Task SaveAsync()
         {
-            _serializer.SaveAsync(_filePath, _model, CancellationToken.None).GetAwaiter().GetResult();
+            return _serializer.SaveAsync(_filePath, _model, CancellationToken.None);
         }
     }
 }

@@ -36,16 +36,16 @@ public class UnrefCommand : Command
         Arguments.Add(nameArg);
         Options.Add(solutionOption);
 
-        this.SetAction(parseResult =>
+        SetAction(async parseResult =>
         {
             var name = parseResult.GetValue(nameArg);
             var solutionPath = parseResult.GetValue(solutionOption)?.FullName ?? SolutionHelper.ResolveSolutionFrom();
-            var solutionFile = SolutionFile.Read(solutionPath);
+            var solutionFile = await SolutionFile.ReadAsync(solutionPath);
 
             if (string.IsNullOrEmpty(name))
             {
                 solutionFile.UnreferenceAll();
-                solutionFile.Save();
+                await solutionFile.SaveAsync();
 
                 Console.WriteLine("All xrepo project references have been removed. Running dotnet restore...");
                 SolutionHelper.DotnetRestore(solutionPath);
@@ -64,7 +64,7 @@ public class UnrefCommand : Command
 
                 var projectPaths = projects.Select(p => p.ProjectPath).ToArray();
                 var result = solutionFile.UnreferenceProjects(projectPaths);
-                solutionFile.Save();
+                await solutionFile.SaveAsync();
 
                 if (result.ModifiedProjectCount > 0)
                 {

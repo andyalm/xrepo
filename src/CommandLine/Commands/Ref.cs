@@ -36,11 +36,11 @@ public class RefCommand : Command
         Arguments.Add(nameArg);
         Options.Add(solutionOption);
 
-        this.SetAction(parseResult =>
+        SetAction(async parseResult =>
         {
             var name = parseResult.GetValue(nameArg)!;
             var solutionPath = parseResult.GetValue(solutionOption)?.FullName ?? SolutionHelper.ResolveSolutionFrom();
-            var solutionFile = SolutionFile.Read(solutionPath);
+            var solutionFile = await SolutionFile.ReadAsync(solutionPath);
             int referencedCount = 0;
 
             if (environment.RepoRegistry.IsRepoRegistered(name))
@@ -61,7 +61,7 @@ public class RefCommand : Command
                     $"'{name}' is not a registered repo, a registered package, or a path to an existing .csproj file.");
             }
 
-            solutionFile.Save();
+            await solutionFile.SaveAsync();
 
             if (referencedCount > 0)
             {
