@@ -10,8 +10,20 @@
     <PackageId>xrepo</PackageId>
     <PackageVersion Condition="$(PackageReleaseTag) != ''">$(PackageReleaseTag.Substring(1))</PackageVersion>
     <PackageVersion Condition="$(PackageVersion)==''">2.0.0-dev</PackageVersion>
+    <Authors>Andy Alm</Authors>
+    <PackageDescription>Cross repository development made easier</PackageDescription>
+    <RepositoryUrl>https://github.com/andyalm/xrepo.git</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/andyalm/xrepo</PackageProjectUrl>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryBranch>$(GITHUB_REF_NAME)</RepositoryBranch>
+    <RepositoryCommit>$(GITHUB_SHA)</RepositoryCommit>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
   </PropertyGroup>
+  <ItemGroup>
+    <None Include="..\..\README.md" Pack="true" PackagePath="\" />
+    <None Include="..\..\LICENSE" Pack="true" PackagePath="\" />
+  </ItemGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="XRepo.Tests" />
   </ItemGroup>

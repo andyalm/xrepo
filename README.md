@@ -1,4 +1,4 @@
-XRepo - Cross repository development finally made easy
+XRepo - Cross repository development made easier
 ======================================================
 
 XRepo makes it easier to work on shared libraries across repositories by letting you temporarily replace NuGet package references with local project references that your IDE (Rider, Visual Studio) natively understands.
