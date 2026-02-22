@@ -174,7 +174,7 @@ namespace XRepo.Core
             return new UnreferenceResult(modifiedCount, projectPaths.Length);
         }
 
-        public void Write()
+        public void Save()
         {
             _serializer.SaveAsync(_filePath, _model, CancellationToken.None).GetAwaiter().GetResult();
         }

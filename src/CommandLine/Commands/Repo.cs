@@ -40,7 +40,7 @@ public class RepoCommand : Command
                 var fullRepoPath = Path.GetFullPath(path ?? Directory.GetCurrentDirectory());
 
                 if (!Directory.Exists(fullRepoPath))
-                    throw new CommandFailureException(10, "The path '" + fullRepoPath + "' does not exist");
+                    throw new CommandFailureException(10, $"The path '{fullRepoPath}' does not exist");
 
                 if (environment.RepoRegistry.IsRepoRegistered(name))
                     environment.RepoRegistry.UnregisterRepo(name);

@@ -25,17 +25,10 @@ public class WhichCommand : Command
         this.SetAction(parseResult =>
         {
             var name = parseResult.GetValue(nameArg)!;
-            var package = environment.PackageRegistry.GetPackage(name);
+            var package = environment.PackageRegistry.GetPackage(name)
+                ?? throw new CommandFailureException(14, $"'{name}' is not a registered package. Have you built it?");
 
-            if (package != null)
-            {
-                Console.WriteLine(package.MostRecentProject!.ProjectPath);
-            }
-            else
-            {
-                throw new CommandFailureException(14,
-                    $"'{name}' is not a registered package. Have you built it?");
-            }
+            Console.WriteLine(package.MostRecentProject!.ProjectPath);
         });
     }
 }

@@ -45,7 +45,7 @@ public class UnrefCommand : Command
             if (string.IsNullOrEmpty(name))
             {
                 solutionFile.UnreferenceAll();
-                solutionFile.Write();
+                solutionFile.Save();
 
                 Console.WriteLine("All xrepo project references have been removed. Running dotnet restore...");
                 SolutionHelper.DotnetRestore(solutionPath);
@@ -64,7 +64,7 @@ public class UnrefCommand : Command
 
                 var projectPaths = projects.Select(p => p.ProjectPath).ToArray();
                 var result = solutionFile.UnreferenceProjects(projectPaths);
-                solutionFile.Write();
+                solutionFile.Save();
 
                 if (result.ModifiedProjectCount > 0)
                 {

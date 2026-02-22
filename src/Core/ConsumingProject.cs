@@ -12,10 +12,8 @@ namespace XRepo.Core
 
         public static ConsumingProject Load(string filePath)
         {
-            using (var stream = File.OpenRead(filePath))
-            {
-                return new ConsumingProject(XDocument.Load(stream), filePath);
-            }
+            using var stream = File.OpenRead(filePath);
+            return new ConsumingProject(XDocument.Load(stream), filePath);
         }
 
         private readonly XDocument _doc;
@@ -59,10 +57,8 @@ namespace XRepo.Core
                 Indent = true,
                 CloseOutput = true
             };
-            using (var writer = XmlWriter.Create(File.Open(FilePath, FileMode.Create), writerSettings))
-            {
-                _doc.Save(writer);
-            }
+            using var writer = XmlWriter.Create(File.Open(FilePath, FileMode.Create), writerSettings);
+            _doc.Save(writer);
         }
 
         public bool ReferencesPackage(string packageId)
@@ -73,27 +69,21 @@ namespace XRepo.Core
 
         public bool RemoveXRepoProjectReferences()
         {
-            var linkedReferences = _doc.Root!.Elements(_doc.Root.Name.Namespace + "ItemGroup")
-                .Where(e => (string?)e.Attribute("Label") == XRepoReferenceLabel).ToArray();
+            var xrepoItemGroups = GetXRepoItemGroups();
+            if (xrepoItemGroups.Length == 0)
+                return false;
 
-            if (linkedReferences.Length > 0)
-            {
-                foreach (var el in linkedReferences)
-                    el.Remove();
-                return true;
-            }
-
-            return false;
+            foreach (var el in xrepoItemGroups)
+                el.Remove();
+            return true;
         }
 
         public bool RemoveXRepoProjectReference(string projectPath)
         {
             var ns = _doc.Root!.Name.Namespace;
-            var xrepoItemGroups = _doc.Root.Elements(ns + "ItemGroup")
-                .Where(e => (string?)e.Attribute("Label") == XRepoReferenceLabel).ToArray();
-
             bool removed = false;
-            foreach (var itemGroup in xrepoItemGroups)
+
+            foreach (var itemGroup in GetXRepoItemGroups())
             {
                 var matchingRefs = itemGroup.Elements(ns + "ProjectReference")
                     .Where(e => string.Equals((string?)e.Attribute("Include"), projectPath,
@@ -115,9 +105,15 @@ namespace XRepo.Core
 
         public bool HasXRepoProjectReferences()
         {
+            return GetXRepoItemGroups().Length > 0;
+        }
+
+        private XElement[] GetXRepoItemGroups()
+        {
             var ns = _doc.Root!.Name.Namespace;
             return _doc.Root.Elements(ns + "ItemGroup")
-                .Any(e => (string?)e.Attribute("Label") == XRepoReferenceLabel);
+                .Where(e => (string?)e.Attribute("Label") == XRepoReferenceLabel)
+                .ToArray();
         }
     }
 }

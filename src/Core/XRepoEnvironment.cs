@@ -43,6 +43,8 @@ namespace XRepo.Core
 
         public RegisteredPackageProject[] ResolveProjects(string name)
         {
+            IEnumerable<RegisteredPackageProject> projects;
+
             if (RepoRegistry.IsRepoRegistered(name))
             {
                 var packages = FindPackagesFromRepo(name).ToArray();
@@ -51,29 +53,28 @@ namespace XRepo.Core
                     throw new XRepoException(
                         $"No packages are registered from repo '{name}'. Nothing to unref.");
                 }
-                return packages
-                    .SelectMany(p => p.Projects)
-                    .GroupBy(p => p.ProjectPath, StringComparer.OrdinalIgnoreCase)
-                    .Select(g => g.First())
-                    .ToArray();
+                projects = packages.SelectMany(p => p.Projects);
             }
-
-            if (PackageRegistry.IsPackageRegistered(name))
+            else if (PackageRegistry.IsPackageRegistered(name))
             {
-                var package = PackageRegistry.GetPackage(name);
-                if (package == null || !package.Projects.Any())
+                var package = PackageRegistry.GetPackage(name)!;
+                if (!package.Projects.Any())
                 {
                     throw new XRepoException(
                         $"Package '{name}' has no associated projects. Nothing to unref.");
                 }
-                return package.Projects
-                    .GroupBy(p => p.ProjectPath, StringComparer.OrdinalIgnoreCase)
-                    .Select(g => g.First())
-                    .ToArray();
+                projects = package.Projects;
+            }
+            else
+            {
+                throw new XRepoException(
+                    $"'{name}' is not a registered repo or package. Run 'xrepo repos' or 'xrepo packages' to see what is registered.");
             }
 
-            throw new XRepoException(
-                $"'{name}' is not a registered repo or package. Run 'xrepo repos' or 'xrepo packages' to see what is registered.");
+            return projects
+                .GroupBy(p => p.ProjectPath, StringComparer.OrdinalIgnoreCase)
+                .Select(g => g.First())
+                .ToArray();
         }
 
         public IEnumerable<PackageRegistration> FindPackagesFromProject(string projectPath)
@@ -84,27 +85,18 @@ namespace XRepo.Core
                     p.ProjectPath.Equals(fullPath, StringComparison.OrdinalIgnoreCase)));
         }
 
-        private string? _defaultConfigDir;
-
-        private string DefaultConfigDir
+        private static string DefaultConfigDir
         {
             get
             {
-                if(_defaultConfigDir != null)
-                    return _defaultConfigDir;
-
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
                     var localAppData = Environment.GetEnvironmentVariable("LOCALAPPDATA")!;
-                    _defaultConfigDir = Path.Combine(localAppData, "XRepo");
-                }
-                else
-                {
-                    var homeDir = Environment.GetEnvironmentVariable("HOME")!;
-                    _defaultConfigDir = Path.Combine(homeDir, ".xrepo");
+                    return Path.Combine(localAppData, "XRepo");
                 }
 
-                return _defaultConfigDir;
+                var homeDir = Environment.GetEnvironmentVariable("HOME")!;
+                return Path.Combine(homeDir, ".xrepo");
             }
         }
 

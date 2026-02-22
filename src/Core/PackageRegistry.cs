@@ -23,10 +23,7 @@ namespace XRepo.Core
 
         public PackageRegistration? GetPackage(string packageId)
         {
-            if (IsPackageRegistered(packageId))
-                return _packages.GetItem(packageId);
-            else
-                return null;
+            return IsPackageRegistered(packageId) ? _packages.GetItem(packageId) : null;
         }
 
         public void RegisterPackage(PackageIdentifier packageId, string packagePath, string projectPath)

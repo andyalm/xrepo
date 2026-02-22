@@ -18,7 +18,7 @@ namespace XRepo.CommandLine.Infrastructure
             if (solutions.Length > 1)
                 throw new XRepoException("No solution was specified and multiple solution files found. Please specify which solution to use with --solution");
 
-            return solutions.Single();
+            return solutions[0];
         }
 
         public static void DotnetRestore(string solutionPath)

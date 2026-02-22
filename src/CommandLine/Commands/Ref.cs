@@ -61,7 +61,7 @@ public class RefCommand : Command
                     $"'{name}' is not a registered repo, a registered package, or a path to an existing .csproj file.");
             }
 
-            solutionFile.Write();
+            solutionFile.Save();
 
             if (referencedCount > 0)
             {
@@ -111,33 +111,22 @@ public class RefCommand : Command
 
     private static int ReferencePackageById(XRepoEnvironment environment, string packageId, SolutionFile solutionFile)
     {
-        var package = environment.PackageRegistry.GetPackage(packageId);
-        if (package == null)
-        {
-            throw new CommandFailureException(16,
-                $"'{packageId}' is not a registered package. Have you built it?");
-        }
+        var package = environment.PackageRegistry.GetPackage(packageId)
+            ?? throw new CommandFailureException(16, $"'{packageId}' is not a registered package. Have you built it?");
 
         var projects = package.Projects.ToArray();
-        string projectPath;
-
         if (projects.Length == 0)
         {
             throw new CommandFailureException(16,
                 $"Package '{packageId}' is registered but has no associated projects.");
         }
-        else if (projects.Length == 1)
-        {
-            projectPath = projects[0].ProjectPath;
-        }
-        else
-        {
-            projectPath = PromptForProjectSelection(packageId, projects);
-        }
+
+        var projectPath = projects.Length == 1
+            ? projects[0].ProjectPath
+            : PromptForProjectSelection(packageId, projects);
 
         return solutionFile.ReferencePackage(packageId, projectPath);
     }
-
 
     internal static string PromptForProjectSelection(string packageId, RegisteredPackageProject[] projects)
     {
