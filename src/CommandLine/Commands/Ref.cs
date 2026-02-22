@@ -39,7 +39,7 @@ public class RefCommand : Command
         this.SetAction(parseResult =>
         {
             var name = parseResult.GetValue(nameArg)!;
-            var solutionPath = SolutionHelper.ResolveSolutionPath(parseResult.GetValue(solutionOption)?.FullName);
+            var solutionPath = parseResult.GetValue(solutionOption)?.FullName ?? SolutionHelper.ResolveSolutionFrom();
             var solutionFile = SolutionFile.Read(solutionPath);
             int referencedCount = 0;
 
