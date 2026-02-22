@@ -112,6 +112,88 @@ namespace XRepo.Tests
         }
 
         [Fact]
+        public void RemoveXRepoProjectReference_RemovesSpecificReference()
+        {
+            var doc = CreateMinimalCsproj();
+            var project = new ConsumingProject(doc, "test.csproj");
+            project.AddProjectReference(@"..\MyLib\MyLib.csproj");
+            project.AddProjectReference(@"..\OtherLib\OtherLib.csproj");
+
+            var removed = project.RemoveXRepoProjectReference(@"..\MyLib\MyLib.csproj");
+
+            removed.Should().BeTrue();
+            var remaining = doc.Root!.Elements("ItemGroup")
+                .Where(e => (string?)e.Attribute("Label") == "XRepoReference")
+                .SelectMany(e => e.Elements("ProjectReference"))
+                .Select(e => (string?)e.Attribute("Include"))
+                .ToList();
+            remaining.Should().ContainSingle().Which.Should().Be(@"..\OtherLib\OtherLib.csproj");
+        }
+
+        [Fact]
+        public void RemoveXRepoProjectReference_RemovesItemGroupWhenLastReferenceRemoved()
+        {
+            var doc = CreateMinimalCsproj();
+            var project = new ConsumingProject(doc, "test.csproj");
+            project.AddProjectReference(@"..\MyLib\MyLib.csproj");
+
+            var removed = project.RemoveXRepoProjectReference(@"..\MyLib\MyLib.csproj");
+
+            removed.Should().BeTrue();
+            doc.Root!.Elements("ItemGroup")
+                .Should().NotContain(e => (string?)e.Attribute("Label") == "XRepoReference");
+        }
+
+        [Fact]
+        public void RemoveXRepoProjectReference_ReturnsFalseWhenReferenceNotFound()
+        {
+            var doc = CreateMinimalCsproj();
+            var project = new ConsumingProject(doc, "test.csproj");
+            project.AddProjectReference(@"..\MyLib\MyLib.csproj");
+
+            var removed = project.RemoveXRepoProjectReference(@"..\NonExistent\NonExistent.csproj");
+
+            removed.Should().BeFalse();
+            doc.Root!.Elements("ItemGroup")
+                .Where(e => (string?)e.Attribute("Label") == "XRepoReference")
+                .SelectMany(e => e.Elements("ProjectReference"))
+                .Should().ContainSingle();
+        }
+
+        [Fact]
+        public void RemoveXRepoProjectReference_MatchesCaseInsensitively()
+        {
+            var doc = CreateMinimalCsproj();
+            var project = new ConsumingProject(doc, "test.csproj");
+            project.AddProjectReference(@"..\MyLib\MyLib.csproj");
+
+            var removed = project.RemoveXRepoProjectReference(@"..\MYLIB\MYLIB.CSPROJ");
+
+            removed.Should().BeTrue();
+            doc.Root!.Elements("ItemGroup")
+                .Should().NotContain(e => (string?)e.Attribute("Label") == "XRepoReference");
+        }
+
+        [Fact]
+        public void HasXRepoProjectReferences_ReturnsTrueWhenReferencesExist()
+        {
+            var doc = CreateMinimalCsproj();
+            var project = new ConsumingProject(doc, "test.csproj");
+            project.AddProjectReference(@"..\MyLib\MyLib.csproj");
+
+            project.HasXRepoProjectReferences().Should().BeTrue();
+        }
+
+        [Fact]
+        public void HasXRepoProjectReferences_ReturnsFalseWhenNoReferencesExist()
+        {
+            var doc = CreateMinimalCsproj();
+            var project = new ConsumingProject(doc, "test.csproj");
+
+            project.HasXRepoProjectReferences().Should().BeFalse();
+        }
+
+        [Fact]
         public void RefoRepoFlow_OnlyAddsReferencesForPackagesConsumedBySolution()
         {
             // Repo produces PkgA and PkgB, but only PkgA is referenced by a consuming project

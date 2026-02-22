@@ -79,7 +79,7 @@ Or, if you have a local clone of this repo:
 3) Restart your shell, and tab completion will work for xrepo commands:
 
     xrepo <TAB>              # lists all commands
-    xrepo ref <TAB>          # lists registered repos and packages
+    xrepo ref <TAB>          # lists registered repos, packages, or paths to csproj files
     xrepo which <TAB>        # lists registered packages
     xrepo repo unregister <TAB>  # lists registered repos
 
