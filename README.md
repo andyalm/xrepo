@@ -45,6 +45,44 @@ Commands
 | `ref <name> [-s\|--solution]` | Add project references for a repo's packages into a solution |
 | `unref [name] [-s\|--solution]` | Remove project references that were added by xrepo ref |
 
+Tab Completion
+--------------
+
+XRepo supports shell tab completion via [dotnet-suggest](https://github.com/dotnet/command-line-api/blob/main/docs/dotnet-suggest.md). This gives you completions for commands, options, and dynamic values like registered repo names and package IDs.
+
+1) Install `dotnet-suggest` as a global tool:
+
+    dotnet tool install -g dotnet-suggest
+
+2) Add the shell shim to your profile:
+
+**bash** (`~/.bashrc`):
+
+    dotnet-suggest script bash >> ~/.bashrc
+
+**zsh** (`~/.zshrc`):
+
+The default script from `dotnet-suggest script zsh` has bugs that break file path
+completion and can produce errors on empty results. Use the fixed version included
+in this repo instead:
+
+    curl -fsSL https://raw.githubusercontent.com/andyalm/xrepo/main/.tab_completions/zsh.sh >> ~/.zshrc
+
+Or, if you have a local clone of this repo:
+
+    cat /path/to/xrepo/.tab_completions/zsh.sh >> ~/.zshrc
+
+**PowerShell** (`$PROFILE`):
+
+    dotnet-suggest script powershell >> $PROFILE
+
+3) Restart your shell, and tab completion will work for xrepo commands:
+
+    xrepo <TAB>              # lists all commands
+    xrepo ref <TAB>          # lists registered repos, packages, or paths to csproj files
+    xrepo which <TAB>        # lists registered packages
+    xrepo repo unregister <TAB>  # lists registered repos
+
 How it works
 ------------
 

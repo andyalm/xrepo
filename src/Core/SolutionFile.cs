@@ -8,6 +8,8 @@ using Microsoft.VisualStudio.SolutionPersistence.Model;
 using Microsoft.VisualStudio.SolutionPersistence.Serializer;
 namespace XRepo.Core
 {
+    public record UnreferenceResult(int ModifiedProjectCount, int RemovedProjectPathCount);
+
     public class SolutionFile
     {
         public const string XRepoSolutionFolder = "xrepo";
@@ -122,6 +124,54 @@ namespace XRepo.Core
                 .FirstOrDefault(p => p.ProjectPath.StartsWith(repoPath, StringComparison.OrdinalIgnoreCase));
 
             return projectInRepo?.ProjectPath ?? package.MostRecentProject!.ProjectPath;
+        }
+
+        public int UnreferenceAll()
+        {
+            var consumingProjects = ConsumingProjects().ToArray();
+            int modifiedCount = 0;
+
+            foreach (var project in consumingProjects)
+            {
+                if (project.RemoveXRepoProjectReferences())
+                {
+                    project.Save();
+                    modifiedCount++;
+                }
+            }
+
+            RemoveSolutionFolder(XRepoSolutionFolder);
+
+            return modifiedCount;
+        }
+
+        public UnreferenceResult UnreferenceProjects(string[] projectPaths)
+        {
+            var consumingProjects = ConsumingProjects().ToArray();
+            int modifiedCount = 0;
+
+            foreach (var consumingProject in consumingProjects)
+            {
+                bool modified = false;
+                foreach (var projectPath in projectPaths)
+                {
+                    if (consumingProject.RemoveXRepoProjectReference(projectPath))
+                        modified = true;
+                }
+                if (modified)
+                {
+                    consumingProject.Save();
+                    modifiedCount++;
+                }
+            }
+
+            bool anyXRepoRefsRemain = consumingProjects.Any(p => p.HasXRepoProjectReferences());
+            if (!anyXRepoRefsRemain)
+            {
+                RemoveSolutionFolder(XRepoSolutionFolder);
+            }
+
+            return new UnreferenceResult(modifiedCount, projectPaths.Length);
         }
 
         public void Write()

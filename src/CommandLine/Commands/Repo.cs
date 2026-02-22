@@ -1,6 +1,8 @@
 using System;
 using System.CommandLine;
+using System.CommandLine.Completions;
 using System.IO;
+using System.Linq;
 using XRepo.CommandLine.Infrastructure;
 using XRepo.Core;
 
@@ -55,8 +57,12 @@ public class RepoCommand : Command
         {
             var nameArg = new Argument<string>("name")
             {
-                Description = "The name of the repo being unregistered"
+                Description = "The name of the repo being unregistered",
+                HelpName = "name"
             };
+            nameArg.CompletionSources.Add(ctx =>
+                environment.RepoRegistry.GetRepos().Select(r => new CompletionItem(r.Name))
+            );
             Arguments.Add(nameArg);
 
             this.SetAction(parseResult =>

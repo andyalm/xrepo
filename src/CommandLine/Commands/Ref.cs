@@ -1,5 +1,6 @@
 using System;
 using System.CommandLine;
+using System.CommandLine.Completions;
 using System.IO;
 using System.Linq;
 using XRepo.CommandLine.Infrastructure;
@@ -14,19 +15,31 @@ public class RefCommand : Command
     {
         var nameArg = new Argument<string>("name")
         {
-            Description = "The name of a registered repo, a package ID, or a path to a .csproj"
+            Description = "The name of a registered repo, a package ID, or a path to a .csproj",
+            HelpName = "name"
         };
-        var solutionOption = new Option<string?>("--solution", "-s")
+        nameArg.CompletionSources.Add(ctx =>
         {
-            Description = "The path to the solution file. Auto-detected if not specified."
+            var repos = environment.RepoRegistry.GetRepos().Select(r => new CompletionItem(r.Name));
+            var packages = environment.PackageRegistry.GetPackages().Select(p => new CompletionItem(p.PackageId));
+            var csprojFiles = FileCompletions.Get(ctx.WordToComplete, ".csproj");
+            return repos.Concat(packages).Concat(csprojFiles);
+        });
+        var solutionOption = new Option<FileInfo?>("--solution", "-s")
+        {
+            Description = "The path to the solution file. Auto-detected if not specified.",
+            HelpName = "solution"
         };
+        solutionOption.CompletionSources.Add(ctx =>
+            FileCompletions.Get(ctx.WordToComplete, ".sln", ".slnx")
+        );
         Arguments.Add(nameArg);
         Options.Add(solutionOption);
 
         this.SetAction(parseResult =>
         {
             var name = parseResult.GetValue(nameArg)!;
-            var solutionPath = SolutionHelper.ResolveSolutionPath(parseResult.GetValue(solutionOption));
+            var solutionPath = parseResult.GetValue(solutionOption)?.FullName ?? SolutionHelper.ResolveSolutionFrom();
             var solutionFile = SolutionFile.Read(solutionPath);
             int referencedCount = 0;
 
@@ -124,6 +137,7 @@ public class RefCommand : Command
 
         return solutionFile.ReferencePackage(packageId, projectPath);
     }
+
 
     internal static string PromptForProjectSelection(string packageId, RegisteredPackageProject[] projects)
     {

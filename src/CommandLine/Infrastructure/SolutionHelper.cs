@@ -6,12 +6,9 @@ namespace XRepo.CommandLine.Infrastructure
 {
     public static class SolutionHelper
     {
-        public static string ResolveSolutionPath(string? specifiedPath)
+        public static string ResolveSolutionFrom(string? currentDir = null)
         {
-            if (!string.IsNullOrWhiteSpace(specifiedPath))
-                return Path.GetFullPath(specifiedPath);
-
-            var currentDir = Directory.GetCurrentDirectory();
+            currentDir ??= Directory.GetCurrentDirectory();
             var solutions = Directory.GetFiles(currentDir, "*.sln")
                 .Concat(Directory.GetFiles(currentDir, "*.slnx"))
                 .ToArray();

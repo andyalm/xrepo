@@ -85,5 +85,39 @@ namespace XRepo.Core
 
             return false;
         }
+
+        public bool RemoveXRepoProjectReference(string projectPath)
+        {
+            var ns = _doc.Root!.Name.Namespace;
+            var xrepoItemGroups = _doc.Root.Elements(ns + "ItemGroup")
+                .Where(e => (string?)e.Attribute("Label") == XRepoReferenceLabel).ToArray();
+
+            bool removed = false;
+            foreach (var itemGroup in xrepoItemGroups)
+            {
+                var matchingRefs = itemGroup.Elements(ns + "ProjectReference")
+                    .Where(e => string.Equals((string?)e.Attribute("Include"), projectPath,
+                        StringComparison.OrdinalIgnoreCase))
+                    .ToArray();
+
+                foreach (var refElement in matchingRefs)
+                {
+                    refElement.Remove();
+                    removed = true;
+                }
+
+                if (!itemGroup.HasElements)
+                    itemGroup.Remove();
+            }
+
+            return removed;
+        }
+
+        public bool HasXRepoProjectReferences()
+        {
+            var ns = _doc.Root!.Name.Namespace;
+            return _doc.Root.Elements(ns + "ItemGroup")
+                .Any(e => (string?)e.Attribute("Label") == XRepoReferenceLabel);
+        }
     }
 }

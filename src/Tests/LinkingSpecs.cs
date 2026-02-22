@@ -153,6 +153,76 @@ namespace XRepo.Tests
             _testEnvironment.XRepoEnvironment.PackageRegistry.IsPackageRegistered("SomePackage").Should().BeTrue();
         }
 
+        [Fact]
+        public void ResolveProjects_ResolvesRepoName_ToProjects()
+        {
+            _testEnvironment.RegisterRepo("MyRepo", "myrepo");
+            _testEnvironment.RegisterPackageAt(new PackageIdentifier("MyRepo.Core", "1.0.0"), "myrepo");
+            _testEnvironment.RegisterPackageAt(new PackageIdentifier("MyRepo.Utils", "1.0.0"), "myrepo");
+
+            var projects = _testEnvironment.XRepoEnvironment.ResolveProjects("MyRepo");
+
+            projects.Should().HaveCount(2);
+            projects.Should().Contain(p => p.ProjectPath.Contains("MyRepo.Core"));
+            projects.Should().Contain(p => p.ProjectPath.Contains("MyRepo.Utils"));
+        }
+
+        [Fact]
+        public void ResolveProjects_ResolvesPackageId_ToProjects()
+        {
+            _testEnvironment.RegisterPackageAt(new PackageIdentifier("SomePackage", "1.0.0"), "src");
+
+            var projects = _testEnvironment.XRepoEnvironment.ResolveProjects("SomePackage");
+
+            projects.Should().ContainSingle();
+            projects[0].ProjectPath.Should().Contain("SomePackage");
+        }
+
+        [Fact]
+        public void ResolveProjects_ThrowsForUnknownName()
+        {
+            Action act = () => _testEnvironment.XRepoEnvironment.ResolveProjects("Bogus");
+
+            act.Should().Throw<XRepoException>().WithMessage("*not a registered repo or package*");
+        }
+
+        [Fact]
+        public void ResolveProjects_ThrowsWhenRepoHasNoPackages()
+        {
+            _testEnvironment.RegisterRepo("EmptyRepo", "emptyrepo");
+
+            Action act = () => _testEnvironment.XRepoEnvironment.ResolveProjects("EmptyRepo");
+
+            act.Should().Throw<XRepoException>().WithMessage("*No packages are registered*");
+        }
+
+        [Fact]
+        public void ResolveProjects_PrefersRepoWhenNameMatchesBoth()
+        {
+            _testEnvironment.RegisterRepo("MyLib", "mylib");
+            _testEnvironment.RegisterPackageAt(new PackageIdentifier("MyLib", "1.0.0"), "mylib");
+
+            // Should resolve through repo path (finding packages under repo directory)
+            var projects = _testEnvironment.XRepoEnvironment.ResolveProjects("MyLib");
+
+            projects.Should().ContainSingle();
+            projects[0].ProjectPath.Should().Contain("MyLib");
+        }
+
+        [Fact]
+        public void ResolveProjects_DeduplicatesProjectPaths()
+        {
+            _testEnvironment.RegisterRepo("MyRepo", "myrepo");
+            // Register two packages that have different project paths
+            _testEnvironment.RegisterPackageAt(new PackageIdentifier("MyRepo.PkgA", "1.0.0"), "myrepo");
+            _testEnvironment.RegisterPackageAt(new PackageIdentifier("MyRepo.PkgB", "1.0.0"), "myrepo");
+
+            var projects = _testEnvironment.XRepoEnvironment.ResolveProjects("MyRepo");
+
+            // Each package has its own project path, so should have 2 distinct paths
+            projects.Select(p => p.ProjectPath).Should().OnlyHaveUniqueItems();
+        }
+
         public void Dispose()
         {
             _testEnvironment.Dispose();

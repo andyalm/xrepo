@@ -1,5 +1,6 @@
 using System;
 using System.CommandLine;
+using System.CommandLine.Completions;
 using System.Linq;
 using XRepo.CommandLine.Infrastructure;
 using XRepo.Core;
@@ -13,8 +14,12 @@ public class WhereCommand : Command
     {
         var nameArg = new Argument<string>("name")
         {
-            Description = "The name of a package"
+            Description = "The name of a package",
+            HelpName = "name"
         };
+        nameArg.CompletionSources.Add(ctx =>
+            environment.PackageRegistry.GetPackages().Select(p => new CompletionItem(p.PackageId))
+        );
         Arguments.Add(nameArg);
 
         this.SetAction(parseResult =>
