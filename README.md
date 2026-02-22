@@ -62,7 +62,15 @@ XRepo supports shell tab completion via [dotnet-suggest](https://github.com/dotn
 
 **zsh** (`~/.zshrc`):
 
-    dotnet-suggest script zsh >> ~/.zshrc
+The default script from `dotnet-suggest script zsh` has bugs that break file path
+completion and can produce errors on empty results. Use the fixed version included
+in this repo instead:
+
+    curl -fsSL https://raw.githubusercontent.com/andyalm/xrepo/main/.tab_completions/zsh.sh >> ~/.zshrc
+
+Or, if you have a local clone of this repo:
+
+    cat /path/to/xrepo/.tab_completions/zsh.sh >> ~/.zshrc
 
 **PowerShell** (`$PROFILE`):
 
