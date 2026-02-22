@@ -12,6 +12,7 @@
     <PackageVersion Condition="$(PackageVersion)==''">2.0.0-dev</PackageVersion>
     <Authors>Andy Alm</Authors>
     <PackageDescription>Cross repository development made easier</PackageDescription>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/andyalm/xrepo.git</RepositoryUrl>
     <PackageProjectUrl>https://github.com/andyalm/xrepo</PackageProjectUrl>
     <RepositoryType>git</RepositoryType>
