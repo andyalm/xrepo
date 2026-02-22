@@ -57,7 +57,8 @@ public class RepoCommand : Command
         {
             var nameArg = new Argument<string>("name")
             {
-                Description = "The name of the repo being unregistered"
+                Description = "The name of the repo being unregistered",
+                HelpName = "name"
             };
             nameArg.CompletionSources.Add(ctx =>
                 environment.RepoRegistry.GetRepos().Select(r => new CompletionItem(r.Name))

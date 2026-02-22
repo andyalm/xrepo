@@ -14,7 +14,8 @@ public class WhichCommand : Command
     {
         var nameArg = new Argument<string>("name")
         {
-            Description = "The name of the package"
+            Description = "The name of the package",
+            HelpName = "name"
         };
         nameArg.CompletionSources.Add(ctx =>
             environment.PackageRegistry.GetPackages().Select(p => new CompletionItem(p.PackageId))

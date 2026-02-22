@@ -16,7 +16,8 @@ public class UnrefCommand : Command
         var nameArg = new Argument<string?>("name")
         {
             Description = "The name of a registered repo or package ID to unref (omit to unref all)",
-            Arity = ArgumentArity.ZeroOrOne
+            Arity = ArgumentArity.ZeroOrOne,
+            HelpName = "name"
         };
         nameArg.CompletionSources.Add(ctx =>
         {
@@ -26,7 +27,8 @@ public class UnrefCommand : Command
         });
         var solutionOption = new Option<FileInfo?>("--solution", "-s")
         {
-            Description = "The path to the solution file. Auto-detected if not specified."
+            Description = "The path to the solution file. Auto-detected if not specified.",
+            HelpName = "solution"
         };
         solutionOption.CompletionSources.Add(ctx =>
             FileCompletions.Get(ctx.WordToComplete, ".sln", ".slnx")

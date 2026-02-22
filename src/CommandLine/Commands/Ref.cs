@@ -15,7 +15,8 @@ public class RefCommand : Command
     {
         var nameArg = new Argument<string>("name")
         {
-            Description = "The name of a registered repo, a package ID, or a path to a .csproj"
+            Description = "The name of a registered repo, a package ID, or a path to a .csproj",
+            HelpName = "name"
         };
         nameArg.CompletionSources.Add(ctx =>
         {
@@ -26,7 +27,8 @@ public class RefCommand : Command
         });
         var solutionOption = new Option<FileInfo?>("--solution", "-s")
         {
-            Description = "The path to the solution file. Auto-detected if not specified."
+            Description = "The path to the solution file. Auto-detected if not specified.",
+            HelpName = "solution"
         };
         solutionOption.CompletionSources.Add(ctx =>
             FileCompletions.Get(ctx.WordToComplete, ".sln", ".slnx")
