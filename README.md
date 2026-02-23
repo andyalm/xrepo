@@ -7,7 +7,7 @@ Quickstart
 ----------
 1) Install xrepo as a .NET global tool
 ```shell
-dotnet tool install -g xrepo
+dotnet tool install -g xrepo --prerelease
 ```
 2) Bootstrap xrepo by installing MSBuild hooks that will watch for packages that you build locally register them with xrepo:
 ```shell
