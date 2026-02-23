@@ -28,7 +28,7 @@ public class WhereCommand : Command
             var packageRegistration = environment.PackageRegistry.GetPackage(name)
                 ?? throw new CommandFailureException(12, $"No package with name '{name}' is registered. Have you ever built it on this machine?");
 
-            Console.Out.WriteList("packages", packageRegistration.Projects.OrderByDescending(p => p.Timestamp).Select(p => p.OutputPath));
+            Console.Out.WriteList("projects", packageRegistration.Projects.OrderByDescending(p => p.Timestamp).Select(p => p.ProjectPath));
         });
     }
 }
