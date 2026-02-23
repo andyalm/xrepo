@@ -57,8 +57,9 @@ public class RefCommand : Command
             }
             else
             {
+                bootstrapChecker.WriteWarningIfNeeded();
                 throw new CommandFailureException(16,
-                    bootstrapChecker.AppendBootstrapHint($"'{name}' is not a registered repo, a registered package, or a path to an existing .csproj file. Have you built it?"));
+                    $"'{name}' is not a registered repo, a registered package, or a path to an existing .csproj file. Have you built it?");
             }
 
             await solutionFile.SaveAsync();
@@ -71,11 +72,7 @@ public class RefCommand : Command
             {
                 Console.WriteLine("No consuming projects found that reference packages from this source.");
                 Console.WriteLine("Note: If the repo produces packages that weren't referenced, make sure you've built the repo first so xrepo can discover them.");
-                var bootstrapWarning = bootstrapChecker.GetBootstrapWarning();
-                if (bootstrapWarning != null)
-                {
-                    Console.WriteLine($"Note: {bootstrapWarning}");
-                }
+                bootstrapChecker.WriteWarningIfNeeded();
             }
         });
     }
@@ -91,8 +88,9 @@ public class RefCommand : Command
         var packages = environment.FindPackagesFromRepo(repoName).ToArray();
         if (packages.Length == 0)
         {
+            bootstrapChecker.WriteWarningIfNeeded();
             throw new CommandFailureException(15,
-                bootstrapChecker.AppendBootstrapHint($"No packages are registered from repo '{repoName}'. Have you built it?"));
+                $"No packages are registered from repo '{repoName}'. Have you built it?");
         }
 
         return solutionFile.ReferenceRepo(repo, packages);
@@ -115,8 +113,12 @@ public class RefCommand : Command
 
     private static int ReferencePackageById(XRepoEnvironment environment, BootstrapChecker bootstrapChecker, string packageId, SolutionFile solutionFile)
     {
-        var package = environment.PackageRegistry.GetPackage(packageId)
-            ?? throw new CommandFailureException(16, bootstrapChecker.AppendBootstrapHint($"'{packageId}' is not a registered package. Have you built it?"));
+        var package = environment.PackageRegistry.GetPackage(packageId);
+        if (package == null)
+        {
+            bootstrapChecker.WriteWarningIfNeeded();
+            throw new CommandFailureException(16, $"'{packageId}' is not a registered package. Have you built it?");
+        }
 
         var projects = package.Projects.ToArray();
         if (projects.Length == 0)

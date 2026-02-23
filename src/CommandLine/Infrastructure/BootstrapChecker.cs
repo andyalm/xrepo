@@ -10,24 +10,14 @@ public class BootstrapChecker
 
     public bool IsBootstrapped => _isBootstrapped.Value;
 
-    public string? GetBootstrapWarning()
+    public void WriteWarningIfNeeded()
     {
         if (!IsBootstrapped)
         {
-            return "xrepo is not bootstrapped for the current .NET SDK. Run 'xrepo bootstrap' to enable automatic package discovery.";
+            Console.ForegroundColor = ConsoleColor.DarkYellow;
+            Console.WriteLine("WARNING: xrepo is not bootstrapped for the current .NET SDK. Run 'xrepo bootstrap' to enable automatic package discovery and then build your package again. After that, xrepo should be able to find your local project.");
+            Console.ResetColor();
         }
-
-        return null;
-    }
-
-    public string AppendBootstrapHint(string message)
-    {
-        if (!IsBootstrapped)
-        {
-            return message + " Note, xrepo is not bootstrapped for the current .NET SDK. Run 'xrepo bootstrap' to enable automatic package discovery and then build your package again. After that, xrepo should be able to find your local project.";
-        }
-
-        return message;
     }
 
     private static bool CheckBootstrapStatus()

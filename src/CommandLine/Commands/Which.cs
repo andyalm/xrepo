@@ -25,8 +25,12 @@ public class WhichCommand : Command
         this.SetAction(parseResult =>
         {
             var name = parseResult.GetValue(nameArg)!;
-            var package = environment.PackageRegistry.GetPackage(name)
-                ?? throw new CommandFailureException(14, bootstrapChecker.AppendBootstrapHint($"'{name}' is not a registered package. Have you built it?"));
+            var package = environment.PackageRegistry.GetPackage(name);
+            if (package == null)
+            {
+                bootstrapChecker.WriteWarningIfNeeded();
+                throw new CommandFailureException(14, $"'{name}' is not a registered package. Have you built it?");
+            }
 
             Console.WriteLine(package.MostRecentProject!.ProjectPath);
         });
