@@ -47,8 +47,7 @@ public class UnrefCommand : Command
                 solutionFile.UnreferenceAll();
                 await solutionFile.SaveAsync();
 
-                Console.WriteLine("All xrepo project references have been removed. Running dotnet restore...");
-                SolutionHelper.DotnetRestore(solutionPath);
+                Console.WriteLine("All xrepo project references have been removed.");
             }
             else
             {
@@ -68,8 +67,7 @@ public class UnrefCommand : Command
 
                 if (result.ModifiedProjectCount > 0)
                 {
-                    Console.WriteLine($"Removed references to {result.RemovedProjectPathCount} project(s) from {result.ModifiedProjectCount} consuming project(s). Running dotnet restore...");
-                    SolutionHelper.DotnetRestore(solutionPath);
+                    Console.WriteLine($"Removed references to {result.RemovedProjectPathCount} project(s) from {result.ModifiedProjectCount} consuming project(s).");
                 }
                 else
                 {

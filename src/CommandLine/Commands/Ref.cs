@@ -65,8 +65,7 @@ public class RefCommand : Command
 
             if (referencedCount > 0)
             {
-                Console.WriteLine($"Referenced {referencedCount} project(s). Running dotnet restore...");
-                SolutionHelper.DotnetRestore(solutionPath);
+                Console.WriteLine($"Referenced {referencedCount} project(s).");
             }
             else
             {

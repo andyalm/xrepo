@@ -20,11 +20,5 @@ namespace XRepo.CommandLine.Infrastructure
 
             return solutions[0];
         }
-
-        public static void DotnetRestore(string solutionPath)
-        {
-            var executor = new ProcessExecutor(Path.GetDirectoryName(solutionPath)!);
-            executor.Exec("dotnet", "restore").ToList();
-        }
     }
 }
