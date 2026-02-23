@@ -24,7 +24,7 @@ public class BootstrapChecker
     {
         if (!IsBootstrapped)
         {
-            return message + " Also, xrepo is not bootstrapped for the current .NET SDK. Run 'xrepo bootstrap' to enable automatic package discovery.";
+            return message + " Note, xrepo is not bootstrapped for the current .NET SDK. Run 'xrepo bootstrap' to enable automatic package discovery and then build your package again. After that, xrepo should be able to find your local project.";
         }
 
         return message;
