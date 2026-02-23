@@ -9,7 +9,7 @@ namespace XRepo.CommandLine.Commands;
 
 public class WhichCommand : Command
 {
-    public WhichCommand(XRepoEnvironment environment)
+    public WhichCommand(XRepoEnvironment environment, BootstrapChecker bootstrapChecker)
         : base("which", "Outputs the most recently registered location for a package")
     {
         var nameArg = new Argument<string>("name")
@@ -26,7 +26,7 @@ public class WhichCommand : Command
         {
             var name = parseResult.GetValue(nameArg)!;
             var package = environment.PackageRegistry.GetPackage(name)
-                ?? throw new CommandFailureException(14, $"'{name}' is not a registered package. Have you built it?");
+                ?? throw new CommandFailureException(14, bootstrapChecker.AppendBootstrapHint($"'{name}' is not a registered package. Have you built it?"));
 
             Console.WriteLine(package.MostRecentProject!.ProjectPath);
         });

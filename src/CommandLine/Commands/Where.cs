@@ -9,7 +9,7 @@ namespace XRepo.CommandLine.Commands;
 
 public class WhereCommand : Command
 {
-    public WhereCommand(XRepoEnvironment environment)
+    public WhereCommand(XRepoEnvironment environment, BootstrapChecker bootstrapChecker)
         : base("where", "Lists all locations of a registered package")
     {
         var nameArg = new Argument<string>("name")
@@ -26,7 +26,7 @@ public class WhereCommand : Command
         {
             var name = parseResult.GetValue(nameArg)!;
             var packageRegistration = environment.PackageRegistry.GetPackage(name)
-                ?? throw new CommandFailureException(12, $"No package with name '{name}' is registered. Have you ever built it on this machine?");
+                ?? throw new CommandFailureException(12, bootstrapChecker.AppendBootstrapHint($"No package with name '{name}' is registered. Have you ever built it on this machine?"));
 
             Console.Out.WriteList("", packageRegistration.Projects.OrderByDescending(p => p.Timestamp).Select(p => p.ProjectPath));
         });

@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 
 namespace XRepo.Bootstrapper;
 
@@ -10,6 +11,13 @@ public class Bootstrapper(MSBuildSdk sdk) : IDisposable
     private static readonly string[] AssemblyFiles = ["XRepo.Build.dll", "XRepo.Core.dll"];
     private TextWriter Output { get; set; } = Console.Out;
     private TextWriter ErrorOutput { get; set; } = Console.Error;
+
+    public bool IsInstalled()
+    {
+        var importAfterPath = Path.Combine(sdk.TargetsBasePath, "Microsoft.Common.targets", "ImportAfter");
+        return TargetsFiles.All(f => File.Exists(Path.Combine(importAfterPath, f)))
+            && AssemblyFiles.All(f => File.Exists(Path.Combine(importAfterPath, "XRepo", f)));
+    }
 
     public void Install()
     {
