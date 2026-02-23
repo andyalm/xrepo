@@ -1,5 +1,6 @@
 using System;
 using System.CommandLine;
+using System.CommandLine.Invocation;
 using XRepo.CommandLine.Commands;
 using XRepo.CommandLine.Infrastructure;
 using XRepo.Core;
@@ -17,9 +18,14 @@ rootCommand.Subcommands.Add(new UnrefCommand(environment));
 rootCommand.Subcommands.Add(new WhereCommand(environment, bootstrapChecker));
 rootCommand.Subcommands.Add(new WhichCommand(environment, bootstrapChecker));
 
+var invocationConfig = new InvocationConfiguration
+{
+    EnableDefaultExceptionHandler = false
+};
+
 try
 {
-    return rootCommand.Parse(args).Invoke();
+    return rootCommand.Parse(args).Invoke(invocationConfig);
 }
 catch (CommandFailureException ex)
 {
