@@ -10,7 +10,7 @@ namespace XRepo.CommandLine.Commands;
 
 public class RefCommand : Command
 {
-    public RefCommand(XRepoEnvironment environment)
+    public RefCommand(XRepoEnvironment environment, BootstrapChecker bootstrapChecker)
         : base("ref", "Adds project references for a repo's packages into a solution")
     {
         var nameArg = new Argument<string>("name")
@@ -45,11 +45,11 @@ public class RefCommand : Command
 
             if (environment.RepoRegistry.IsRepoRegistered(name))
             {
-                referencedCount = ReferenceRepo(environment, name, solutionFile);
+                referencedCount = ReferenceRepo(environment, bootstrapChecker, name, solutionFile);
             }
             else if (environment.PackageRegistry.IsPackageRegistered(name))
             {
-                referencedCount = ReferencePackageById(environment, name, solutionFile);
+                referencedCount = ReferencePackageById(environment, bootstrapChecker, name, solutionFile);
             }
             else if (name.EndsWith(".csproj", StringComparison.OrdinalIgnoreCase) && File.Exists(name))
             {
@@ -57,8 +57,9 @@ public class RefCommand : Command
             }
             else
             {
+                bootstrapChecker.WriteWarningIfNeeded();
                 throw new CommandFailureException(16,
-                    $"'{name}' is not a registered repo, a registered package, or a path to an existing .csproj file.");
+                    $"'{name}' is not a registered repo, a registered package, or a path to an existing .csproj file. Have you built it?");
             }
 
             await solutionFile.SaveAsync();
@@ -71,11 +72,12 @@ public class RefCommand : Command
             {
                 Console.WriteLine("No consuming projects found that reference packages from this source.");
                 Console.WriteLine("Note: If the repo produces packages that weren't referenced, make sure you've built the repo first so xrepo can discover them.");
+                bootstrapChecker.WriteWarningIfNeeded();
             }
         });
     }
 
-    private static int ReferenceRepo(XRepoEnvironment environment, string repoName, SolutionFile solutionFile)
+    private static int ReferenceRepo(XRepoEnvironment environment, BootstrapChecker bootstrapChecker, string repoName, SolutionFile solutionFile)
     {
         if (!environment.RepoRegistry.IsRepoRegistered(repoName, out var repo))
         {
@@ -86,6 +88,7 @@ public class RefCommand : Command
         var packages = environment.FindPackagesFromRepo(repoName).ToArray();
         if (packages.Length == 0)
         {
+            bootstrapChecker.WriteWarningIfNeeded();
             throw new CommandFailureException(15,
                 $"No packages are registered from repo '{repoName}'. Have you built it?");
         }
@@ -108,10 +111,14 @@ public class RefCommand : Command
         return solutionFile.ReferenceProject(projectPath, packages);
     }
 
-    private static int ReferencePackageById(XRepoEnvironment environment, string packageId, SolutionFile solutionFile)
+    private static int ReferencePackageById(XRepoEnvironment environment, BootstrapChecker bootstrapChecker, string packageId, SolutionFile solutionFile)
     {
-        var package = environment.PackageRegistry.GetPackage(packageId)
-            ?? throw new CommandFailureException(16, $"'{packageId}' is not a registered package. Have you built it?");
+        var package = environment.PackageRegistry.GetPackage(packageId);
+        if (package == null)
+        {
+            bootstrapChecker.WriteWarningIfNeeded();
+            throw new CommandFailureException(16, $"'{packageId}' is not a registered package. Have you built it?");
+        }
 
         var projects = package.Projects.ToArray();
         if (projects.Length == 0)
